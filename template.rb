@@ -44,13 +44,17 @@ run "bundle install"
 
 # Initialize guard
 # ==================================================
+say "Initializing RSpec"
 run "bundle exec guard init rspec"
-
+run "bundle exec rails generate rspec:install"
+run "rm -rf test/"
 
 # Clean up Assets
 # ==================================================
 # Use SASS extension for application.css
+say "Cleaning up assets."
 run "mv app/assets/stylesheets/application.css app/assets/stylesheets/application.css.sass"
+run "mv app/assets/javascripts/application.js app/assets/javascripts/application.js.coffee"
 # Remove the require_tree directives from the SASS and JavaScript files.
 # It's better design to import or require things manually.
 run "sed -i '' /require_tree/d app/assets/javascripts/application.js"
@@ -89,6 +93,7 @@ run "echo '.DS_Store' >> .gitignore"
 
 # HAML: replace generated ERB for HAML and set the name
 # ===================================================
+say "Replacing ERB for HAML."
 run "rm app/views/layouts/application.html.erb"
 get 'https://raw.github.com/brianvanburken/rails_startup_template/master/application.html.haml', 'app/views/layouts/application.html.haml'
 gsub_file 'app/views/layouts/application.html.haml', /App_Name/, "#{app_name.humanize.titleize}"
