@@ -37,3 +37,11 @@ rails new [app_name] -m https://github.com/brianvanburken/rails_startup_template
 7. Initializes a new git repository with an initial commit.
 
 8. Optionally create a github repository.
+
+## TODO
+
+- Add database_cleaner gem.
+- Cucumber testing.
+- Configure database.yml.
+- Set generators.
+- Break everything down to individual files like this [example](https://github.com/perfectline/template-bucket).
