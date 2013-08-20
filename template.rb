@@ -75,7 +75,7 @@ gsub_file 'app/views/layouts/application.html.haml', /App_Name/, "#{app_name.hum
 # Normalize.css: Install from https://github.com/necolas/normalize.css/
 # ==================================================
 say "Adding normalize.css"
-get 'https://raw.github.com/necolas/normalize.css/master/normalize.css', 'vendor/assets/stylesheets/'
+get 'https://raw.github.com/necolas/normalize.css/master/normalize.css', 'vendor/assets/stylesheets/normalize.css'
 run "echo '@import \"normalize\";' >>  app/assets/stylesheets/application.css.sass"
 
 # Font-awesome: Install from http://fortawesome.github.io/Font-Awesome/
