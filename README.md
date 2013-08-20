@@ -37,7 +37,3 @@ rails new [app_name] -m https://github.com/brianvanburken/rails_startup_template
 7. Initializes a new git repository with an initial commit.
 
 8. Optionally create a github repository.
-
-##TODO
-
-Setting up the default generators in `application.rb` and output mode for HAML in `enviroment.rb`.
