@@ -37,4 +37,4 @@ rails new [app_name] -m https://github.com/brianvanburken/rails_startup_template
 
 ##TODO
 
-Setting up the default generators in ```application.rb``` and output mode for HAML in ```enviroment.rb```.
+Setting up the default generators in `application.rb` and output mode for HAML in `enviroment.rb`.
