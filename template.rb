@@ -72,6 +72,12 @@ run "rm app/views/layouts/application.html.erb"
 get 'https://raw.github.com/brianvanburken/rails_startup_template/master/application.html.haml', 'app/views/layouts/application.html.haml'
 gsub_file 'app/views/layouts/application.html.haml', /App_Name/, "#{app_name.humanize.titleize}"
 
+# Normalize.css: Install from https://github.com/necolas/normalize.css/
+# ==================================================
+say "Adding normalize.css"
+get 'https://raw.github.com/necolas/normalize.css/master/normalize.css', 'vendor/assets/stylesheets/'
+run "echo '@import \"normalize\";' >>  app/assets/stylesheets/application.css.sass"
+
 # Font-awesome: Install from http://fortawesome.github.io/Font-Awesome/
 # ==================================================
 if yes?("Download font-awesome?")

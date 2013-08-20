@@ -28,13 +28,15 @@ rails new [app_name] -m https://github.com/brianvanburken/rails_startup_template
 
 3. Cleans up assets by renaming `application.css` to `application.css.scss` and removing the `include_tree` directives. It's better design to import and require things manually. For example, `@import 'bourbon';`
 
-4. Changes the ERB files to HAML version
+4. Adds Normalize.css for cross-browser normalization.
 
-5. Optionally installs [Font Awesome](http://fortawesome.github.io/Font-Awesome/).
+5. Changes the ERB files to HAML version
 
-6. Initializes a new git repository with an initial commit.
+6. Optionally installs [Font Awesome](http://fortawesome.github.io/Font-Awesome/).
 
-7. Optionally create a github repository.
+7. Initializes a new git repository with an initial commit.
+
+8. Optionally create a github repository.
 
 ##TODO
 
