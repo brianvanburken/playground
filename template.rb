@@ -23,6 +23,7 @@ gem_group :development do
   # Guard for automatically launching your specs when files are modified. (https://github.com/guard/guard-rspec)
   gem "guard-rspec"
 
+  gem 'binding_of_caller' # Needed for better_errors.
   gem 'better_errors'
   gem 'rack-mini-profiler'
   gem 'letter_opener'
@@ -57,6 +58,8 @@ run "rm -rf test/"
 say "Cleaning up assets."
 run "mv app/assets/stylesheets/application.css app/assets/stylesheets/application.css.sass"
 run "mv app/assets/javascripts/application.js app/assets/javascripts/application.js.coffee"
+# Convert JavaScript // comments to CoffeeScript # for correct require
+gsub_file 'app/assets/javascripts/application.js.coffee', /\/\//, '#'
 # Remove the require_tree directives from the SASS and JavaScript files.
 # It's better design to import or require things manually.
 run "sed -i '' /require_tree/d app/assets/javascripts/application.js.coffee"
