@@ -1,6 +1,7 @@
+
 # Gems
 # ==================================================
-
+say "Setting up the gems"
 # For encrypted password
 gem 'bcrypt-ruby'
 # Useful SASS mixins (http://bourbon.io/)
@@ -9,6 +10,9 @@ gem 'rails_best_practices'
 
 # HAML templating language (http://haml.info)
 gem 'haml-rails'
+
+# Simple pagination gem (https://github.com/amatsuda/kaminari)
+gem 'kaminari'
 
 # Simple form builder (https://github.com/plataformatec/simple_form)
 #gem "simple_form"
@@ -20,8 +24,6 @@ gem_group :development do
   gem "guard-rspec"
 
   gem 'better_errors'
-  gem 'binding_of_caller'
-  gem 'meta_request'
   gem 'rack-mini-profiler'
   gem 'letter_opener'
   gem 'quiet_assets'
@@ -63,10 +65,17 @@ run "sed -i '' /require_tree/d app/assets/stylesheets/application.css.sass"
 run "echo >> app/assets/stylesheets/application.css.sass"
 run "echo '@import \"bourbon\";' >>  app/assets/stylesheets/application.css.sass"
 
+# HAML: replace generated ERB for HAML and set the name
+# ===================================================
+say "Replacing ERB for HAML."
+run "rm app/views/layouts/application.html.erb"
+get 'https://raw.github.com/brianvanburken/rails_startup_template/master/application.html.haml', 'app/views/layouts/application.html.haml'
+gsub_file 'app/views/layouts/application.html.haml', /App_Name/, "#{app_name.humanize.titleize}"
 
 # Font-awesome: Install from http://fortawesome.github.io/Font-Awesome/
 # ==================================================
 if yes?("Download font-awesome?")
+  say "Getting font-awesome"
   run "wget http://fortawesome.github.io/Font-Awesome/assets/font-awesome.zip -O font-awesome.zip"
   run "unzip font-awesome.zip && rm font-awesome.zip"
   run "cp font-awesome/css/font-awesome.css vendor/assets/stylesheets/"
@@ -77,6 +86,7 @@ end
 
 # Ignore rails doc files, Vim/Emacs swap files, .DS_Store, and more
 # ===================================================
+say "Setting up .gitignore"
 run "echo '/.bundle' >> .gitignore"
 run "echo '/db/*.sqlite3' >> .gitignore"
 run "echo '/db/*.sqlite3-journal' >> .gitignore"
@@ -90,13 +100,6 @@ run "echo '.project' >> .gitignore"
 run "echo '.idea' >> .gitignore"
 run "echo '.secret' >> .gitignore"
 run "echo '.DS_Store' >> .gitignore"
-
-# HAML: replace generated ERB for HAML and set the name
-# ===================================================
-say "Replacing ERB for HAML."
-run "rm app/views/layouts/application.html.erb"
-get 'https://raw.github.com/brianvanburken/rails_startup_template/master/application.html.haml', 'app/views/layouts/application.html.haml'
-gsub_file 'app/views/layouts/application.html.haml', /App_Name/, "#{app_name.humanize.titleize}"
 
 # Git: Initialize
 # ==================================================
