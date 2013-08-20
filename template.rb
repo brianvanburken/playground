@@ -67,7 +67,7 @@ run "echo '@import \"bourbon\";' >>  app/assets/stylesheets/application.css.sass
 # Font-awesome: Install from http://fortawesome.github.io/Font-Awesome/
 # ==================================================
 if yes?("Download font-awesome?")
-  run "wget http://fortawesome.github.io/Font-Awesome/assets/font-awesome.zip -o font-awesome.zip"
+  run "wget http://fortawesome.github.io/Font-Awesome/assets/font-awesome.zip -O font-awesome.zip"
   run "unzip font-awesome.zip && rm font-awesome.zip"
   run "cp font-awesome/css/font-awesome.css vendor/assets/stylesheets/"
   run "cp -r font-awesome/font public/font"
