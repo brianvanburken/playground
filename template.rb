@@ -8,7 +8,7 @@ gem 'bourbon'
 gem 'rails_best_practices'
 
 # HAML templating language (http://haml.info)
-gem 'haml-rails' if yes?("Use HAML instead of ERB?")
+gem 'haml-rails'
 
 # Simple form builder (https://github.com/plataformatec/simple_form)
 #gem "simple_form"
@@ -87,6 +87,11 @@ run "echo '.idea' >> .gitignore"
 run "echo '.secret' >> .gitignore"
 run "echo '.DS_Store' >> .gitignore"
 
+# HAML: replace generated ERB for HAML and set the name
+# ===================================================
+run "rm app/views/layouts/application.html.erb"
+get 'https://raw.github.com/brianvanburken/rails_startup_template/master/application.html.haml', 'app/views/layouts/application.html.haml'
+gsub_file 'app/views/layouts/application.html.haml', /App_Name/, "#{app_name.humanize.titleize}"
 
 # Git: Initialize
 # ==================================================
