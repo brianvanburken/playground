@@ -66,7 +66,7 @@ run "sed -i '' /require_tree/d app/assets/javascripts/application.js.coffee"
 run "sed -i '' /require_tree/d app/assets/stylesheets/application.css.sass"
 # Add bourbon to stylesheet file
 run "echo >> app/assets/stylesheets/application.css.sass"
-run "echo '@import \"bourbon\";' >>  app/assets/stylesheets/application.css.sass"
+run "echo '@import \"bourbon\"' >>  app/assets/stylesheets/application.css.sass"
 
 # HAML: replace generated ERB for HAML and set the name
 # ===================================================
@@ -79,7 +79,7 @@ gsub_file 'app/views/layouts/application.html.haml', /App_Name/, "#{app_name.hum
 # ==================================================
 say "Adding normalize.css"
 get 'https://raw.github.com/necolas/normalize.css/master/normalize.css', 'vendor/assets/stylesheets/normalize.css'
-run "echo '@import \"normalize\";' >>  app/assets/stylesheets/application.css.sass"
+run "echo '@import \"normalize\"' >>  app/assets/stylesheets/application.css.sass"
 
 # Font-awesome: Install from http://fortawesome.github.io/Font-Awesome/
 # ==================================================
@@ -90,7 +90,7 @@ if yes?("Download font-awesome?")
   run "cp font-awesome/css/font-awesome.css vendor/assets/stylesheets/"
   run "cp -r font-awesome/font public/font"
   run "rm -rf font-awesome"
-  run "echo '@import \"font-awesome\";' >>  app/assets/stylesheets/application.css.sass"
+  run "echo '@import \"font-awesome\"' >>  app/assets/stylesheets/application.css.sass"
 end
 
 # Ignore rails doc files, Vim/Emacs swap files, .DS_Store, and more
