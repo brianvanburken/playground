@@ -94,6 +94,21 @@ if yes?("Download font-awesome?")
   run "echo '@import \"font-awesome\"' >>  app/assets/stylesheets/application.css.sass"
 end
 
+# Clean up routes and gemfile and other
+# ==================================================
+say "Cleanup..."
+
+# Remove generated README
+run 'rm README.rdoc'
+
+# Remove commented lines and multiple blank lines from Gemfile
+gsub_file 'Gemfile', /#.*\n/, "\n"
+gsub_file 'Gemfile', /\n^\s*\n/, "\n"
+
+# Remove commented lines and multiple blank lines from config/routes.rb
+gsub_file 'config/routes.rb', /  #.*\n/, "\n"
+gsub_file 'config/routes.rb', /\n^\s*\n/, "\n"
+
 # Ignore rails doc files, Vim/Emacs swap files, .DS_Store, and more
 # ===================================================
 say "Setting up .gitignore"
