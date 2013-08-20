@@ -57,7 +57,7 @@ run "mv app/assets/stylesheets/application.css app/assets/stylesheets/applicatio
 run "mv app/assets/javascripts/application.js app/assets/javascripts/application.js.coffee"
 # Remove the require_tree directives from the SASS and JavaScript files.
 # It's better design to import or require things manually.
-run "sed -i '' /require_tree/d app/assets/javascripts/application.js"
+run "sed -i '' /require_tree/d app/assets/javascripts/application.js.coffee"
 run "sed -i '' /require_tree/d app/assets/stylesheets/application.css.sass"
 # Add bourbon to stylesheet file
 run "echo >> app/assets/stylesheets/application.css.sass"
@@ -67,8 +67,8 @@ run "echo '@import \"bourbon\";' >>  app/assets/stylesheets/application.css.sass
 # Font-awesome: Install from http://fortawesome.github.io/Font-Awesome/
 # ==================================================
 if yes?("Download font-awesome?")
-  run "wget http://fortawesome.github.io/Font-Awesome/assets/font-awesome.zip -O font-awesome.zip"
-  run "unzip font-awesome.zip && rm font-awesome.zip"
+  run "wget http://fortawesome.github.io/Font-Awesome/assets/font-awesome.zip -o font-awesome.zip"
+  run "unzip font-awesome.zip"# && rm font-awesome.zip"
   run "cp font-awesome/css/font-awesome.css vendor/assets/stylesheets/"
   run "cp -r font-awesome/font public/font"
   run "rm -rf font-awesome"
