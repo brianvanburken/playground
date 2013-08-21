@@ -16,5 +16,3 @@ apply "#{@template_path}/modules/rspec.rb"
 apply "#{@template_path}/modules/gems.rb"
 apply "#{@template_path}/modules/assets.rb"
 apply "#{@template_path}/modules/git.rb"
-
-run 'bundle update'
