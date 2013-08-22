@@ -9,7 +9,7 @@ development:
   <<: *setup
   database: #{options[:database] =~ /sqlite3/ ? "db/development.sqlite3" : "#{app_name}_development"}
 
-test:
+test: &test
   <<: *setup
   database: #{options[:database] =~ /sqlite3/ ? "db/test.sqlite3" : "#{app_name}_test"}
 
