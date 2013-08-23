@@ -21,7 +21,7 @@ if yes?("Install rspec and rspec-rails?", :yellow)
     unless gem_available?('guard-rspec', '~> 3.0.2')
       run "gem install rspec -v '~> 3.0.2' --no-rdoc --no-ri"
     else
-      say("Found database_cleaner, skipping installation", :cyan)
+      say("Found database_cleaner, skipping installation", :green)
     end
 
     run "bundle exec guard init rspec"
@@ -32,14 +32,14 @@ if yes?("Install rspec and rspec-rails?", :yellow)
     run "gem install rspec -v '~> 2.14.0' --no-rdoc --no-ri"
     run "gem install rspec-rails -v '~> 2.14.0' --no-rdoc --no-ri"
   else
-    say("Found rspec gem, skipping installation", :cyan)
-    say("Found rspec-rails gems, skipping installation", :cyan)
+    say("Found rspec gem, skipping installation", :green)
+    say("Found rspec-rails gems, skipping installation", :green)
   end
 
   unless gem_available?("database_cleaner", '~> 1.1.1')
     run "gem install database_cleaner -v '~> 1.1.1' --no-rdoc --no-ri"
   else
-    say("Found database_cleaner, skipping installation", :cyan)
+    say("Found database_cleaner, skipping installation", :green)
   end
 
   # Generate the RSpec files
