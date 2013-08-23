@@ -28,11 +28,16 @@ end
 unless gem_available?(gem_for_database)
   run "gem install #{gem_for_database} --no-rdoc --no-ri"
 else
-  say("Found #{gem_for_database}, skipping installation", :cyan)
+  say("Found #{gem_for_database}, skipping installation", :green)
 end
 
 if options[:database] =~ /postgresql/
   if yes?('Install silent-postgres gem?', :yellow)
     gem 'silent-postgres', group: :delevelopment
   end
+end
+
+if yes?("Create database? (Needs all gems to be installed first)", :yellow)
+  run 'bundle install'
+  rake "db:create"
 end
