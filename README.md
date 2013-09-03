@@ -14,7 +14,6 @@ Configures the Rails project right after creation.
 
 ## TODO
 
-- Add Cucumber testing
 - Add Spork for faster testing
 - Expand "What it does" section in README
 - Add `generator.stylesheets = false` for disabling stylesheet for scaffolds.
