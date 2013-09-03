@@ -1,6 +1,5 @@
 # Font-awesome: Installed from http://fortawesome.github.io/Font-Awesome/
 if yes?("Download font-awesome?", :yellow)
-  say "Getting font-awesome"
   run "wget http://fortawesome.github.io/Font-Awesome/assets/font-awesome.zip -O font-awesome.zip"
   run "unzip font-awesome.zip && rm font-awesome.zip"
   run "cp font-awesome/css/font-awesome.css vendor/assets/stylesheets/"
