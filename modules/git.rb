@@ -1,3 +1,5 @@
+say("Going to initialize a blank repository", :white)
+
 # Ignore rails doc files, Vim/Emacs swap files, .DS_Store, and more
 get "#{File.dirname(__FILE__)}/../resources/.gitignore", ".gitignore", force: true
 
