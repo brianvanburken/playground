@@ -19,7 +19,7 @@ if yes?("Install rspec and rspec-rails?", :yellow)
     gem "guard-rspec", '~> 3.0.2', group: :test
 
     unless gem_available?('guard-rspec', '~> 3.0.2')
-      run "gem install rspec -v '~> 3.0.2' --no-rdoc --no-ri"
+      run "gem install guard-rspec -v '~> 3.0.2' --no-rdoc --no-ri"
     else
       say("Found database_cleaner, skipping installation", :green)
     end
