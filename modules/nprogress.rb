@@ -8,32 +8,31 @@ if yes?("Use NProgress.js for Turbolinks loading indicator?", :yellow)
     run "echo '@import \"nprogress\"' >>  stylesheets/application.css.sass"
 
     inject_into_file 'javascripts/application.js.coffee', after: "#= require turbolinks" do
-      "\n#= require nprogress\n\n"
+      "\n#= require nprogress\n"
     end
 
     # Links NProgress with Turbolinks
     append_file "javascripts/application.js.coffee" do
-"# Link Turbolink status changes with NProgress
-NProgress.configure { showSpinner: false }
-$(document).on 'page:fetch',   -> NProgress.start()
-$(document).on 'page:change',  -> NProgress.done()
-$(document).on 'page:restore', -> NProgress.remove()
-"
+      "\n" +
+      "# Link Turbolink status changes with NProgress\n" +
+      "NProgress.configure { showSpinner: false }\n" +
+      "$(document).on 'page:fetch',   -> NProgress.start()\n" +
+      "$(document).on 'page:change',  -> NProgress.done()\n" +
+      "$(document).on 'page:restore', -> NProgress.remove()\n"
     end
 
     # Adds the selectors for changing NProgress colours.
     append_file "stylesheets/application.css.sass" do
-"
-// Styles for colouring the NProgress plugin
-$nprogress-colour: #29d
-#nprogress .bar
-  background: $nprogress-colour
-#nprogress .peg
-  box-shadow: 0 0 10px $nprogress-colour, 0 0 5px $nprogress-colour
-#nprogress .spinner-icon
-  border-top-color: $nprogress-colour
-  border-left-color: $nprogress-colour
-"
+      "\n" +
+      "// Styles for colouring the NProgress plugin\n" +
+      "$nprogress-colour: #29d\n" +
+      "#nprogress .bar\n" +
+      "  background: $nprogress-colour\n" +
+      "#nprogress .peg\n" +
+      "  box-shadow: 0 0 10px $nprogress-colour, 0 0 5px $nprogress-colour\n" +
+      "#nprogress .spinner-icon\n" +
+      "  border-top-color: $nprogress-colour\n" +
+      "  border-left-color: $nprogress-colour\n"
     end
   end
 
