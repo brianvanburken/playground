@@ -7,7 +7,9 @@ remove_file "public/images/rails.png"
 
 # Cleanup Gemfile, by removing all commented lines
 gsub_file "Gemfile", /#.*\n/, "\n"
+gsub_file "Gemfile", /^\s*$/, ""
 gsub_file "Gemfile", /\n+/, "\n"
+gsub_file "Gemfile", /^([ \t]*)\r?\n\s+$/, "\1"
 
 # Remove commented lines and multiple blank lines from config/routes.rb
 gsub_file 'config/routes.rb', /  #.*\n/, "\n"
