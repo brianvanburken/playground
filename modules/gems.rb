@@ -1,14 +1,24 @@
 # Checks if we're still following the best practices and picks out bad smells
 gem 'rails_best_practices'
 
-# Simple pagination gem (https://github.com/amatsuda/kaminari)
-gem 'kaminari', '~> 0.14.1'
+if yes?("Use kaminari pagination?", :yellow)
+  # Simple pagination gem (https://github.com/amatsuda/kaminari)
+  gem 'kaminari'
+end
 
-# Useful SASS mixins (http://bourbon.io/)
-gem 'bourbon'
+if yes?("Use bourbon library?", :yellow)
+  gem 'bourbon'
+  # Add bourbon to stylesheet
+  # Useful SASS mixins (http://bourbon.io/)
+  append_file "app/assets/stylesheets/application.css.sass" do
+    "@import \"bourbon\"\n"
+  end
+end
 
-# Simple form builder (https://github.com/plataformatec/simple_form)
-#gem "simple_form", '~> 2.1.0'
+if yes?("Use simple_form builder?", :yellow)
+  # Simple form builder (https://github.com/plataformatec/simple_form)
+  gem 'simple_form'
+end
 
 gem_group :development do
   gem 'binding_of_caller' # Needed for better_errors
