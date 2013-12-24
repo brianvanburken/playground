@@ -10,12 +10,14 @@ def gem_available?(gemname, version = nil)
 end
 
 apply "#{@template_path}/modules/cleanup.rb"
+apply "#{@template_path}/modules/assets.rb"
+
 apply "#{@template_path}/modules/haml.rb"
 apply "#{@template_path}/modules/database.rb"
 apply "#{@template_path}/modules/rspec.rb"
 apply "#{@template_path}/modules/cucumber.rb"
 apply "#{@template_path}/modules/gems.rb"
-apply "#{@template_path}/modules/assets.rb"
+apply "#{@template_path}/modules/modernizr.rb"
 apply "#{@template_path}/modules/normalize.rb"
 apply "#{@template_path}/modules/font-awesome.rb"
 apply "#{@template_path}/modules/nprogress.rb"
