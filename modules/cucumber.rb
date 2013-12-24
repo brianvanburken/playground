@@ -9,33 +9,33 @@ if yes?("Use Cucumber behavior testing?", :yellow)
   if yes?("Use Capybara instead of Webrat?", :yellow)
     gem 'capybara', '~> 2.1.0', group: :test
     @use_capybara = true
-    unless Gem.available?("capybara")
+    unless gem_available?("capybara")
       run "gem install capybara -v '~> 2.1.0' --no-rdoc --no-ri"
     else
       say("Found capybara gem, skipping installation", :green)
     end
   else
     gem 'webrat', '~> 0.7.3', group: :test
-    unless Gem.available?("webrat")
+    unless gem_available?("webrat")
       run "gem install webrat -v '~> 0.7.3' --no-rdoc --no-ri"
     else
       say("Found webrat gem, skipping installation", :green)
     end
   end
 
-  unless Gem.available?("cucumber-rails")
+  unless gem_available?("cucumber-rails")
     run "gem install cucumber-rails -v '~> 1.4.0' --no-rdoc --no-ri"
   else
     say("Found cucumber-rails, skipping installation", :green)
   end
 
-  unless Gem.available?("database_cleaner")
+  unless gem_available?("database_cleaner")
     run "gem install database_cleaner -v '~> 1.1.1' --no-rdoc --no-ri"
   else
     say("Found database_cleaner, skipping installation", :green)
   end
 
-  unless Gem.available?("launchy")
+  unless gem_available?("launchy")
     run "gem install launchy -v '~> 2.3.0' --no-rdoc --no-ri"
   else
     say("Found launchy gem, skipping installation", :green)
@@ -49,6 +49,6 @@ if yes?("Use Cucumber behavior testing?", :yellow)
 
   generate "cucumber:install #{arguments.join(" ")}"
 
-  get "#{File.dirname(__FILE__)}/resources/cucumber.yml", "config/cucumber.yml", force: true
+  get "#{@template_path}/resources/cucumber.yml", "config/cucumber.yml", force: true
 
 end
