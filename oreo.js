@@ -12,7 +12,7 @@
     d.cookie = name + '=' + value + expires + '; path=/';
   };
 
-  oreo.delete = function (name) {
+  oreo.destroy = function (name) {
     oreo.set(name, false, -1);
   };
 

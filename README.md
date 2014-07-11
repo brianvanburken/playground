@@ -24,5 +24,5 @@ Oreo.set('foo', 'bar', 5);
 
 To delete a cookie, pass a name.
 ```js
-Oreo.delete('foo');
+Oreo.destroy('foo');
 ```
