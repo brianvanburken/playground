@@ -16,7 +16,7 @@ undefined.
 Oreo.get('foo');
 ```
 
-To set a cookie value, pass a name, string value, and opionally number of days
+To set a cookie value, pass a name, string value, and optionally number of days
 until the cookie expires.
 ```js
 Oreo.set('foo', 'bar', 5);
