@@ -29,7 +29,7 @@ After this visit ```http://localhost:3000/```.
 ## Highlights
 ### STI (Single Table Inheritance)
 [Poem](app/models/poem.rb) and [Short Story](app/models/short_story.rb)
-both inherit from [Literature](app/models/short_story.rb)
+both inherit from [Literature](app/models/literature.rb)
 . This is done for the reason that Poem and Short
 Story both share common fields like title, content and published date.
 
