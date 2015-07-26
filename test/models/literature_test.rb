@@ -28,6 +28,7 @@ class LiteratureTest < ActiveSupport::TestCase
   should belong_to(:author)
   should have_many(:taggings).dependent(:destroy)
   should have_many(:tags)
+  should delegate_method(:name).to(:author).with_prefix
 
   test "published_at does not accept dates in the future" do
     literature = literatures(:one)

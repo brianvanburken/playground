@@ -27,6 +27,8 @@ class Literature < ActiveRecord::Base
 
   after_save :tag_content, if: :content_changed?
 
+  delegate :name, to: :author, prefix: true
+
   private
     def published_in_the_past
       if published_at && published_at > Date.today
