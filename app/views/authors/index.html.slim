@@ -13,7 +13,7 @@ table
     - @authors.each do |author|
       tr
         td = author.name
-        td = author.biography
+        td = truncate author.biography
         td = link_to 'Show', author
         td = link_to 'Edit', edit_author_path(author)
         td = link_to 'Destroy', author, data: {:confirm => 'Are you sure?'}, :method => :delete
