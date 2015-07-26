@@ -15,4 +15,5 @@
 require 'test_helper'
 
 class PoemTest < ActiveSupport::TestCase
+  should validate_presence_of(:metaphor)
 end

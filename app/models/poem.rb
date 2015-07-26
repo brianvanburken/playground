@@ -13,4 +13,5 @@
 #
 
 class Poem < Literature
+  validates :metaphor, presence: true
 end
