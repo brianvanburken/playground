@@ -1,5 +1,6 @@
 # Publisher
 [![Code Climate](https://codeclimate.com/github/brianvanburken/publisher/badges/gpa.svg)](https://codeclimate.com/github/brianvanburken/publisher)
+[![Build Status](https://travis-ci.org/brianvanburken/publisher.svg?branch=master)](https://travis-ci.org/brianvanburken/publisher)
 
 ## Assignment
 Please write an application that enables storing poems and short stories (with their authors) and will automatically tag the content. Each story has a title, content, short description, publish date and an author. A poem has the same, but instead of short description it has a metaphor. Each author has a name and a biography. The content of poems, stories and biographies should be automatically tagged if it contains some of the predefined keywords (you can define 20 keywords yourself and store them however you wish). Tags can be shared between the entities.
