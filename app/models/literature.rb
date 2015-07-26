@@ -20,6 +20,10 @@
 
 class Literature < ActiveRecord::Base
   belongs_to :author
+
+  has_many :taggings, as: :taggable
+  has_many :tags, through: :taggings
+
   validates :title, :content, :author, :published_at, presence: true
   validate :published_in_the_past
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150726141644) do
+ActiveRecord::Schema.define(version: 20150726145226) do
 
   create_table "authors", force: :cascade do |t|
     t.string   "name",       null: false
@@ -33,6 +33,17 @@ ActiveRecord::Schema.define(version: 20150726141644) do
   end
 
   add_index "literatures", ["author_id"], name: "index_literatures_on_author_id"
+
+  create_table "taggings", force: :cascade do |t|
+    t.string   "taggable_type"
+    t.integer  "taggable_id"
+    t.integer  "tag_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "taggings", ["tag_id"], name: "index_taggings_on_tag_id"
+  add_index "taggings", ["taggable_id"], name: "index_taggings_on_taggable_id"
 
   create_table "tags", force: :cascade do |t|
     t.string   "name",       null: false
