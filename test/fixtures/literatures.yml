@@ -17,12 +17,10 @@
 
 one:
   title: MyString
-  short_description: MyText
   content: MyText
   published_at: 2015-07-26
 
 two:
   title: MyString
-  short_description: MyText
   content: MyText
   published_at: 2015-07-26
