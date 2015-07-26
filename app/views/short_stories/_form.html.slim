@@ -1,0 +1,21 @@
+= form_for @short_story do |f|
+  - if @short_story.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@short_story.errors.count, "error")} prohibited this short story from being saved:"
+      ul
+        - @short_story.errors.full_messages.each do |message|
+          li = message
+
+  .field
+    = f.label :title
+    = f.text_field :title
+  .field
+    = f.label :content
+    = f.text_area :content
+  .field
+    = f.label :short_description
+    = f.text_area :short_description
+  .field
+    = f.label :published_at
+    = f.date_field :published_at
+  .actions = f.submit
