@@ -5,8 +5,6 @@ class TaggingService
 
   def tag(words)
     @record.taggings.delete_all
-    Tag.where(name: words).each do |tag|
-      @record.tags << tag
-    end
+    @record.tags << Tag.where(name: words)
   end
 end
