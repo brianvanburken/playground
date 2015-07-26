@@ -1,0 +1,21 @@
+h1 Homepage
+table[border="1"]
+  thead
+    tr
+      th Title
+      th Type
+      th Content
+      th Published At
+  tbody
+    - @literature.each do |literature|
+      tr
+        td = link_to literature.title, literature
+        td = literature.type
+        td = truncate literature.content
+        td = literature.published_at
+br
+= link_to 'View poems', poems_path
+br
+= link_to 'View short stories', short_stories_path
+br
+= link_to 'View authors', authors_path
