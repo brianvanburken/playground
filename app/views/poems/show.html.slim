@@ -13,5 +13,4 @@ p
   = @poem.content
 p
   strong> Tags:
-  - @poem.tags.each do |tag|
-    span>= link_to "##{tag.name}", tag
+  = render @poem.tags

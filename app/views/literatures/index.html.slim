@@ -7,6 +7,7 @@ table border="1"
       th Content
       th Author
       th Published At
+      th Tags
   tbody
     - @literature.each do |literature|
       tr
@@ -15,3 +16,4 @@ table border="1"
         td = truncate literature.content
         td = literature.author_name
         td = literature.published_at
+        td = render literature.tags

@@ -13,5 +13,4 @@ p
   = @short_story.content
 p
   strong> Tags:
-  - @short_story.tags.each do |tag|
-    span>= link_to "##{tag.name}", tag
+  = render @short_story.tags
