@@ -1,4 +1,6 @@
-p#notice = notice
+= link_to 'Edit', edit_short_story_path(@short_story)
+'|
+= link_to 'Back', short_stories_path
 
 p
   strong Title:
@@ -9,7 +11,7 @@ p
 p
   strong Content:
   = @short_story.content
-
-= link_to 'Edit', edit_short_story_path(@short_story)
-'|
-= link_to 'Back', short_stories_path
+p
+  strong> Tags:
+  - @short_story.tags.each do |tag|
+    span>= link_to "##{tag.name}", tag

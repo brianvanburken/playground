@@ -5,7 +5,6 @@ table
     tr
       th Title
       th Short Description
-      th Content
       th
       th
       th
@@ -15,7 +14,6 @@ table
       tr
         td = short_story.title
         td = short_story.short_description
-        td = short_story.content
         td = link_to 'Show', short_story
         td = link_to 'Edit', edit_short_story_path(short_story)
         td = link_to 'Destroy', short_story, data: {:confirm => 'Are you sure?'}, :method => :delete

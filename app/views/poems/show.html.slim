@@ -1,4 +1,6 @@
-p#notice = notice
+= link_to 'Edit', edit_poem_path(@poem)
+'|
+= link_to 'Back', poems_path
 
 p
   strong Title:
@@ -9,7 +11,7 @@ p
 p
   strong Content:
   = @poem.content
-
-= link_to 'Edit', edit_poem_path(@poem)
-'|
-= link_to 'Back', poems_path
+p
+  strong> Tags:
+  - @poem.tags.each do |tag|
+    span>= link_to "##{tag.name}", tag

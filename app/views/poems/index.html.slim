@@ -5,7 +5,6 @@ table
     tr
       th Title
       th Metaphor
-      th Content
       th
       th
       th
@@ -15,7 +14,6 @@ table
       tr
         td = poem.title
         td = poem.metaphor
-        td = poem.content
         td = link_to 'Show', poem
         td = link_to 'Edit', edit_poem_path(poem)
         td = link_to 'Destroy', poem, data: {:confirm => 'Are you sure?'}, :method => :delete
