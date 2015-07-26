@@ -21,4 +21,5 @@ end
 
 group :test do
   gem 'shoulda',      '~> 3.5.0'
+  gem 'codeclimate-test-reporter', require: nil
 end
