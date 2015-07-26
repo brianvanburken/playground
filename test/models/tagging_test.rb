@@ -18,7 +18,6 @@
 require 'test_helper'
 
 class TaggingTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  should belong_to(:tag)
+  should belong_to(:taggable)
 end

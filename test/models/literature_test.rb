@@ -26,6 +26,8 @@ class LiteratureTest < ActiveSupport::TestCase
   should validate_presence_of(:published_at)
   should validate_presence_of(:author)
   should belong_to(:author)
+  should have_many(:taggings)
+  should have_many(:tags)
 
   test "published_at does not accept dates in the future" do
     literature = literatures(:one)
