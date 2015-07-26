@@ -1,0 +1,10 @@
+- if model.errors.any?
+  #error_explanation
+    h2
+      = pluralize(model.errors.count, "error")
+      |  prohibited this&nbsp;
+      = model.class.model_name.human
+      | &nbsp;from being saved:
+    ul
+      - model.errors.full_messages.each do |message|
+        li = message

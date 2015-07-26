@@ -1,10 +1,5 @@
 = form_for @short_story do |f|
-  - if @short_story.errors.any?
-    #error_explanation
-      h2 = "#{pluralize(@short_story.errors.count, "error")} prohibited this short story from being saved:"
-      ul
-        - @short_story.errors.full_messages.each do |message|
-          li = message
+  = render 'shared/form_errors', model: @short_story
 
   .field
     = f.label :title
