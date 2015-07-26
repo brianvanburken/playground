@@ -19,6 +19,7 @@
 #
 
 class Literature < ActiveRecord::Base
+  belongs_to :author
   validates :title, :content, :published_at, presence: true
   validate :published_in_the_past
 
