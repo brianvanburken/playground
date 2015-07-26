@@ -52,6 +52,7 @@ class ShortStoriesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def short_story_params
-      params.require(:short_story).permit(:title, :content, :short_description, :published_at)
+      params.require(:short_story).permit(:title, :content, :short_description,
+                                          :published_at, :author_id)
     end
 end

@@ -13,4 +13,7 @@
   .field
     = f.label :published_at
     = f.date_field :published_at
+  .field
+    = f.label :author_id
+    = f.collection_select(:author_id, Author.all, :id, :name, prompt: true)
   .actions = f.submit
