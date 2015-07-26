@@ -35,10 +35,7 @@ class Literature < ActiveRecord::Base
     end
 
     def tag_content
-      taggings.delete_all
       words = content.strip.downcase.split(/\W+/)
-      Tag.all.each do |tag|
-        tags << tag if words.include? tag.name
-      end
+      TaggingService.new(self).tag(words)
     end
 end

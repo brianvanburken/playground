@@ -17,10 +17,7 @@ class Author < ActiveRecord::Base
 
   private
     def tag_biography
-      taggings.delete_all
       words = biography.strip.downcase.split(/\W+/)
-      Tag.all.each do |tag|
-        tags << tag if words.include? tag.name
-      end
+      TaggingService.new(self).tag(words)
     end
 end
