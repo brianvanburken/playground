@@ -4,6 +4,9 @@ p
 p
   strong Biography:
   = @author.biography
+p
+  strong> Tags:
+  = render @author.tags
 
 = link_to 'Edit', edit_author_path(@author)
 '|
