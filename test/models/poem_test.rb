@@ -10,6 +10,7 @@
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  metaphor          :text
+#  type              :string
 #
 
 require 'test_helper'
