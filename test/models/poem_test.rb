@@ -12,14 +12,7 @@
 #  metaphor          :text
 #
 
-class Literature < ActiveRecord::Base
-  validates :title, :short_description, :content, :published_at, presence: true
-  validate :published_in_the_past
+require 'test_helper'
 
-  private
-    def published_in_the_past
-      if published_at && published_at > Date.today
-        errors.add(:published_at, "can't be in the future")
-      end
-    end
+class PoemTest < ActiveSupport::TestCase
 end
