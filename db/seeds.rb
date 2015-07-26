@@ -1,5 +1,27 @@
+Tag.destroy_all
 Author.destroy_all
 Literature.destroy_all
+
+Tag.create!(name: 'secret')
+Tag.create!(name: 'woman')
+Tag.create!(name: 'Phenomenal')
+Tag.create!(name: 'sky')
+Tag.create!(name: 'clouds')
+Tag.create!(name: 'ruby')
+Tag.create!(name: 'emerald')
+Tag.create!(name: 'saphire')
+Tag.create!(name: 'dog')
+Tag.create!(name: 'wood')
+Tag.create!(name: 'forest')
+Tag.create!(name: 'leaf')
+Tag.create!(name: 'birds')
+Tag.create!(name: 'mountain')
+Tag.create!(name: 'sun')
+Tag.create!(name: 'fire')
+Tag.create!(name: 'love')
+Tag.create!(name: 'influential')
+Tag.create!(name: 'cool')
+Tag.create!(name: 'cute')
 
 maya = Author.create!(name: 'Maya Angelou', biography: 'Maya Angelou was born as Marguerite Johnson on April 4th, 1928, in St. Louis, Missouri and raised in St. Louis and Stamps, Arkansas. Maya Angelou became one of the most renowned and influential voices of our time. With over 50 honorary doctorate degrees Dr. Maya Angelou became a celebrated poet, memoirist, educator, dramatist, producer, actress, historian, filmmaker, and civil rights activist.')
 stephen = Author.create!(name: 'Stephen Crane', biography: 'Stephen Crane was born Nov 1st, 1871 in Newark, NJ, the youngest of fourteen children. He is best known for his novel The Red Badge of Courage, an impressionistic novel about Henry Fleming, a soldier participating in the Civil War.')
