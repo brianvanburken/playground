@@ -14,6 +14,6 @@ require 'test_helper'
 class AuthorTest < ActiveSupport::TestCase
   should validate_presence_of(:name)
   should validate_presence_of(:biography)
-  should have_many(:taggings)
+  should have_many(:taggings).dependent(:destroy)
   should have_many(:tags)
 end

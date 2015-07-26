@@ -10,7 +10,6 @@
 #
 
 class Author < ActiveRecord::Base
-  has_many :taggings, as: :taggable
-  has_many :tags, through: :taggings
+  include Taggable
   validates :name, :biography, presence: true
 end
