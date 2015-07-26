@@ -1,0 +1,26 @@
+# == Schema Information
+#
+# Table name: literatures
+#
+#  id                :integer          not null, primary key
+#  title             :string
+#  short_description :text
+#  content           :text
+#  published_at      :date
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  short_description: MyText
+  content: MyText
+  published_at: 2015-07-26
+
+two:
+  title: MyString
+  short_description: MyText
+  content: MyText
+  published_at: 2015-07-26
