@@ -7,10 +7,11 @@ html lang="en" dir="ltr"
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = csrf_meta_tags
   body
-    = link_to 'Homepage', root_path
-    = link_to 'Poems', poems_path
-    = link_to 'Short stories', short_stories_path
-    = link_to 'Tags', tags_path
-    = link_to 'Authors', authors_path
+    ul
+      li= link_to 'Homepage', root_path
+      li= link_to 'Poems', poems_path
+      li= link_to 'Short stories', short_stories_path
+      li= link_to 'Tags', tags_path
+      li= link_to 'Authors', authors_path
     p#notice = notice
     = yield
