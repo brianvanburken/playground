@@ -13,8 +13,6 @@
 #  type              :string
 #
 
-require 'test_helper'
-
-class PoemTest < ActiveSupport::TestCase
-  should validate_presence_of(:metaphor)
+class ShortStory < Literature
+  validates :short_description, presence: true
 end

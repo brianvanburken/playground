@@ -15,6 +15,6 @@
 
 require 'test_helper'
 
-class PoemTest < ActiveSupport::TestCase
-  should validate_presence_of(:metaphor)
+class ShortStoryTest < ActiveSupport::TestCase
+  should validate_presence_of(:short_description)
 end

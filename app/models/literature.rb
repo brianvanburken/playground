@@ -4,7 +4,7 @@
 #
 #  id                :integer          not null, primary key
 #  title             :string           not null
-#  short_description :text             not null
+#  short_description :text
 #  content           :text             not null
 #  published_at      :date             not null
 #  created_at        :datetime         not null
@@ -14,7 +14,7 @@
 #
 
 class Literature < ActiveRecord::Base
-  validates :title, :short_description, :content, :published_at, presence: true
+  validates :title, :content, :published_at, presence: true
   validate :published_in_the_past
 
   private

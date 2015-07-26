@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20150726083925) do
 
   create_table "literatures", force: :cascade do |t|
     t.string   "title",             null: false
-    t.text     "short_description", null: false
+    t.text     "short_description"
     t.text     "content",           null: false
     t.date     "published_at",      null: false
     t.datetime "created_at",        null: false

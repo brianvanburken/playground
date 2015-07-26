@@ -4,7 +4,7 @@
 #
 #  id                :integer          not null, primary key
 #  title             :string           not null
-#  short_description :text             not null
+#  short_description :text
 #  content           :text             not null
 #  published_at      :date             not null
 #  created_at        :datetime         not null
@@ -17,7 +17,6 @@ require 'test_helper'
 
 class LiteratureTest < ActiveSupport::TestCase
   should validate_presence_of(:title)
-  should validate_presence_of(:short_description)
   should validate_presence_of(:content)
   should validate_presence_of(:published_at)
 
