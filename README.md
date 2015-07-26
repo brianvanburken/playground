@@ -9,3 +9,13 @@ In short:
 - Create the show view for poem and short story that has the title, content, author name and tags.
 - View for poem contains methaphore.
 - View for short story contains short description.
+
+## Setup
+Run the following commands in order:
+```bash
+rake db:create
+rake db:migrate
+rake db:seed
+rails s
+```
+After this visit ```http://localhost:3000/```.
