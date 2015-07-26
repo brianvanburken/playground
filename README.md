@@ -28,19 +28,18 @@ After this visit ```http://localhost:3000/```.
 
 ## Highlights
 ### STI (Single Table Inheritance)
-[Poem](https://github.com/brianvanburken/publisher/app/models/poem.rb) and
-[Short Story](https://github.com/brianvanburken/publisher/app/models/short_story.rb)
-both inherit from [Literature](https://github.com/brianvanburken/publisher/app/models/short_story.rb)
+[Poem](app/models/poem.rb) and [Short Story](app/models/short_story.rb)
+both inherit from [Literature](app/models/short_story.rb)
 . This is done for the reason that Poem and Short
 Story both share common fields like title, content and published date.
 
 ### Polymorphic association
 The assignment states that authors, poems and short stories must be tagged. To
 achieve a more generic solution I've used a polymorphic association. The model
-that uses this technique is [Tagging](https://github.com/brianvanburken/publisher/app/models/tagging.rb).
-To enable tagging on other models a simple include of the module [Taggable](https://github.com/brianvanburken/publisher/app/models/concerns/taggable.rb)
+that uses this technique is [Tagging](app/models/tagging.rb).
+To enable tagging on other models a simple include of the module [Taggable](app/models/concerns/taggable.rb)
 is all that is needed.
 
 ### Service objects
-I've extracted the tagging of models into a service object called [TaggingService](https://github.com/brianvanburken/publisher/app/services/tagging_service.rb).
+I've extracted the tagging of models into a service object called [TaggingService](app/services/tagging_service.rb).
 This way duplicated code is prevented and the wrong logic is moved away from the models.
