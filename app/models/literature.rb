@@ -25,7 +25,7 @@ class Literature < ActiveRecord::Base
   validates :title, :content, :author, :published_at, presence: true
   validate :published_in_the_past
 
-  after_save :tag_content
+  after_save :tag_content, if: :content_changed?
 
   private
     def published_in_the_past

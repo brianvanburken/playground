@@ -13,7 +13,7 @@ class Author < ActiveRecord::Base
   include Taggable
   validates :name, :biography, presence: true
 
-  after_save :tag_biography
+  after_save :tag_biography, if: :biography_changed?
 
   private
     def tag_biography
