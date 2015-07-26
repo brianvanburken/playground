@@ -10,4 +10,5 @@
 #
 
 class Author < ActiveRecord::Base
+  validates :name, :biography, presence: true
 end

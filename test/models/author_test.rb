@@ -12,7 +12,6 @@
 require 'test_helper'
 
 class AuthorTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  should validate_presence_of(:name)
+  should validate_presence_of(:biography)
 end
