@@ -15,3 +15,9 @@ one:
 
 two:
   name: MyStringTwo
+
+love:
+  name: love
+
+hate:
+  name: hate

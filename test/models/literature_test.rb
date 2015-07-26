@@ -43,4 +43,38 @@ class LiteratureTest < ActiveSupport::TestCase
     assert literature.valid?
     assert_not literature.errors.include?(:published_at)
   end
+
+  test "tags words in content" do
+    tag = tags(:love)
+    literature = literatures(:one)
+    literature.content = 'I love this.'
+    literature.save
+    assert_equal [tag], literature.tags
+  end
+
+  test "finds words with between non-alphanumeric characters" do
+    tag = tags(:love)
+    literature = literatures(:one)
+    literature.content = 'I say "love".'
+    literature.save
+    assert_equal [tag], literature.tags
+  end
+
+  test "ignores partial matched tags" do
+    literature = literatures(:one)
+    literature.content = 'I said "haters".'
+    literature.save
+    assert literature.tags.empty?
+  end
+
+  test "destroys old irrelevant tags" do
+    love_tag = tags(:love)
+    literature = literatures(:one)
+    literature.content = 'I hate this.'
+    literature.save
+    literature.content = 'I love this.'
+    literature.save
+    literature.reload
+    assert_equal [love_tag], literature.tags
+  end
 end

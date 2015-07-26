@@ -9,10 +9,11 @@
 #
 
 class Tag < ActiveRecord::Base
+  has_many :taggings, dependent: :destroy
   before_save :downcase_name
   validates :name, presence: true, uniqueness: true, format: {
-    with: /\A[a-zA-Z0-9\-]+\z/,
-    message: "only allows alphanumeric and hypen"
+    with: /\A[a-zA-Z0-9]+\z/,
+    message: "only allows alphanumeric"
   }
 
   private
