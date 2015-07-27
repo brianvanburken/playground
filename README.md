@@ -43,4 +43,4 @@ is all that is needed.
 
 ### Service objects
 I've extracted the tagging of models into a service object called [TaggingService](app/services/tagging_service.rb).
-This way duplicated code is prevented and the wrong logic is moved away from the models.
+This way duplicated code is prevented and the logic of tagging is moved away from the models.
