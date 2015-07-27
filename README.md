@@ -3,8 +3,9 @@
 [![Build Status](https://travis-ci.org/brianvanburken/publisher.svg?branch=master)](https://travis-ci.org/brianvanburken/publisher)
 [![Test Coverage](https://codeclimate.com/github/brianvanburken/publisher/badges/coverage.svg)](https://codeclimate.com/github/brianvanburken/publisher/coverage)
 
-Small Ruby on Rails application to showcase my skills. See the Highlights section
-of this README for important points in this application.
+Small Ruby on Rails application to showcase my skills. The focus of this application
+is on the server side. No styling has been applied to the HTML. See the Highlights
+section of this README for important points in this application.
 
 ## Assignment
 Please write an application that enables storing poems and short stories (with their authors) and will automatically tag the content. Each story has a title, content, short description, publish date and an author. A poem has the same, but instead of short description it has a metaphor. Each author has a name and a biography. The content of poems, stories and biographies should be automatically tagged if it contains some of the predefined keywords (you can define 20 keywords yourself and store them however you wish). Tags can be shared between the entities.
