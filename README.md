@@ -3,7 +3,7 @@ Oreo - simple JavaScript cookies
 
 Get, set, or delete cookies.
 
-* [c]2014 @brianvanburken
+* [c]2015 @brianvanburken
 * Licensed MIT
 
 Based on code examples from https://github.com/filamentgroup/cookie.
