@@ -12,12 +12,29 @@ defmodule My do
 end
 
 defmodule Test do
-  import Kernel, except: [ unless: 2 ]
-  import My
 
-  unless 1 == 2 do
-    IO.puts "1 != 2"
-  else
-    IO.puts "1 == 2"
+  def my_unless do
+    import Kernel, except: [ unless: 2 ]
+    import My
+
+    unless 1 == 2 do
+      IO.puts "1 != 2"
+    else
+      IO.puts "1 == 2"
+    end
+  end
+
+  def my_ast do
+    import Kernel, except: [ unless: 2 ]
+    import My
+
+    ast = {
+      :unless, [context: Elixir, import: My], [
+        { :var!, [context: Elixir, import: Kernel], [ {:test, [], Elixir} ] },
+        [do: "true", else: "false"]
+      ]
+    }
+
+    Code.eval_quoted ast, test: true
   end
 end
