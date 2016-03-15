@@ -1,0 +1,11 @@
+{application,httpotion,
+             [{registered,[]},
+              {description,"Fancy HTTP client for Elixir, based on ibrowse.\n"},
+              {applications,[kernel,stdlib,elixir,ssl,ibrowse]},
+              {vsn,"1.0.0"},
+              {modules,['Elixir.HTTPotion','Elixir.HTTPotion.AsyncChunk',
+                        'Elixir.HTTPotion.AsyncEnd',
+                        'Elixir.HTTPotion.AsyncHeaders',
+                        'Elixir.HTTPotion.AsyncResponse',
+                        'Elixir.HTTPotion.Base','Elixir.HTTPotion.HTTPError',
+                        'Elixir.HTTPotion.Response']}]}.
