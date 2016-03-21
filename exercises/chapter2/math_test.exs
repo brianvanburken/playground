@@ -40,4 +40,9 @@ defmodule MathTest do
     assert 1 < 2
     assert 2 < 1
   end
+
+  test "asserting boolean" do
+    assert true
+    assert false
+  end
 end

@@ -27,13 +27,18 @@ defmodule Assertion do
       Assertion.Test.assert(operator, lhs, rhs)
     end
   end
+
+  defmacro assert(boolean) do
+    Assertion.Test.assert(boolean)
+  end
+
 end
 
 defmodule Assertion.Test do
   def run(tests, module) do
     Enum.each tests, fn {test_func, description} ->
       case apply(module, test_func, []) do
-        :ok             -> IO.write "."
+        :ok             -> IO.write ".\n"
         {:fail, reason} -> IO.puts """
 
           ===============================================
@@ -43,6 +48,14 @@ defmodule Assertion.Test do
           """
       end
     end
+  end
+
+  def assert(true), do: :ok
+  def assert(_) do
+    {:fail, """
+      Expected value to be truthy
+      """
+    }
   end
 
   def assert(:==, lhs, rhs) when lhs == rhs, do: :ok
