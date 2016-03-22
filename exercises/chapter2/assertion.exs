@@ -32,6 +32,16 @@ defmodule Assertion do
     Assertion.Test.assert(boolean)
   end
 
+  defmacro refute({operator, _, [lhs, rhs]}) do
+    quote bind_quoted: [operator: operator, lhs: lhs, rhs: rhs] do
+      Assertion.Test.refute(operator, lhs, rhs)
+    end
+  end
+
+  defmacro refute(boolean) do
+    Assertion.Test.refute(boolean)
+  end
+
 end
 
 defmodule Assertion.Test do
@@ -130,4 +140,83 @@ defmodule Assertion.Test do
     }
   end
 
+  def refute(false), do: :ok
+  def refute(_) do
+    {:fail, """
+      Not expected value to be truthy
+      """
+    }
+  end
+
+  def refute(:==, lhs, rhs) when lhs == rhs do
+    {:fail, """
+      Expected:       #{lhs}
+      not to be equal to: #{rhs}
+      """
+    }
+  end
+  def refute(:==, _lhs, _rhs), do: :ok
+
+  def refute(:>, lhs, rhs) when lhs > rhs do
+    {:fail, """
+      Expected:           #{lhs}
+      not to be greater than: #{rhs}
+      """
+    }
+  end
+  def refute(:>, _lhs, _rhs), do: :ok
+
+  def refute(:<, lhs, rhs) when lhs < rhs do
+    {:fail, """
+      Expected:           #{lhs}
+      not to be lesser than: #{rhs}
+      """
+    }
+  end
+  def refute(:<, _lhs, _rhs), do: :ok
+
+  def refute(:<=, lhs, rhs) when lhs <= rhs do
+    {:fail, """
+      Expected:                      #{lhs}
+      not to be lesser than or equal to: #{rhs}
+      """
+    }
+  end
+  def refute(:<=, _lhs, _rhs), do: :ok
+
+  def refute(:>=, lhs, rhs) when lhs >= rhs do
+    {:fail, """
+      Expected:                       #{lhs}
+      not to be greater than or equal to: #{rhs}
+      """
+    }
+  end
+  def refute(:>=, _lhs, _rhs), do: :ok
+
+  def refute(:!=, lhs, rhs) when lhs != rhs do
+    {:fail, """
+      Expected:        #{lhs}
+      not to not equal to: #{rhs}
+      """
+    }
+  end
+  def refute(:!=, _lhs, _rhs), do: :ok
+
+  def refute(:===, lhs, rhs) when lhs === rhs do
+    {:fail, """
+      Expected:               #{lhs}
+      not to strict equal to: #{rhs}
+      """
+    }
+  end
+  def refute(:===, _lhs, _rhs), do: :ok
+
+  def refute(:!==, lhs, rhs) when lhs !== rhs do
+    {:fail, """
+      Expected:                   #{lhs}
+      not to strict not equal to: #{rhs}
+      """
+    }
+  end
+  def refute(:!==, _lhs, _rhs), do: :ok
 end
