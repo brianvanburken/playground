@@ -1,48 +1,30 @@
 defmodule MathTest do
   use Assertion
 
-  test "equal to or greater than" do
-    assert 1 >= 1
-    assert -1 >= 0
-  end
+  test "[SUCCESS] equal to or greater than", do: assert 1 >= 1
+  test "[FAIL] equal to or greater than", do: assert -1 >= 0
 
-  test "equal to or lesser than" do
-    assert 1 <= 1
-    assert 2 <= 1
-  end
+  test "[SUCCESS] equal to or lesser than", do: assert 1 <= 1
+  test "[FAIL] equal to or lesser than", do: assert 2 <= 1
 
-  test "not equal to" do
-    assert 1 != 2
-    assert 1 != 1
-  end
+  test "[SUCCESS] not equal to", do: assert 1 != 2
+  test "[FAIL] not equal to", do: assert 1 != 1
 
-  test "strict equal to" do
-    assert 1 === 1
-    assert 1 === 1.0
-  end
+  test "[SUCCESS] strict equal to", do: assert 1 === 1
+  test "[FAIL] strict equal to", do: assert 1 === 1.0
 
-  test "strict not equal to" do
-    assert 1 !== 2
-    assert 1 !== 1.0
-  end
+  test "[SUCCESS] strict not equal to", do: assert 1 !== 2
+  test "[FAIL] strict not equal to", do: assert 1 !== 1
 
-  test "equal to" do
-    assert 1 == 1
-    assert 1 == 2
-  end
+  test "[SUCCESS] equal to", do: assert 1 == 1
+  test "[FAIL] equal to", do: assert 1 == 2
 
-  test "greater than" do
-    assert 2 > 1
-    assert 1 > 2
-  end
+  test "[SUCCESS] greater than", do: assert 2 > 1
+  test "[FAIL] greater than", do: assert 1 > 2
 
-  test "lesser to" do
-    assert 1 < 2
-    assert 2 < 1
-  end
+  test "[SUCCESS] lesser to", do: assert 1 < 2
+  test "[FAIL] lesser to", do: assert 2 < 1
 
-  test "asserting boolean" do
-    assert true
-    assert false
-  end
+  test "[SUCCESS] asserting boolean", do: assert true
+  test "[FAIL] asserting boolean", do: assert false
 end
