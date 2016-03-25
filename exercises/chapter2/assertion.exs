@@ -12,17 +12,9 @@ defmodule Assertion do
     quote do
       def run do
         { time, result } = :timer.tc( Assertion.Test, :run, [ @tests, __MODULE__ ])
-        result = result |> Enum.reduce(%{ fail: 0, ok: 0 }, fn (res, acc) ->
-          case res do
-            :ok ->
-              { _, acc } = Map.get_and_update(acc, :ok, fn count -> { count, count + 1 } end)
-            :fail ->
-              { _, acc } = Map.get_and_update(acc, :fail, fn count -> { count, count + 1 } end)
-          end
-          acc
-        end)
+        %{ ok: passed, fail: failed } = result |> count_results
         :io.format "Execution time (ms): ~.2f~n", [ time / 1000.0 ]
-        :io.format "ok:     ~B~nfail:   ~B~n", [ Map.get(result, :ok), Map.get(result, :fail ) ]
+        :io.format "Passed: ~B~nFailed: ~B~n", [ passed, failed ]
       end
     end
   end
@@ -55,6 +47,17 @@ defmodule Assertion do
     Assertion.Test.refute(boolean)
   end
 
+  def count_results(result) do
+    result |> Enum.reduce(%{ fail: 0, ok: 0 }, fn (res, acc) ->
+      case res do
+        :ok ->
+          { _, acc } = Map.get_and_update(acc, :ok, fn count -> { count, count + 1 } end)
+        :fail ->
+          { _, acc } = Map.get_and_update(acc, :fail, fn count -> { count, count + 1 } end)
+      end
+      acc
+    end)
+  end
 end
 
 defmodule Assertion.Test do
