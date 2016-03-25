@@ -10,7 +10,10 @@ defmodule Assertion do
 
   defmacro __before_compile__(_env) do
     quote do
-      def run, do: Assertion.Test.run(@tests, __MODULE__)
+      def run do
+        { time, _ } = :timer.tc( Assertion.Test, :run, [ @tests, __MODULE__ ])
+        :io.format "Execution time (ms): ~.2f~n", [ time / 1000.0 ]
+      end
     end
   end
 
