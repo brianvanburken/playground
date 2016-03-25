@@ -27,6 +27,11 @@ defmodule Translator do
     quote do
       def t(locale, path, binding \\ [])
       unquote(translations_ast)
+
+      # These two methods are used for pluralization
+      def t(locale, path, [ count: count ]) when count == 1, do: t(locale, "#{path}.one")
+      def t(locale, path, [ count: count ]), do: t(locale, "#{path}.other")
+
       def t(_locale, _path, _bindings), do: {:error, :no_translation}
     end
   end
@@ -62,3 +67,35 @@ defmodule Translator do
   defp append_path("", next), do: to_string(next)
   defp append_path(current, next), do: "#{current}.#{next}"
 end
+
+defmodule I18n do
+  use Translator
+
+  locale "en",
+    flash: [
+      hello: "Hello %{first} %{last}!",
+      bye: "Bye, %{name}!"
+    ],
+    users: [
+      title: "Users",
+    ],
+    plural: [
+      user: [
+        one: "user",
+        other: "users",
+      ],
+    ]
+
+  locale "fr",
+    flash: [
+      hello: "Salut %{first} %{last}!",
+      bye: "Au revoir, %{name}!"
+    ],
+    users: [
+      title: "Utilisateurs",
+    ]
+end
+
+IO.inspect I18n.t("en", "flash.hello", first: "Chris", last: "McCord")
+IO.inspect I18n.t("en", "plural.user", count: 1)
+IO.inspect I18n.t("en", "plural.user", count: 2)
