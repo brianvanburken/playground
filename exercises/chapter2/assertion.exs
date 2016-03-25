@@ -29,22 +29,22 @@ defmodule Assertion do
 
   defmacro assert({operator, _, [lhs, rhs]}) do
     quote bind_quoted: [operator: operator, lhs: lhs, rhs: rhs] do
-      Assertion.Test.assert(operator, lhs, rhs)
+      Assertion.Asserts.assert(operator, lhs, rhs)
     end
   end
 
   defmacro assert(boolean) do
-    Assertion.Test.assert(boolean)
+    Assertion.Asserts.assert(boolean)
   end
 
   defmacro refute({operator, _, [lhs, rhs]}) do
     quote bind_quoted: [operator: operator, lhs: lhs, rhs: rhs] do
-      Assertion.Test.refute(operator, lhs, rhs)
+      Assertion.Refutes.refute(operator, lhs, rhs)
     end
   end
 
   defmacro refute(boolean) do
-    Assertion.Test.refute(boolean)
+    Assertion.Refutes.refute(boolean)
   end
 
   def count_results(result) do
@@ -76,7 +76,9 @@ defmodule Assertion.Test do
       end
     end
   end
+end
 
+defmodule Assertion.Asserts do
   def assert(true), do: :ok
   def assert(_) do
     {:fail, """
@@ -156,7 +158,9 @@ defmodule Assertion.Test do
       """
     }
   end
+end
 
+defmodule Assertion.Refutes do
   def refute(false), do: :ok
   def refute(_) do
     {:fail, """
