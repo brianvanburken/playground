@@ -11,8 +11,18 @@ defmodule Assertion do
   defmacro __before_compile__(_env) do
     quote do
       def run do
-        { time, _ } = :timer.tc( Assertion.Test, :run, [ @tests, __MODULE__ ])
+        { time, result } = :timer.tc( Assertion.Test, :run, [ @tests, __MODULE__ ])
+        result = result |> Enum.reduce(%{ fail: 0, ok: 0 }, fn (res, acc) ->
+          case res do
+            :ok ->
+              { _, acc } = Map.get_and_update(acc, :ok, fn count -> { count, count + 1 } end)
+            :fail ->
+              { _, acc } = Map.get_and_update(acc, :fail, fn count -> { count, count + 1 } end)
+          end
+          acc
+        end)
         :io.format "Execution time (ms): ~.2f~n", [ time / 1000.0 ]
+        :io.format "ok:     ~B~nfail:   ~B~n", [ Map.get(result, :ok), Map.get(result, :fail ) ]
       end
     end
   end
@@ -49,7 +59,7 @@ end
 
 defmodule Assertion.Test do
   def run(tests, module) do
-    Enum.each tests, fn {test_func, description} ->
+    Enum.map tests, fn {test_func, description} ->
       case apply(module, test_func, []) do
         :ok             -> IO.write ".\n"
         {:fail, reason} -> IO.puts """
@@ -59,6 +69,7 @@ defmodule Assertion.Test do
           ===============================================
           #{reason}
           """
+          :fail
       end
     end
   end
