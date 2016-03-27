@@ -16,8 +16,7 @@ defmodule Assertion do
         IO.write "\n"
         IO.puts output
         IO.write "\n"
-        IO.puts Enum.join(errors, "\n")
-        IO.write "\n"
+        IO.puts Enum.join(errors)
         :io.format "Execution time (ms): ~.2f~n", [ time / 1000.0 ]
         :io.format "Passed: ~B~nFailed: ~B~n", [ passed, failed ]
       end
