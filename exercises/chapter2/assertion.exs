@@ -56,10 +56,14 @@ defmodule Assertion do
     result |> Enum.reduce(%{ fail: 0, ok: 0, result: "", errors: [] }, fn (res, acc) ->
       case res do
         { :ok } ->
-          { _, acc } = Map.get_and_update(acc, :result, fn result -> { result, result <> "." } end)
+          { _, acc } = Map.get_and_update(acc, :result, fn result ->
+            { result, result <> "#{IO.ANSI.green}.#{IO.ANSI.default_color}" }
+          end)
           { _, acc } = Map.get_and_update(acc, :ok, fn count -> { count, count + 1 } end)
         { :fail, msg } ->
-          { _, acc } = Map.get_and_update(acc, :result, fn result -> { result, result <> "F" } end)
+          { _, acc } = Map.get_and_update(acc, :result, fn result ->
+            { result, result <> "#{IO.ANSI.red}F#{IO.ANSI.default_color}" }
+          end)
           { _, acc } = Map.get_and_update(acc, :fail, fn count -> { count, count + 1 } end)
           { _, acc } = Map.get_and_update(acc, :errors, fn errors -> { errors, [ msg | errors ] } end )
       end
@@ -91,9 +95,11 @@ defmodule Assertion.Test do
     case apply(module, test_func, []) do
         :ok             -> { :ok, "." }
         {:fail, reason} -> { :fail, """
+          #{IO.ANSI.red}\
           ===============================================
           FAILURE: #{description}
           ===============================================
+          #{IO.ANSI.default_color}\
           #{reason}
           """ }
       end
