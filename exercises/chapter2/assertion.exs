@@ -12,7 +12,12 @@ defmodule Assertion do
     quote do
       def run do
         { time, result } = :timer.tc( Assertion.Test, :run, [ @tests, __MODULE__ ])
-        %{ ok: passed, fail: failed } = result |> count_results
+        %{ ok: passed, fail: failed, errors: errors, result: output } = result |> count_results
+        IO.write "\n"
+        IO.puts output
+        IO.write "\n"
+        IO.puts Enum.join(errors, "\n")
+        IO.write "\n"
         :io.format "Execution time (ms): ~.2f~n", [ time / 1000.0 ]
         :io.format "Passed: ~B~nFailed: ~B~n", [ passed, failed ]
       end
@@ -48,12 +53,15 @@ defmodule Assertion do
   end
 
   def count_results(result) do
-    result |> Enum.reduce(%{ fail: 0, ok: 0 }, fn (res, acc) ->
+    result |> Enum.reduce(%{ fail: 0, ok: 0, result: "", errors: [] }, fn (res, acc) ->
       case res do
-        :ok ->
+        { :ok } ->
+          { _, acc } = Map.get_and_update(acc, :result, fn result -> { result, result <> "." } end)
           { _, acc } = Map.get_and_update(acc, :ok, fn count -> { count, count + 1 } end)
-        :fail ->
+        { :fail, msg } ->
+          { _, acc } = Map.get_and_update(acc, :result, fn result -> { result, result <> "F" } end)
           { _, acc } = Map.get_and_update(acc, :fail, fn count -> { count, count + 1 } end)
+          { _, acc } = Map.get_and_update(acc, :errors, fn errors -> { errors, [ msg | errors ] } end )
       end
       acc
     end)
@@ -62,18 +70,56 @@ end
 
 defmodule Assertion.Test do
   def run(tests, module) do
-    Enum.map tests, fn {test_func, description} ->
-      case apply(module, test_func, []) do
-        :ok             -> IO.write ".\n"
-        {:fail, reason} -> IO.puts """
+    number_of_workers = length(tests)
+    1..number_of_workers
+    |> Enum.map(fn _ -> spawn_link(__MODULE__, :run_worker, [ self ]) end)
+    |> run_workers(tests, module, [])
+  end
 
+  def run_worker(parent) do
+    send parent, { :ready, self }
+    receive do
+      { :test, module, function, description } ->
+        send parent, run_test(module, function, description)
+        run_worker(parent)
+      { :terminate } ->
+        exit(:normal)
+    end
+  end
+
+  def run_test(module, test_func, description) do
+    case apply(module, test_func, []) do
+        :ok             -> { :ok, "." }
+        {:fail, reason} -> { :fail, """
           ===============================================
           FAILURE: #{description}
           ===============================================
           #{reason}
-          """
-          :fail
+          """ }
       end
+  end
+
+  def run_workers(workers, tests, module, results) do
+    receive do
+      { :ready, pid } when length(tests) > 0 ->
+        [ { test, description } | tail ] = tests
+        send pid, { :test, module, test, description }
+        run_workers(workers, tail, module, results)
+      { :ready, pid } ->
+        send pid, { :terminate }
+        if length(workers) > 1 do
+          run_workers(List.delete(workers, pid), tests, module, results)
+        else
+          results
+        end
+      { :ok, _message } ->
+        results = [ { :ok } | results ]
+        run_workers(workers, tests, module, results)
+      { :fail, reason } ->
+        results = [ { :fail, reason } | results ]
+        run_workers(workers, tests, module, results)
+      msg ->
+        IO.puts "Unknown response: #{inspect msg}"
     end
   end
 end
