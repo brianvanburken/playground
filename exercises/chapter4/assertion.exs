@@ -56,8 +56,10 @@ defmodule Assertion do
     end
   end
 
-  defmacro assert(boolean) do
-    Assertion.Asserts.assert(boolean)
+  defmacro assert(expression) do
+    quote bind_quoted: [expression: expression] do
+      Assertion.Asserts.assert(expression)
+    end
   end
 
   defmacro assert_raise(module, block) do
@@ -77,8 +79,10 @@ defmodule Assertion do
     end
   end
 
-  defmacro refute(boolean) do
-    Assertion.Refutes.refute(boolean)
+  defmacro refute(expression) do
+    quote bind_quoted: [expression: expression] do
+      Assertion.Refutes.assert(expression)
+    end
   end
 
   @doc """
@@ -195,8 +199,9 @@ defmodule Assertion.Test do
 end
 
 defmodule Assertion.Asserts do
+
   def assert(true), do: :ok
-  def assert(_) do
+  def assert(false) do
     {:fail, """
       Expected value to be truthy
       """
@@ -291,7 +296,7 @@ end
 
 defmodule Assertion.Refutes do
   def refute(false), do: :ok
-  def refute(_) do
+  def refute(true) do
     {:fail, """
       Not expected value to be truthy
       """
