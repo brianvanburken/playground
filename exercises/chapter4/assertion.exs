@@ -65,7 +65,7 @@ defmodule Assertion do
   defmacro assert_raise(module, block) do
     quote bind_quoted: [module: module, block: block] do
       try do
-        IO.inspect block.()
+        block.()
         Assertion.Asserts.assert_raise(module, nil)
       rescue
         e -> Assertion.Asserts.assert_raise(module, e.__struct__)
