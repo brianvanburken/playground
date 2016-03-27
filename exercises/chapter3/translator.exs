@@ -49,7 +49,7 @@ defmodule Translator do
     end
 
     quote do
-      def t(locale, path, binding \\ [])
+      def t(locale, path, bindings \\ [])
       unquote(translations_ast)
 
       # These two methods are used for pluralization
