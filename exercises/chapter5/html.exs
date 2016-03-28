@@ -1,7 +1,9 @@
 Code.require_file("html_entities.exs", __DIR__)
+Code.require_file("html_formatter.exs", __DIR__)
 
 defmodule Html do
   import HtmlEntities, only: [ encode: 1 ]
+  import HtmlFormatter, only: [ format: 1 ]
 
   @external_resource tags_path = Path.join([__DIR__, "tags.txt"])
   @tags (for line <- File.stream!(tags_path, [], :line) do
@@ -35,7 +37,7 @@ defmodule Html do
 
   def put_buffer(buff, content), do: Agent.update(buff, &[content | &1])
 
-  def render(buff), do: Agent.get(buff, &(&1)) |> Enum.reverse |> Enum.join
+  def render(buff), do: Agent.get(buff, &(&1)) |> Enum.reverse |> format
 
   defmacro tag(name, attrs \\ [], do: inner) do
     quote do
@@ -66,9 +68,15 @@ defmodule Template do
       div class: "row" do
         div do
           text "XSS Protection <script>alert('vulnerable?');</script>"
-          p do: text "Hello!"
         end
+        p do: text "Hello!"
       end
     end
   end
 end
+
+IO.write "\n\n"
+IO.write Template.render
+IO.write "\n\n"
+
+
