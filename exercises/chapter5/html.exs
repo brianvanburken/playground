@@ -35,7 +35,7 @@ defmodule Html do
 
   def put_buffer(buff, content), do: Agent.update(buff, &[content | &1])
 
-  def render(buff), do: Agent.get(buff, &(&1)) |> Enum.reverse |> Enum.join("")
+  def render(buff), do: Agent.get(buff, &(&1)) |> Enum.reverse |> Enum.join
 
   defmacro tag(name, attrs \\ [], do: inner) do
     quote do
