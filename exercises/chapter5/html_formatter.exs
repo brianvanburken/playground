@@ -13,7 +13,7 @@ defmodule HtmlFormatter do
   nodes and indentations.
   """
   defp do_format([], _previous_type, acc, _depth), do: acc
-  defp do_format([ node ], _previous_type, acc, _depth), do: acc <> node
+  defp do_format([ node ], _previous_type, acc, _depth), do: node
   defp do_format([ node, next | tail ], previous_type, acc, depth) do
     current_tag_type = node_type(node)
     next_tag_type = node_type(next)
