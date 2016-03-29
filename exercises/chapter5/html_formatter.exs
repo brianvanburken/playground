@@ -1,7 +1,7 @@
 defmodule HtmlFormatter do
   @indent "  "
 
-  def format(tags), do: tags |> do_format(:none, 0) |> IO.inspect
+  def format(tags), do: tags |> do_format(:none, 0) |> Enum.join
 
   @doc """
   This method indents the list of tags based on their hierarchical depth. Its
