@@ -1,7 +1,7 @@
 defmodule HtmlFormatter do
   @indent "  "
 
-  def format(tags), do: tags |> do_format(:none, "", 0) |> Enum.join
+  def format(tags), do: tags |> do_format(:none, 0) |> Enum.join
 
   @doc """
   This method indents the list of tags based on their hierarchical depth. Its
@@ -9,42 +9,39 @@ defmodule HtmlFormatter do
   opening node it adds an indent for the current depth. A new line is added only
   if the next node is also an opening node. For closing tags it decreases the
   indent and adds a new line. For all other it just adds the node to the
-  accumulator. This is done recursivly untill in the end we build a list of
-  nodes and indentations.
+  list. This is done recursivly untill in the end we build a list of nodes and
+  indentations.
   """
-  defp do_format([], _previous_type, acc, _depth), do: acc
-  defp do_format([ node ], _previous_type, acc, _depth), do: node
-  defp do_format([ node, next | tail ], previous_type, acc, depth) do
+  defp do_format([], _previous_type, _depth), do: ""
+  defp do_format([ node ], _previous_type, _depth), do: node
+  defp do_format([ node, next | tail ], previous_type, depth) do
     current_tag_type = node_type(node)
     next_tag_type = node_type(next)
     case current_tag_type do
       :opening_tag ->
         [
-          acc,
           indent(depth),
           node,
           ( case next_tag_type do
             :opening_tag -> "\n"
                        _ -> ""
           end ),
-          do_format([ next | tail], current_tag_type, acc, depth + 1),
+          do_format([ next | tail], current_tag_type, depth + 1),
         ]
       :closing_tag ->
         [
-          acc,
           ( case previous_type do
             :closing_tag -> indent(depth - 1)
                        _ -> ""
           end ),
           node,
           "\n",
-          do_format([ next | tail ], current_tag_type, acc, depth - 1),
+          do_format([ next | tail ], current_tag_type, depth - 1),
         ]
       :text ->
         [
-          acc,
           node,
-          do_format([ next | tail ], current_tag_type, acc, depth)
+          do_format([ next | tail ], current_tag_type, depth)
         ]
     end
   end
