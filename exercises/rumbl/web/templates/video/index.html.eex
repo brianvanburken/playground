@@ -1,3 +1,4 @@
+
 <h2>Listing videos</h2>
 
 <table class="table">
@@ -20,9 +21,16 @@
       <td><%= video.description %></td>
 
       <td class="text-right">
-        <%= link "Show", to: video_path(@conn, :show, video), class: "btn btn-default btn-xs" %>
-        <%= link "Edit", to: video_path(@conn, :edit, video), class: "btn btn-default btn-xs" %>
-        <%= link "Delete", to: video_path(@conn, :delete, video), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+        <%= link "Watch", to: watch_path(@conn, :show, video),
+                          class: "btn btn-default btn-xs" %>
+
+        <%= link "Edit", to: video_path(@conn, :edit, video),
+                         class: "btn btn-default btn-xs" %>
+
+        <%= link "Delete", to: video_path(@conn, :delete, video),
+                           method: :delete,
+                           data: [confirm: "Are you sure?"],
+                           class: "btn btn-danger btn-xs" %>
       </td>
     </tr>
 <% end %>
