@@ -42,6 +42,7 @@ defmodule Rumbl.Video do
     str
     |> String.downcase
     |> String.replace(~r/[^\w-]+/u, "-")
+    |> String.strip(?-)
   end
 end
 
