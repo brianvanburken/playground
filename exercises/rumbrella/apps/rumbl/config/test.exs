@@ -20,3 +20,5 @@ config :rumbl, Rumbl.Repo,
 
 config :comeonin, :bcrypt_log_rounds, 4
 config :comeonin, :pbkdf2_rounds, 1
+
+config :info_sys, :wolfram, app_id: "1234", http_client: InfoSys.Test.HTTPClient
