@@ -1,5 +1,8 @@
 # BlogPhoenix
 
+Example blog application created with the following tutorial: [http://codetunes.com/2015/phoenix-blog/](http://codetunes.com/2015/phoenix-blog/).
+Created with Elixir 1.2.5 and Phoenix 1.1.4.
+
 To start your Phoenix app:
 
   * Install dependencies with `mix deps.get`
