@@ -3,6 +3,7 @@ defmodule VideoChat.UserSocket do
 
   ## Channels
   # channel "rooms:*", VideoChat.RoomChannel
+  channel "call", VideoChat.CallChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
