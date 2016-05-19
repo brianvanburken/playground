@@ -61,6 +61,7 @@ defmodule PhoenixStrawpoll.PollController do
 
     case Repo.update(changeset) do
       {:ok, poll} ->
+        PhoenixStrawpoll.Endpoint.broadcast("polls:#{id}", "close", %{closed: poll.closed})
         conn
         |> put_flash(:info, "Poll updated successfully.")
         |> redirect(to: poll_path(conn, :show, poll))

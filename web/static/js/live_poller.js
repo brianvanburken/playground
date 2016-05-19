@@ -23,6 +23,15 @@ export class LivePoller {
       this._updateDisplay(vote.entry_id);
       this._updateGraph();
     });
+    pollChannel.on("close", vote => {
+      if (status.closed) {
+        $("a.vote").addClass("hidden")
+          $("#poll-closed").text("false")
+      } else {
+        $("a.vote").removeClass("hidden")
+          $("#poll-closed").text("true")
+      }
+    });
     pollChannel
         .join()
         .receive("ok", resp => { console.log("Joined") })
