@@ -3,6 +3,7 @@ defmodule PhoenixStrawpoll.UserSocket do
 
   ## Channels
   # channel "rooms:*", PhoenixStrawpoll.RoomChannel
+  channel "polls:*", PhoenixStrawpoll.PollChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

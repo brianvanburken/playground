@@ -20,4 +20,7 @@ import "deps/phoenix_html/web/static/js/phoenix_html"
 
 // import socket from "./socket"
 import { Poll } from "./poll"
+import { LivePoller } from "./live_poller"
+
 const poll = new Poll();
+const livePoller = new LivePoller();
