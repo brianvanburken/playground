@@ -17,6 +17,7 @@ defmodule PhoenixStrawpoll.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    resources "/polls", PollController
   end
 
   # Other scopes may use custom stacks.
