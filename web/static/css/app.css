@@ -83,3 +83,8 @@ form.link, form.button {
  margin-top: 20px;
  margin-bottom: 20px;
 }
+
+#my-chart {
+  width: 400px;
+  height: 400px;
+}

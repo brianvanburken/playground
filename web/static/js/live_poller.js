@@ -5,6 +5,7 @@ export class LivePoller {
     if (!$("#poll-id").length) { return; }
     const pollChannel = this._setupPollChannel();
     this._setupVoteButtons(pollChannel);
+    this._setupGraph();
   }
 
   _createSocket() {
@@ -18,7 +19,10 @@ export class LivePoller {
     const socket = this._createSocket();
     const pollId = $("#poll-id").val();
     const pollChannel = socket.channel("polls:" + pollId);
-    pollChannel.on("new_vote", vote => { this._updateDisplay(vote.entry_id) });
+    pollChannel.on("new_vote", vote => {
+      this._updateDisplay(vote.entry_id);
+      this._updateGraph();
+    });
     pollChannel
         .join()
         .receive("ok", resp => { console.log("Joined") })
@@ -48,5 +52,30 @@ export class LivePoller {
       const pollId = $("#poll-id").val();
       pollChannel.push("new_vote", { entry_id });
     });
+  }
+
+  _setupGraph() {
+    google.load("visualization", "1", { packages: ["corechart"] });
+    google.setOnLoadCallback(() => {
+      this.chart = new google.visualization.PieChart(document.getElementById("my-chart"));
+      this._updateGraph();
+    });
+  }
+
+  _updateGraph() {
+    const data = this._getGraphData();
+    const convertedData = google.visualization.arrayToDataTable(data);
+    this.chart.draw(convertedData, { title: "Poll", is3D: true });
+  }
+
+  _getGraphData() {
+    const data = [["Choice", "Votes"]];
+    $.each($("li.entry"), (index, item) => {
+      const li = $(item);
+      const title = li.find(".title").text();
+      const votes = +(li.find(".votes").text());
+      data.push([title, votes]);
+    });
+    return data;
   }
 }
