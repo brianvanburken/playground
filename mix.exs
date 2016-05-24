@@ -36,7 +36,8 @@ defmodule PhoenixTrello.Mixfile do
      {:phoenix_html, "~> 2.1"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:cowboy, "~> 1.0"},
-     {:comeonin, "~> 2.0"}]
+     {:comeonin, "~> 2.0"},
+     {:guardian, "~> 0.9.0"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
