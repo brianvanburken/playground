@@ -31,7 +31,7 @@ var config = module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,el
+        exclude: /node_modules/,
         loader: 'babel',
         query: {
           cacheDirectory: true,

@@ -12,7 +12,9 @@ config :phoenix_trello, PhoenixTrello.Endpoint,
   code_reloader: true,
   cache_static_lookup: false,
   check_origin: false,
-  watchers: []
+  watchers: [
+    node: ["node_modules/webpack/bin/webpack.js", "--watch", "--color"]
+  ]
 
 # Watch static and templates for browser reloading.
 config :phoenix_trello, PhoenixTrello.Endpoint,
