@@ -32,7 +32,7 @@ defmodule PhoenixTrello.User do
     |> generate_encrypted_password
   end
 
-  defp generate_encrytped_password(current_changeset) do
+  defp generate_encrypted_password(current_changeset) do
     case current_changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
         put_change(current_changeset, :encrypted_password, Comeonin.Bcrypt.hashpwsalt(password))
