@@ -30,6 +30,7 @@ defmodule PhoenixTrello.Web do
       use Phoenix.Controller
 
       alias PhoenixTrello.Repo
+      import Ecto, only: [build_assoc: 2]
       import Ecto.Model
       import Ecto.Query, only: [from: 1, from: 2]
 
