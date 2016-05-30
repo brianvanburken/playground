@@ -20,10 +20,15 @@ defmodule PhoenixTrello.Router do
 
     scope "/v1" do
       post "/registrations", RegistrationController, :create
+
       post "/sessions", SessionController, :create
       delete "/sessions", SessionController, :delete
+
       get "/current_user", CurrentUserController, :show
-      resources "boards", BoardController, only: [:index, :create]
+
+      resources "boards", BoardController, only: [:index, :create] do
+        resources "cards", CardController, only: [:show]
+      end
     end
   end
 
@@ -32,5 +37,4 @@ defmodule PhoenixTrello.Router do
 
     get "*path", PageController, :index
   end
-
 end

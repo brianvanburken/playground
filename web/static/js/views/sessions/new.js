@@ -20,7 +20,7 @@ class SessionsNew extends React.Component {
   }
 
   _renderError() {
-    const { error } = this.props;
+    let { error } = this.props;
 
     if (!error) return false;
 
@@ -38,13 +38,25 @@ class SessionsNew extends React.Component {
           <header>
             <div className="logo" />
           </header>
-          <form onSubmit={::this._handleSubmit}>
+          <form id="sign_in_form" onSubmit={::this._handleSubmit}>
             {::this._renderError()}
             <div className="field">
-              <input ref="email" type="Email" placeholder="Email" required="true" defaultValue="john@phoenix-trello.com"/>
+              <input
+                ref="email"
+                type="Email"
+                id="user_email"
+                placeholder="Email"
+                required="true"
+                defaultValue="john@phoenix-trello.com"/>
             </div>
             <div className="field">
-              <input ref="password" type="password" placeholder="Password" required="true" defaultValue="12345678"/>
+              <input
+                ref="password"
+                type="password"
+                id="user_password"
+                placeholder="Password"
+                required="true"
+                defaultValue="12345678"/>
             </div>
             <button type="submit">Sign in</button>
           </form>

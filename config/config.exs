@@ -28,9 +28,13 @@ config :phoenix, :generators,
   migration: true,
   binary_id: false
 
+# Configure guardian
 config :guardian, Guardian,
   issuer: "PhoenixTrello",
   ttl: { 3, :days },
   verify_issuer: true,
   secret_key: "PhoenixTrello",
   serializer: PhoenixTrello.GuardianSerializer
+
+# Start Hound for PhantomJs
+config :hound, driver: "chrome_driver"

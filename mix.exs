@@ -18,8 +18,16 @@ defmodule PhoenixTrello.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {PhoenixTrello, []},
-     applications: [:phoenix, :phoenix_html, :cowboy, :logger,
-                    :phoenix_ecto, :postgrex, :comeonin]]
+     applications: [
+      :phoenix,
+      :phoenix_html,
+      :cowboy,
+      :logger,
+      :phoenix_ecto,
+      :postgrex,
+      :comeonin,
+      :ex_machina
+    ]]
   end
 
   # Specifies which paths to compile per environment.
@@ -30,14 +38,21 @@ defmodule PhoenixTrello.Mixfile do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:phoenix, "~> 1.0.4"},
-     {:phoenix_ecto, "~> 1.1"},
-     {:postgrex, ">= 0.0.0"},
-     {:phoenix_html, "~> 2.1"},
-     {:phoenix_live_reload, "~> 1.0", only: :dev},
-     {:cowboy, "~> 1.0"},
-     {:comeonin, "~> 2.0"},
-     {:guardian, "~> 0.9.0"}]
+    [
+      {:phoenix, "~> 1.1.2"},
+      {:phoenix_ecto, "~> 2.0"},
+      {:postgrex, ">= 0.0.0", override: true},
+      {:phoenix_html, "~> 2.3"},
+      {:phoenix_live_reload, "~> 1.0", only: :dev},
+      {:cowboy, "~> 1.0"},
+      {:comeonin, "~> 2.0"},
+      {:guardian, "~> 0.9.0"},
+      {:credo, "~> 0.2", only: [:dev, :test]},
+      {:ex_machina, "~> 0.6.1"},
+      {:exactor, "~> 2.2.0"},
+      {:hound, "~> 0.8"},
+      {:mix_test_watch, "~> 0.2", only: :dev}
+     ]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

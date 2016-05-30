@@ -1,11 +1,13 @@
 defmodule PhoenixTrello.UserSocket do
   use Phoenix.Socket
 
-  ## Channels
-  channel "users:*", PhoenixTrello.UserChannel
-  channel "boards:*", PhoenixTrello.BoardChannel
+  alias PhoenixTrello.{GuardianSerializer}
 
-  ## Transports
+  # Channels
+  channel "boards:*", PhoenixTrello.BoardChannel
+  channel "users:*", PhoenixTrello.UserChannel
+
+  # Transports
   transport :websocket, Phoenix.Transports.WebSocket
   transport :longpoll, Phoenix.Transports.LongPoll
 
