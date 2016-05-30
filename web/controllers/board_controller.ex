@@ -16,22 +16,28 @@ defmodule PhoenixTrello.BoardController do
     render(conn, "index.json", owned_boards: owned_boards)
   end
 
-  def create(conn, %{"board" => board_params}) do
+def create(conn, %{"board" => board_params}) do
     current_user = Guardian.Plug.current_resource(conn)
 
     changeset = current_user
       |> build_assoc(:owned_boards)
       |> Board.changeset(board_params)
 
-    case Repo.insert(changeset) do
-      {:ok, board} ->
-        conn
-        |> put_status(:created)
-        |> render("show.json", board: board )
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render("error.json", changeset: changeset)
+    if changeset.valid? do
+      board = Repo.insert!(changeset)
+
+      board
+      |> build_assoc(:user_boards)
+      |> UserBoard.changeset(%{user_id: current_user.id})
+      |> Repo.insert!
+
+      conn
+      |> put_status(:created)
+      |> render("show.json", board: board )
+    else
+      conn
+      |> put_status(:unprocessable_entity)
+      |> render("error.json", changeset: changeset)
     end
   end
 end
