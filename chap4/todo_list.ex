@@ -71,7 +71,6 @@ defmodule TodoList.CsvImporter do
     |> Stream.map(fn([year, month, day, title]) -> {{String.to_integer(year), String.to_integer(month), String.to_integer(day)}, title} end)
     |> Stream.map(fn({date, title}) -> %{date: date, title: title} end)
     |> Enum.to_list()
-    |> IO.inspect()
     |> TodoList.new()
   end
 end
