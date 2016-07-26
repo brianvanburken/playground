@@ -61,3 +61,17 @@ defmodule TodoList do
     %TodoList{todo_list | entries: HashDict.delete(entries, entry_id)}
   end
 end
+
+defmodule TodoList.CsvImporter do
+  def import(file_path) do
+    file_path
+    |> File.stream!()
+    |> Stream.map(fn(line) -> String.replace(line, "\n", "") end)
+    |> Stream.map(fn(line) -> Regex.split(~r/[\/\,]/, line) end)
+    |> Stream.map(fn([year, month, day, title]) -> {{String.to_integer(year), String.to_integer(month), String.to_integer(day)}, title} end)
+    |> Stream.map(fn({date, title}) -> %{date: date, title: title} end)
+    |> Enum.to_list()
+    |> IO.inspect()
+    |> TodoList.new()
+  end
+end
