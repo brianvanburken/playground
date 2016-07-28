@@ -33,7 +33,7 @@ defmodule Todo.Database do
   # This function creates a pool of database workers and stores their PID in a
   # HashDict.
   defp start_workers(db_folder) do
-    for index <- 1..@pool_size, into: HashDict.new do
+    for index <- 1..@pool_size, into: %{} do
       {:ok, pid} = Todo.DatabaseWorker.start(db_folder)
       {index - 1, pid}
     end
@@ -48,6 +48,6 @@ defmodule Todo.Database do
   # is always handled by the worker that is stored behind index 1 of the pool.
   def handle_call({:choose_worker, key}, _, workers) do
     worker_key = :erlang.phash2(key, @pool_size)
-    {:reply, HashDict.get(workers, worker_key), workers}
+    {:reply, Map.get(workers, worker_key), workers}
   end
 end
