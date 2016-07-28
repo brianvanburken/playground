@@ -31,7 +31,7 @@ defmodule Todo.Database do
   end
 
   # This function creates a pool of database workers and stores their PID in a
-  # HashDict.
+  # Map.
   defp start_workers(db_folder) do
     for index <- 1..@pool_size,
         {:ok, pid} = Todo.DatabaseWorker.start(db_folder),
