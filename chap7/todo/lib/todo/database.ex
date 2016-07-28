@@ -33,10 +33,10 @@ defmodule Todo.Database do
   # This function creates a pool of database workers and stores their PID in a
   # HashDict.
   defp start_workers(db_folder) do
-    for index <- 1..@pool_size, into: %{} do
-      {:ok, pid} = Todo.DatabaseWorker.start(db_folder)
-      {index - 1, pid}
-    end
+    for index <- 1..@pool_size,
+        {:ok, pid} = Todo.DatabaseWorker.start(db_folder),
+        into: %{},
+        do: {index - 1, pid}
   end
 
   # This function receives the synchronous call to pick a worker from the pool
