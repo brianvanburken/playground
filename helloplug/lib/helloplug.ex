@@ -6,17 +6,17 @@ defmodule Helloplug do
 
   def call(conn, _opts) do
     IO.puts "saying Hello!"
-    conn |> route
+    route(conn.method, conn.path_info, conn)
   end
 
-  def route(%{method: "GET", path_info: ["hello"]} = conn) do
+  def route("GET", ["hello"], conn) do
     conn |> Plug.Conn.send_resp(200, "Hello, world!")
   end
 
-  def route(%{method: "GET", path_info: ["users", user_id]} = conn) do
+  def route("GET", ["users", user_id], conn) do
     conn |> Plug.Conn.send_resp(200, "You requested user #{user_id}")
   end
 
-  def route(conn),
+  def route(_method, _path, conn),
     do: conn |> Plug.Conn.send_resp(404, "Couldn't find that page, sorry!")
 end
