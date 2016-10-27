@@ -1,13 +1,15 @@
-defmodule Helloplug do
-  def init(default_opts) do
-    IO.puts "starting up Helloplug..."
-    default_opts
-  end
+defmodule Router do
+  defmacro __using__(opts) do
+    quote do
+      def init(options), do: options
 
-  def call(conn, _opts) do
-    IO.puts "saying Hello!"
-    route(conn.method, conn.path_info, conn)
+      def call(conn, _opts), do: route(conn.method, conn.path_info, conn)
+    end
   end
+end
+
+defmodule Helloplug do
+  use Router
 
   def route("GET", ["hello"], conn) do
     conn |> Plug.Conn.send_resp(200, "Hello, world!")
