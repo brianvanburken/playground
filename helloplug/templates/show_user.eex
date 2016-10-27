@@ -1,0 +1,11 @@
+<!doctype html>
+<html>
+  <body>
+    <h1>User Information Page</h1>
+    <p>Looks like you've requested information for the user with id <%= user_id %>.</p>
+    <p>Also, 1 + 1 = <%= 1 + 1 %></p>
+    <%= if user_id == "0" do %>
+      <%# we should tell everybody that user 0 is really cool %>
+      User zero is really cool!
+    <% end %>
+</html>
