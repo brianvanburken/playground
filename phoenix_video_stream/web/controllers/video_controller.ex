@@ -1,6 +1,8 @@
 defmodule PhoenixVideoStream.VideoController do
   use PhoenixVideoStream.Web, :controller
 
+  import PhoenixVideoStream.Util, only: [build_video_path: 1]
+
   alias PhoenixVideoStream.Video
 
   def index(conn, _params) do
@@ -17,7 +19,8 @@ defmodule PhoenixVideoStream.VideoController do
     changeset = Video.changeset(%Video{}, video_params)
 
     case Repo.insert(changeset) do
-      {:ok, _video} ->
+      {:ok, video} ->
+        persist_file(video, video_params["video_file"])
         conn
         |> put_flash(:info, "Video created successfully.")
         |> redirect(to: video_path(conn, :index))
@@ -61,5 +64,13 @@ defmodule PhoenixVideoStream.VideoController do
     conn
     |> put_flash(:info, "Video deleted successfully.")
     |> redirect(to: video_path(conn, :index))
+  end
+
+  defp persist_file(video, %{path: temp_path}) do
+    video_path = build_video_path(video)
+    unless File.exists?(video_path) do
+      video_path |> Path.dirname() |> File.mkdir_p()
+      File.copy!(temp_path, video_path)
+    end
   end
 end
