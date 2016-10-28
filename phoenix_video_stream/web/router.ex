@@ -18,6 +18,7 @@ defmodule PhoenixVideoStream.Router do
 
     get "/", PageController, :index
     resources "/videos", VideoController
+    get "/watch/:id", WatchController, :show
   end
 
   # Other scopes may use custom stacks.
