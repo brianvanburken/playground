@@ -12,6 +12,7 @@ defmodule GameOfLife do
       # worker(GameOfLife.Worker, [arg1, arg2, arg3]),
       supervisor(Task.Supervisor, [[name: GameOfLife.TaskSupervisor]]),
       worker(GameOfLife.BoardServer, [[]]),
+      worker(GameOfLife.GamePrinter, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
