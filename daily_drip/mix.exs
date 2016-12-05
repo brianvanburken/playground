@@ -27,6 +27,7 @@ defmodule DailyDrip.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [{:floki, "~> 0.11.0"},
+     {:pandex, "~> 0.1.0"}]
   end
 end
