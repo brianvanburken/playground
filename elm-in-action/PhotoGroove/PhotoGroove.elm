@@ -2,41 +2,31 @@ module PhotoGroove exposing (..)
 
 import Array exposing (Array)
 import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html.Attributes exposing (id, class, classList, src, name, type_, title)
 import Html.Events exposing (onClick)
-import Random
 import Http
+import Json.Decode exposing (string, int, list, Decoder)
+import Json.Decode.Pipeline exposing (decode, required, optional)
+import Random
+
+
+photoDecoder : Decoder Photo
+photoDecoder =
+    decode Photo
+        |> required "url" string
+        |> required "size" int
+        |> optional "title" string "(untitled)"
+
+
+urlPrefix : String
+urlPrefix =
+    "http://elm-in-action.com/"
 
 
 type ThumbnailSize
     = Small
     | Medium
     | Large
-
-
-type Msg
-    = SelectByUrl String
-    | SelectByIndex Int
-    | SupriseMe
-    | SetSize ThumbnailSize
-    | LoadPhotos (Result Http.Error String)
-
-
-type alias Photo =
-    { url : String }
-
-
-type alias Model =
-    { photos : List Photo
-    , selectedUrl : Maybe String
-    , loadingError : Maybe String
-    , chosenSize : ThumbnailSize
-    }
-
-
-urlPrefix : String
-urlPrefix =
-    "http://elm-in-action.com/"
 
 
 view : Model -> Html Msg
@@ -67,6 +57,7 @@ viewThumbnail : Maybe String -> Photo -> Html Msg
 viewThumbnail selectedUrl thumbnail =
     img
         [ src (urlPrefix ++ thumbnail.url)
+        , title (thumbnail.title ++ " [" ++ toString thumbnail.size ++ " KB]")
         , classList [ ( "selected", selectedUrl == Just thumbnail.url ) ]
         , onClick (SelectByUrl thumbnail.url)
         ]
@@ -96,6 +87,21 @@ sizeToString size =
             "large"
 
 
+type alias Photo =
+    { url : String
+    , size : Int
+    , title : String
+    }
+
+
+type alias Model =
+    { photos : List Photo
+    , selectedUrl : Maybe String
+    , loadingError : Maybe String
+    , chosenSize : ThumbnailSize
+    }
+
+
 initialModel : Model
 initialModel =
     { photos = []
@@ -103,6 +109,11 @@ initialModel =
     , loadingError = Nothing
     , chosenSize = Medium
     }
+
+
+photoArray : Array Photo
+photoArray =
+    Array.fromList initialModel.photos
 
 
 getPhotoUrl : Int -> Maybe String
@@ -115,9 +126,12 @@ getPhotoUrl index =
             Nothing
 
 
-photoArray : Array Photo
-photoArray =
-    Array.fromList initialModel.photos
+type Msg
+    = SelectByUrl String
+    | SelectByIndex Int
+    | SupriseMe
+    | SetSize ThumbnailSize
+    | LoadPhotos (Result Http.Error (List Photo))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -147,15 +161,13 @@ update msg model =
         SetSize size ->
             ( { model | chosenSize = size }, Cmd.none )
 
-        LoadPhotos (Ok responseStr) ->
-            let
-                urls =
-                    String.split "," responseStr
-
-                photos =
-                    List.map Photo urls
-            in
-                ( { model | photos = photos, selectedUrl = List.head urls }, Cmd.none )
+        LoadPhotos (Ok photos) ->
+            ( { model
+                | photos = photos
+                , selectedUrl = Maybe.map .url (List.head photos)
+              }
+            , Cmd.none
+            )
 
         LoadPhotos (Err _) ->
             ( { model
@@ -180,8 +192,8 @@ viewOrError model =
 
 initialCmd : Cmd Msg
 initialCmd =
-    "http://elm-in-action.com/photos/list"
-        |> Http.getString
+    list photoDecoder
+        |> Http.get "http://elm-in-action.com/photos/list.json"
         |> Http.send LoadPhotos
 
 
