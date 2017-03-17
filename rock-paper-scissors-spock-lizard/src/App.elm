@@ -125,6 +125,43 @@ indexToMove idx =
             Rock
 
 
+explainMoves : Maybe Move -> Maybe Move -> String
+explainMoves playerMove opponentMove =
+    case ( playerMove, opponentMove ) of
+        ( Just Scissors, Just Paper ) ->
+            "scissors cuts paper"
+
+        ( Just Paper, Just Rock ) ->
+            "paper covers rock"
+
+        ( Just Rock, Just Lizard ) ->
+            "rock crushes lizard"
+
+        ( Just Lizard, Just Spock ) ->
+            "lizard poisons Spock"
+
+        ( Just Spock, Just Scissors ) ->
+            "Spock smashes scissors"
+
+        ( Just Scissors, Just Lizard ) ->
+            "scissors decapitates lizard"
+
+        ( Just Lizard, Just Paper ) ->
+            "lizard eats paper"
+
+        ( Just Paper, Just Spock ) ->
+            "paper disproves Spock"
+
+        ( Just Spock, Just Rock ) ->
+            "Spock vaporizes rock"
+
+        ( Just Rock, Just Scissors ) ->
+            "rock crushes scissors"
+
+        ( _, _ ) ->
+            ""
+
+
 moveToString : Maybe Move -> String
 moveToString choosenMove =
     case choosenMove of
@@ -186,6 +223,12 @@ view model =
         , text ("Opponent chooses: " ++ moveToString model.opponentMove)
         , br [] []
         , text ("Outcome: " ++ resultToString model.playerMove model.opponentMove)
+        , br [] []
+        , text
+            ("Explanation: "
+                ++ (explainMoves model.playerMove model.opponentMove)
+                ++ (explainMoves model.opponentMove model.playerMove)
+            )
         ]
 
 
