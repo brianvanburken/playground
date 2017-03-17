@@ -2,6 +2,7 @@ module App exposing (..)
 
 import Html exposing (Html, div, text, button, br)
 import Html.Events exposing (onClick)
+import Random
 
 
 type alias Model =
@@ -17,6 +18,8 @@ init =
 
 type Msg
     = ChooseMove Move
+    | GenerateMove
+    | NewMove Move
 
 
 type Move
@@ -100,6 +103,28 @@ result move1 move2 =
             Tie
 
 
+indexToMove : Int -> Move
+indexToMove idx =
+    case idx of
+        1 ->
+            Rock
+
+        2 ->
+            Paper
+
+        3 ->
+            Scissors
+
+        4 ->
+            Spock
+
+        5 ->
+            Lizard
+
+        _ ->
+            Rock
+
+
 moveToString : Maybe Move -> String
 moveToString move =
     case move of
@@ -111,23 +136,51 @@ moveToString move =
             "nothing yet"
 
 
+resultToString : Maybe Move -> Maybe Move -> String
+resultToString move1 move2 =
+    case ( move1, move2 ) of
+        ( Nothing, _ ) ->
+            ""
+
+        ( _, Nothing ) ->
+            ""
+
+        ( Just move1, Just move2 ) ->
+            "You " ++ (result move1 move2 |> toString |> String.toLower) ++ "."
+
+
+generateMove : Random.Generator Move
+generateMove =
+    Random.map indexToMove (Random.int 1 5)
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ChooseMove move ->
-            ( { model | playerMove = Just move }, Cmd.none )
+            ({ model | playerMove = Just move } |> update GenerateMove)
+
+        GenerateMove ->
+            ( model, Random.generate NewMove generateMove )
+
+        NewMove move ->
+            ( { model | opponentMove = Just move }, Cmd.none )
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick (ChooseMove Rock) ] [ text "Rock" ]
-        , button [ onClick (ChooseMove Paper) ] [ text "Paper" ]
-        , button [ onClick (ChooseMove Scissors) ] [ text "Scissors" ]
-        , button [ onClick (ChooseMove Spock) ] [ text "Spock" ]
-        , button [ onClick (ChooseMove Lizard) ] [ text "Lizard" ]
+        [ button [ onClick (ChooseMove Rock) ] [ text "rock 💎" ]
+        , button [ onClick (ChooseMove Paper) ] [ text "paper 📰" ]
+        , button [ onClick (ChooseMove Scissors) ] [ text "scissors ✂️" ]
+        , button [ onClick (ChooseMove Spock) ] [ text "spock 🖖" ]
+        , button [ onClick (ChooseMove Lizard) ] [ text "lizard \x1F98E" ]
         , br [] []
-        , text ("You've choosen " ++ (moveToString model.playerMove))
+        , text ("You choose: " ++ (moveToString model.playerMove))
+        , br [] []
+        , text ("Opponent chooses: " ++ (moveToString model.opponentMove))
+        , br [] []
+        , text ("Outcome: " ++ (resultToString model.playerMove model.opponentMove))
         ]
 
 
