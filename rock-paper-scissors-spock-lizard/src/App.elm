@@ -126,8 +126,8 @@ indexToMove idx =
 
 
 moveToString : Maybe Move -> String
-moveToString move =
-    case move of
+moveToString choosenMove =
+    case choosenMove of
         Just move ->
             move
                 |> toString
@@ -146,8 +146,8 @@ resultToString move1 move2 =
         ( _, Nothing ) ->
             ""
 
-        ( Just move1, Just move2 ) ->
-            result move1 move2
+        ( Just playerMove, Just opponentMove ) ->
+            result playerMove opponentMove
                 |> toString
                 |> String.toLower
 
@@ -173,17 +173,19 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ viewMoveChooser Rock
-        , viewMoveChooser Paper
-        , viewMoveChooser Scissors
-        , viewMoveChooser Spock
-        , viewMoveChooser Lizard
+        [ div []
+            [ viewMoveChooser Rock
+            , viewMoveChooser Paper
+            , viewMoveChooser Scissors
+            , viewMoveChooser Spock
+            , viewMoveChooser Lizard
+            ]
         , br [] []
-        , text ("You choose: " ++ (moveToString model.playerMove))
+        , text ("You choose: " ++ moveToString model.playerMove)
         , br [] []
-        , text ("Opponent chooses: " ++ (moveToString model.opponentMove))
+        , text ("Opponent chooses: " ++ moveToString model.opponentMove)
         , br [] []
-        , text ("Outcome: " ++ (resultToString model.playerMove model.opponentMove))
+        , text ("Outcome: " ++ resultToString model.playerMove model.opponentMove)
         ]
 
 
@@ -195,5 +197,5 @@ viewMoveChooser move =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.none
