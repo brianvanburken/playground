@@ -141,10 +141,10 @@ resultToString : Maybe Move -> Maybe Move -> String
 resultToString move1 move2 =
     case ( move1, move2 ) of
         ( Nothing, _ ) ->
-            ""
+            "-"
 
         ( _, Nothing ) ->
-            ""
+            "-"
 
         ( Just playerMove, Just opponentMove ) ->
             result playerMove opponentMove
