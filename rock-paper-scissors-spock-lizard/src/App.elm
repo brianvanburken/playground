@@ -173,11 +173,11 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick (ChooseMove Rock) ] [ text "rock 💎" ]
-        , button [ onClick (ChooseMove Paper) ] [ text "paper 📰" ]
-        , button [ onClick (ChooseMove Scissors) ] [ text "scissors ✂️" ]
-        , button [ onClick (ChooseMove Spock) ] [ text "spock 🖖" ]
-        , button [ onClick (ChooseMove Lizard) ] [ text "lizard \x1F98E" ]
+        [ viewMoveChooser Rock
+        , viewMoveChooser Paper
+        , viewMoveChooser Scissors
+        , viewMoveChooser Spock
+        , viewMoveChooser Lizard
         , br [] []
         , text ("You choose: " ++ (moveToString model.playerMove))
         , br [] []
@@ -185,6 +185,13 @@ view model =
         , br [] []
         , text ("Outcome: " ++ (resultToString model.playerMove model.opponentMove))
         ]
+
+
+viewMoveChooser : Move -> Html Msg
+viewMoveChooser move =
+    button
+        [ onClick (ChooseMove move) ]
+        [ text (moveToString (Just move)) ]
 
 
 subscriptions : Model -> Sub Msg
