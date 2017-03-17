@@ -129,7 +129,8 @@ moveToString : Maybe Move -> String
 moveToString move =
     case move of
         Just move ->
-            toString move
+            move
+                |> toString
                 |> String.toLower
 
         Nothing ->
@@ -146,7 +147,9 @@ resultToString move1 move2 =
             ""
 
         ( Just move1, Just move2 ) ->
-            "You " ++ (result move1 move2 |> toString |> String.toLower) ++ "."
+            result move1 move2
+                |> toString
+                |> String.toLower
 
 
 generateMove : Random.Generator Move
