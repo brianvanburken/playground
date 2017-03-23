@@ -6,7 +6,15 @@
   </head>
   <body>
     <div id="elm-area"></div>
+    <script src="http://elm-in-action.com/pasta.js"></script>
     <script src="elm.js"></script>
-    <script>Elm.PhotoGroove.embed(document.getElementById("elm-area"));</script>
+    <script>
+      var app = Elm.PhotoGroove.embed(document.getElementById("elm-area"));
+      app.ports.setFilters.subscribe(function (options) {
+        requestAnimationFrame(function () {
+          Pasta.apply(document.getElementById("main-canvas"), options);
+        });
+      });
+    </script>
   </body>
 </html>
