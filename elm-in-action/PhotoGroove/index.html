@@ -15,6 +15,9 @@
           Pasta.apply(document.getElementById("main-canvas"), options);
         });
       });
+      Pasta.addStatusListener(function (status) {
+        app.ports.statusChanges.send(status);
+      });
     </script>
   </body>
 </html>

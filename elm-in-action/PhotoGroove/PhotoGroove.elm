@@ -34,6 +34,7 @@ view model =
     div [ class "content" ]
         [ h1 [] [ text "Photo Groove" ]
         , button [ onClick SupriseMe ] [ text "Suprise Me!" ]
+        , div [ class "status" ] [ text model.status ]
         , div [ class "filters" ]
             [ viewFilter "Hue" SetHue model.hue
             , viewFilter "Ripple" SetRipple model.ripple
@@ -101,6 +102,9 @@ sizeToString size =
             "large"
 
 
+port statusChanges : (String -> msg) -> Sub msg
+
+
 port setFilters : FilterOptions -> Cmd msg
 
 
@@ -119,6 +123,7 @@ type alias Photo =
 
 type alias Model =
     { photos : List Photo
+    , status : String
     , selectedUrl : Maybe String
     , loadingError : Maybe String
     , chosenSize : ThumbnailSize
@@ -131,6 +136,7 @@ type alias Model =
 initialModel : Model
 initialModel =
     { photos = []
+    , status = ""
     , selectedUrl = Nothing
     , loadingError = Nothing
     , chosenSize = Medium
@@ -158,6 +164,7 @@ getPhotoUrl index =
 type Msg
     = SelectByUrl String
     | SelectByIndex Int
+    | SetStatus String
     | SupriseMe
     | SetSize ThumbnailSize
     | LoadPhotos (Result Http.Error (List Photo))
@@ -169,6 +176,9 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        SetStatus status ->
+            ( { model | status = status }, Cmd.none )
+
         SetHue hue ->
             applyFilters { model | hue = hue }
 
@@ -263,7 +273,7 @@ main =
         { init = ( initialModel, initialCmd )
         , view = viewOrError
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = \_ -> statusChanges SetStatus
         }
 
 
