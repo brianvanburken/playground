@@ -267,14 +267,23 @@ initialCmd =
         |> Http.send LoadPhotos
 
 
-main : Program Never Model Msg
+main : Program Float Model Msg
 main =
-    Html.program
-        { init = ( initialModel, initialCmd )
+    Html.programWithFlags
+        { init = init
         , view = viewOrError
         , update = update
         , subscriptions = \_ -> statusChanges SetStatus
         }
+
+
+init : Float -> ( Model, Cmd Msg )
+init flags =
+    let
+        status =
+            "Initializing Pasta v" ++ toString flags
+    in
+        ( { initialModel | status = status }, initialCmd )
 
 
 paperSlider : List (Attribute msg) -> List (Html msg) -> Html msg
