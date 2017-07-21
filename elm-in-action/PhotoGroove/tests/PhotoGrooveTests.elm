@@ -9,6 +9,7 @@ import Json.Encode as Encode
 import Fuzz exposing (Fuzzer, list, int, string)
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (text, tag, attribute)
+import Html.Attributes exposing (src)
 
 
 stateTransitions : Test
@@ -55,7 +56,7 @@ noPhotosNoThumbnails =
                 |> Query.count (Expect.equal 0)
 
 
-thumbnailsWork : test
+thumbnailsWork : Test
 thumbnailsWork =
     fuzz (Fuzz.intRange 1 5) "URLs render as thumbnails" <|
         \urlCount ->
@@ -83,7 +84,7 @@ urlPrefix =
 thumbnailRendered : String -> Query.Single msg -> Expectation
 thumbnailRendered url query =
     query
-        |> Query.findAll [ tag "img", attribute "src" (urlPrefix ++ url) ]
+        |> Query.findAll [ tag "img", attribute <| src (urlPrefix ++ url) ]
         |> Query.count (Expect.atLeast 1)
 
 
