@@ -10,6 +10,7 @@ import Fuzz exposing (Fuzzer, list, int, string)
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (text, tag, attribute)
 import Html.Attributes exposing (src)
+import Test.Html.Event as Event
 
 
 stateTransitions : Test
@@ -74,6 +75,41 @@ thumbnailsWork =
                     |> PhotoGroove.view
                     |> Query.fromHtml
                     |> Expect.all thumbnailChecks
+
+
+clickThumbnails : Test
+clickThumbnails =
+    fuzz3 urlFuzzer string urlFuzzer "clicking a thumbnail selects it" <|
+        \urlsBefore urlToClick urlsAfter ->
+            let
+                url =
+                    urlToClick ++ ".jpeg"
+
+                photos =
+                    (urlsBefore ++ url :: urlsAfter)
+                        |> List.map photoFromUrl
+
+                srcToClick =
+                    urlPrefix ++ url
+            in
+                { initialModel | photos = photos }
+                    |> PhotoGroove.view
+                    |> Query.fromHtml
+                    |> Query.find [ tag "img", attribute <| src srcToClick ]
+                    |> Event.simulate Event.click
+                    |> Event.expect (SelectByUrl url)
+
+
+urlFuzzer : Fuzzer (List String)
+urlFuzzer =
+    Fuzz.intRange 1 5
+        |> Fuzz.map urlsFromCount
+
+
+urlsFromCount : Int -> List String
+urlsFromCount urlCount =
+    List.range 1 urlCount
+        |> List.map (\num -> toString num ++ ".png")
 
 
 urlPrefix : String
