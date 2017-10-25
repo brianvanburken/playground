@@ -21,25 +21,25 @@ testSuite =
     describe "About UnionTypes"
         [ test "simple types are similar to enums in other languages" <|
             \() ->
-                x____replace me____x
+                C
                     |> Expect.equal C
         , test "more complex types can be built with a 'tag' and additional data" <|
             \() ->
-                Base (x____replace me____x)
+                Base (C)
                     |> Expect.equal (Base C)
         , test "all types in the union type are the same type" <|
             \() ->
-                (Strand [ A, T, C, G ])
+                Base A
                     |> Expect.equal (Base A)
         , test "case statements may be used to extract the data from the type" <|
             case Base A of
                 Strand nucleotides ->
                     \() ->
-                        [ x____replace me____x ]
+                        [ A ]
                             |> Expect.equal nucleotides
 
                 Base nucleotide ->
                     \() ->
-                        x____replace me____x
+                        A
                             |> Expect.equal nucleotide
         ]
