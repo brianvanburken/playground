@@ -1,9 +1,8 @@
 module Koans17AboutDates exposing (testSuite)
 
 import Expect
-import Date
+import Date exposing (..)
 import Utils.Test exposing (describe, test)
-import Utils.Blank exposing (..)
 
 
 -- dates can be created from a Time
@@ -35,32 +34,32 @@ testSuite =
     describe "About Dates"
         [ test "year gets the year" <|
             \() ->
-                x____replace me____x
+                1970
                     |> Expect.equal (Date.year ourDate)
         , test "month gets the month" <|
             -- a type!
             \() ->
-                x____replace me____x
+                Jan
                     |> Expect.equal (Date.month ourDate)
         , test "day gets the day" <|
             \() ->
-                x____replace me____x
+                1
                     |> Expect.equal (Date.day ourDate)
         , test "dayOfWeek gets the day of the week" <|
             -- another type
             \() ->
-                x____replace me____x
+                Thu
                     |> Expect.equal (Date.dayOfWeek ourDate)
         , test "hour gets the hour" <|
             \() ->
-                x____replace me____x
+                "11"
                     |> Expect.equal (getField Date.hour parsedDate)
         , test "minute gets the minute" <|
             \() ->
-                x____replace me____x
+                "30"
                     |> Expect.equal (getField Date.minute parsedDate)
         , test "second gets the second" <|
             \() ->
-                x____replace me____x
+                "45"
                     |> Expect.equal (getField Date.second parsedDate)
         ]
