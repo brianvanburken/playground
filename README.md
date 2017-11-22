@@ -1,6 +1,6 @@
 # Publisher
 [![Code Climate](https://codeclimate.com/github/brianvanburken/publisher/badges/gpa.svg)](https://codeclimate.com/github/brianvanburken/publisher)
-[![Build Status](https://travis-ci.org/brianvanburken/publisher.svg?branch=master)](https://travis-ci.org/brianvanburken/publisher)
+[![Build Status](https://travis-ci.org/brianvanburken/publisher-rails.svg?branch=master)](https://travis-ci.org/brianvanburken/publisher-rails)
 [![Test Coverage](https://codeclimate.com/github/brianvanburken/publisher/badges/coverage.svg)](https://codeclimate.com/github/brianvanburken/publisher/coverage)
 
 Small Ruby on Rails application to showcase my skills. The focus of this application
