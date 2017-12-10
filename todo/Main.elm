@@ -42,6 +42,14 @@ mockTodo =
     }
 
 
+newTodo : Todo
+newTodo =
+    { title = ""
+    , completed = False
+    , editing = False
+    }
+
+
 initialModel : Model
 initialModel =
     { todos =
@@ -50,11 +58,7 @@ initialModel =
           , editing = False
           }
         ]
-    , todo =
-        { title = ""
-        , completed = False
-        , editing = False
-        }
+    , todo = newTodo
     , filter = All
     }
 
@@ -75,17 +79,10 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         Add ->
-            let
-                todo =
-                    model.todo
-
-                newTodo =
-                    { todo | title = "" }
-            in
-                { model
-                    | todos = todo :: model.todos
-                    , todo = newTodo
-                }
+            { model
+                | todos = model.todo :: model.todos
+                , todo = newTodo
+            }
 
         Input title ->
             let
