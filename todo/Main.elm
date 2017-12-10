@@ -2,7 +2,7 @@ module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (on, keyCode, onInput)
+import Html.Events exposing (on, keyCode, onInput, onCheck, onClick)
 import Json.Decode as Json
 
 
@@ -10,6 +10,7 @@ type alias Todo =
     { title : String
     , completed : Bool
     , editing : Bool
+    , identifier : Int
     }
 
 
@@ -23,23 +24,18 @@ type alias Model =
     { todos : List Todo
     , todo : Todo
     , filter : FilterState
+    , nextIdentifier : Int
     }
 
 
 type Msg
     = Add
     | Complete Todo
+    | Uncomplete Todo
     | Delete Todo
     | Filter FilterState
     | Input String
-
-
-mockTodo : Todo
-mockTodo =
-    { title = "A mock todo..."
-    , completed = False
-    , editing = False
-    }
+    | ClearCompleted
 
 
 newTodo : Todo
@@ -47,6 +43,7 @@ newTodo =
     { title = ""
     , completed = False
     , editing = False
+    , identifier = 0
     }
 
 
@@ -56,10 +53,12 @@ initialModel =
         [ { title = "The first todo"
           , completed = False
           , editing = False
+          , identifier = 1
           }
         ]
-    , todo = newTodo
+    , todo = { newTodo | identifier = 2 }
     , filter = All
+    , nextIdentifier = 3
     }
 
 
@@ -81,7 +80,8 @@ update msg model =
         Add ->
             { model
                 | todos = model.todo :: model.todos
-                , todo = newTodo
+                , todo = { newTodo | identifier = model.nextIdentifier }
+                , nextIdentifier = model.nextIdentifier + 1
             }
 
         Input title ->
@@ -89,55 +89,142 @@ update msg model =
                 todo =
                     model.todo
 
-                newTodo =
+                updatedTodo =
                     { todo | title = title }
             in
-                { model | todo = newTodo }
+                { model | todo = updatedTodo }
 
         Complete todo ->
-            model
+            let
+                updatedTodo thisTodo =
+                    if thisTodo.identifier == todo.identifier then
+                        { todo | completed = True }
+                    else
+                        thisTodo
+            in
+                { model | todos = List.map updatedTodo model.todos }
+
+        Uncomplete todo ->
+            let
+                updateTodo thisTodo =
+                    if thisTodo.identifier == todo.identifier then
+                        { thisTodo | completed = False }
+                    else
+                        thisTodo
+            in
+                { model | todos = List.map updateTodo model.todos }
 
         Delete todo ->
-            model
+            { model | todos = List.filter (\mappedTodo -> todo.identifier /= mappedTodo.identifier) model.todos }
 
         Filter filterState ->
-            model
+            { model | filter = filterState }
+
+        ClearCompleted ->
+            let
+                isUncompleted =
+                    (\todo -> todo.completed == False)
+
+                withoutCompleted =
+                    List.filter isUncompleted model.todos
+            in
+                { model | todos = withoutCompleted }
+
+
+filterItemView : Model -> FilterState -> Html Msg
+filterItemView model filterState =
+    li []
+        [ a
+            [ classList [ ( "selected", (model.filter == filterState) ) ]
+            , href "#"
+            , onClick (Filter filterState)
+            ]
+            [ text (toString filterState) ]
+        ]
+
+
+filteredTodos : Model -> List Todo
+filteredTodos model =
+    let
+        matchesFilter =
+            case model.filter of
+                All ->
+                    (\_ -> True)
+
+                Active ->
+                    (\todo -> todo.completed == False)
+
+                Completed ->
+                    (\todo -> todo.completed == True)
+    in
+        List.filter matchesFilter model.todos
 
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ node "style" [ type_ "text/css" ] [ text styles ]
-        , section [ class "todoapp" ]
-            [ header [ class "header" ]
-                [ h1 [] [ text "todos" ]
-                , input
-                    [ class "new-todo"
-                    , placeholder "What needs to be done?"
-                    , value model.todo.title
-                    , autofocus True
-                    , onInput Input
-                    , onEnter Add
+    let
+        filtered =
+            filteredTodos model
+    in
+        div []
+            [ node "style" [ type_ "text/css" ] [ text styles ]
+            , section [ class "todoapp" ]
+                [ header [ class "header" ]
+                    [ h1 [] [ text "todos" ]
+                    , input
+                        [ class "new-todo"
+                        , placeholder "What needs to be done?"
+                        , value model.todo.title
+                        , autofocus True
+                        , onInput Input
+                        , onEnter Add
+                        ]
+                        []
                     ]
-                    []
-                ]
-            , section [ class "main" ]
-                [ ul [ class "todo-list" ]
-                    (List.map todoView model.todos)
+                , section [ class "main" ]
+                    [ ul [ class "todo-list" ]
+                        (List.map todoView filtered)
+                    ]
+                , footer [ class "footer" ]
+                    [ span [ class "todo-count" ]
+                        [ strong [] [ text (toString (List.length filtered)) ]
+                        , text " items left"
+                        ]
+                    , ul [ class "filters" ]
+                        [ filterItemView model All
+                        , filterItemView model Active
+                        , filterItemView model Completed
+                        ]
+                    , button [ class "clear-completed", onClick ClearCompleted ] [ text "Clear completed" ]
+                    ]
                 ]
             ]
-        ]
 
 
 todoView : Todo -> Html Msg
 todoView todo =
-    li [ classList [ ( "completed", todo.completed ) ] ]
-        [ div [ class "view" ]
-            [ input [ class "toggle", type_ "checkbox", checked todo.completed ] []
-            , label [] [ text todo.title ]
-            , button [ class "destroy" ] []
+    let
+        handleComplete =
+            case todo.completed of
+                True ->
+                    (\_ -> Uncomplete todo)
+
+                False ->
+                    (\_ -> Complete todo)
+    in
+        li [ classList [ ( "completed", todo.completed ) ] ]
+            [ div [ class "view" ]
+                [ input
+                    [ class "toggle"
+                    , type_ "checkbox"
+                    , checked todo.completed
+                    , onCheck handleComplete
+                    ]
+                    []
+                , label [] [ text todo.title ]
+                , button [ class "destroy", onClick (Delete todo) ] []
+                ]
             ]
-        ]
 
 
 main =
