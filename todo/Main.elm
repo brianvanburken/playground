@@ -27,7 +27,7 @@ type alias Model =
 
 
 type Msg
-    = Add Todo
+    = Add
     | Complete Todo
     | Delete Todo
     | Filter FilterState
@@ -74,7 +74,7 @@ onEnter msg =
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Add todo ->
+        Add ->
             let
                 todo =
                     model.todo
@@ -120,7 +120,7 @@ view model =
                     , value model.todo.title
                     , autofocus True
                     , onInput Input
-                    , onEnter (Add model.todo)
+                    , onEnter Add
                     ]
                     []
                 ]
