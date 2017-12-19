@@ -193,8 +193,28 @@ rotate tetromino =
         }
 
 
+shift : ( Int, Int ) -> Tetromino -> Tetromino
+shift ( rows, cols ) tetromino =
+    let
+        shiftHelper ( row, col ) =
+            ( row + rows, col + cols )
+
+        newShape =
+            List.map shiftHelper tetromino.shape
+
+        pivot =
+            { r = tetromino.pivot.r + (toFloat rows)
+            , c = tetromino.pivot.c + (toFloat cols)
+            }
+    in
+        { tetromino
+            | shape = newShape
+            , pivot = pivot
+        }
+
+
 tetromino =
-    rotate <| rotate <| rotate j
+    shift ( 1, 5 ) o
 
 
 type alias Model =
