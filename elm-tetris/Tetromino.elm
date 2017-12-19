@@ -1,10 +1,8 @@
-module Main exposing (..)
+module Tetromino exposing (..)
 
 import Block exposing (Block)
-import Collage exposing (..)
-import Element exposing (..)
-import Html exposing (..)
-import Color exposing (Color)
+import Collage exposing (move, Form, group, circle, filled)
+import Color
 
 
 type alias Location =
@@ -12,7 +10,9 @@ type alias Location =
 
 
 type alias Pivot =
-    { r : Float, c : Float }
+    { r : Float
+    , c : Float
+    }
 
 
 type alias Tetromino =
@@ -31,7 +31,7 @@ toForm { shape, block } =
             Block.toForm block
 
         translate ( row, col ) =
-            move ( (toFloat col) * Block.size, (toFloat row) * Block.size ) form
+            move ( toFloat col * Block.size, toFloat row * Block.size ) form
 
         forms =
             List.map translate shape
@@ -157,16 +157,16 @@ drawPivot { pivot } =
 
 
 rotateLocation : Pivot -> Float -> Location -> Location
-rotateLocation { r, c } angle ( row, col ) =
+rotateLocation pivot angle ( row, col ) =
     let
         rowOrigin =
-            (toFloat row) - r
+            toFloat row - pivot.r
 
         colOrigin =
-            (toFloat col) - c
+            toFloat col - pivot.c
 
         ( s, c ) =
-            ( sin (angle), cos (angle) )
+            ( sin angle, cos angle )
 
         rowRotated =
             rowOrigin * c - colOrigin * s
@@ -174,7 +174,7 @@ rotateLocation { r, c } angle ( row, col ) =
         colRotated =
             rowOrigin * s + colOrigin * c
     in
-        ( round <| rowRotated + r, round <| colRotated + c )
+        ( round <| rowRotated + pivot.r, round <| colRotated + pivot.c )
 
 
 rotate : Tetromino -> Tetromino
@@ -203,48 +203,11 @@ shift ( rows, cols ) tetromino =
             List.map shiftHelper tetromino.shape
 
         pivot =
-            { r = tetromino.pivot.r + (toFloat rows)
-            , c = tetromino.pivot.c + (toFloat cols)
+            { r = tetromino.pivot.r + toFloat rows
+            , c = tetromino.pivot.c + toFloat cols
             }
     in
         { tetromino
             | shape = newShape
             , pivot = pivot
-        }
-
-
-tetromino =
-    shift ( 1, 5 ) o
-
-
-type alias Model =
-    {}
-
-
-model : Model
-model =
-    {}
-
-
-type Msg
-    = NoOp
-
-
-update : Msg -> Model -> Model
-update msg model =
-    case msg of
-        NoOp ->
-            model
-
-
-view : Model -> Html Msg
-view model =
-    toHtml (collage 400 400 [ toForm tetromino, drawPivot tetromino ])
-
-
-main =
-    Html.beginnerProgram
-        { model = model
-        , view = view
-        , update = update
         }
