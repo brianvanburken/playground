@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Block exposing (Block)
-import Collage exposing (collage, square, solid, outlined, group, filled, move, Form)
+import Collage exposing (..)
 import Element exposing (..)
 import Html exposing (..)
 import Color exposing (Color)
@@ -11,8 +11,17 @@ type alias Location =
     ( Int, Int )
 
 
+type alias Pivot =
+    { r : Float, c : Float }
+
+
 type alias Tetromino =
-    { shape : List Location, block : Block }
+    { shape : List Location
+    , block : Block
+    , pivot : Pivot
+    , rows : Int
+    , cols : Int
+    }
 
 
 toForm : Tetromino -> Form
@@ -39,6 +48,9 @@ i =
         , ( -2, 0 )
         ]
     , block = Block Color.lightBlue
+    , pivot = { r = -0.5, c = 0.5 }
+    , rows = 4
+    , cols = 1
     }
 
 
@@ -51,11 +63,63 @@ j =
         , ( -1, 0 )
         ]
     , block = Block Color.blue
+    , pivot = { r = 0.0, c = 0.0 }
+    , rows = 3
+    , cols = 2
     }
 
 
+drawPivot : Tetromino -> Form
+drawPivot { pivot } =
+    let
+        dot =
+            circle 5 |> filled Color.black
+
+        translate =
+            move ( pivot.c * Block.size, pivot.r * Block.size )
+    in
+        translate dot
+
+
+rotateLocation : Pivot -> Float -> Location -> Location
+rotateLocation { r, c } angle ( row, col ) =
+    let
+        rowOrigin =
+            (toFloat row) - r
+
+        colOrigin =
+            (toFloat col) - c
+
+        ( s, c ) =
+            ( sin (angle), cos (angle) )
+
+        rowRotated =
+            rowOrigin * c - colOrigin * s
+
+        colRotated =
+            rowOrigin * s + colOrigin * c
+    in
+        ( round <| rowRotated + r, round <| colRotated + c )
+
+
+rotate : Tetromino -> Tetromino
+rotate tetromino =
+    let
+        rotateHelper =
+            rotateLocation tetromino.pivot (degrees 90)
+
+        newShape =
+            List.map rotateHelper tetromino.shape
+    in
+        { tetromino
+            | shape = newShape
+            , rows = tetromino.cols
+            , cols = tetromino.rows
+        }
+
+
 tetromino =
-    j
+    rotate <| rotate <| rotate j
 
 
 type alias Model =
@@ -80,7 +144,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    toHtml (collage 400 400 [ toForm tetromino ])
+    toHtml (collage 400 400 [ toForm tetromino, drawPivot tetromino ])
 
 
 main =
