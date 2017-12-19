@@ -69,6 +69,81 @@ j =
     }
 
 
+l : Tetromino
+l =
+    { shape =
+        [ ( 1, 0 )
+        , ( 0, 0 )
+        , ( -1, 0 )
+        , ( -1, 1 )
+        ]
+    , block = Block Color.orange
+    , pivot = { r = 0.0, c = 0.0 }
+    , rows = 3
+    , cols = 2
+    }
+
+
+z : Tetromino
+z =
+    { shape =
+        [ ( 1, -1 )
+        , ( 1, 0 )
+        , ( 0, 0 )
+        , ( 0, 1 )
+        ]
+    , block = Block Color.red
+    , pivot = { r = 0.0, c = 0.0 }
+    , rows = 3
+    , cols = 2
+    }
+
+
+s : Tetromino
+s =
+    { shape =
+        [ ( 0, 0 )
+        , ( 0, 1 )
+        , ( -1, -1 )
+        , ( -1, 0 )
+        ]
+    , block = Block Color.green
+    , pivot = { r = 0.0, c = 0.0 }
+    , rows = 3
+    , cols = 2
+    }
+
+
+t : Tetromino
+t =
+    { shape =
+        [ ( 0, -1 )
+        , ( 0, 0 )
+        , ( 0, 1 )
+        , ( -1, 0 )
+        ]
+    , block = Block Color.purple
+    , pivot = { r = 0.0, c = 0.0 }
+    , rows = 2
+    , cols = 3
+    }
+
+
+o : Tetromino
+o =
+    { shape =
+        [ ( 0, 0 )
+        , ( 0, 1 )
+        , ( -1, 0 )
+        , ( -1, 1 )
+        ]
+    , block = Block Color.yellow
+    , pivot = { r = -0.5, c = 0.5 }
+    , rows = 2
+    , cols = 2
+    }
+
+
 drawPivot : Tetromino -> Form
 drawPivot { pivot } =
     let
