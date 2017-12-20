@@ -1,9 +1,9 @@
 module Controller exposing (..)
 
-import Html exposing (Html, text, div)
-import Keyboard exposing (presses, KeyCode)
+import Html exposing (Html)
+import Keyboard exposing (KeyCode)
 import Collage exposing (..)
-import Element exposing (Element, toHtml)
+import Element exposing (toHtml)
 import Tetromino exposing (Tetromino)
 
 
