@@ -5,6 +5,7 @@ import Keyboard exposing (KeyCode)
 import Collage exposing (..)
 import Element exposing (toHtml)
 import Tetromino exposing (Tetromino)
+import Time exposing (Time, second)
 
 
 type alias Coordinates =
@@ -42,6 +43,7 @@ init =
 
 type Msg
     = PressDown KeyCode
+    | Tick Time
 
 
 keyToDirection : Int -> Direction
@@ -66,6 +68,13 @@ keyToDirection key =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Tick _ ->
+            let
+                falling =
+                    Tetromino.shift ( -1, 0 ) model.falling
+            in
+                ( { model | falling = falling }, Cmd.none )
+
         PressDown k ->
             let
                 direction =
@@ -93,7 +102,10 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Keyboard.downs PressDown
+    Sub.batch
+        [ Keyboard.downs PressDown
+        , Time.every second Tick
+        ]
 
 
 view : Model -> Html Msg
@@ -111,6 +123,7 @@ view model =
         toHtml (collage screenWidth screenHeight [ fallingForm ])
 
 
+main : Program Never Model Msg
 main =
     Html.program
         { init = init
