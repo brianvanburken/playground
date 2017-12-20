@@ -44,30 +44,48 @@ type Msg
     = PressDown KeyCode
 
 
+keyToDirection : Int -> Direction
+keyToDirection key =
+    case key of
+        37 ->
+            Left
+
+        38 ->
+            Up
+
+        39 ->
+            Right
+
+        40 ->
+            Down
+
+        _ ->
+            None
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         PressDown k ->
             let
+                direction =
+                    keyToDirection k
+
                 falling =
-                    case k of
-                        37 ->
-                            -- Left
+                    case direction of
+                        Left ->
                             Tetromino.shift ( 0, -1 ) model.falling
 
-                        38 ->
-                            -- Up
+                        Up ->
                             Tetromino.rotate model.falling
 
-                        39 ->
-                            -- Right
+                        Right ->
                             Tetromino.shift ( 0, 1 ) model.falling
 
-                        40 ->
-                            -- Down
+                        Down ->
                             Tetromino.shift ( -1, 0 ) model.falling
 
-                        _ ->
+                        None ->
                             model.falling
             in
                 ( { model | falling = falling }, Cmd.none )
