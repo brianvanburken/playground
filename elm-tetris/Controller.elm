@@ -2,7 +2,7 @@ module Controller exposing (..)
 
 import Html exposing (Html)
 import Keyboard exposing (KeyCode)
-import Collage exposing (..)
+import Collage exposing (collage)
 import Element exposing (toHtml)
 import Tetromino exposing (Tetromino)
 import Time exposing (Time, second)
