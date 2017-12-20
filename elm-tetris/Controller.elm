@@ -2,24 +2,42 @@ module Controller exposing (..)
 
 import Html exposing (Html, text, div)
 import Keyboard exposing (presses, KeyCode)
+import Collage exposing (..)
+import Element exposing (Element, toHtml)
+import Tetromino exposing (Tetromino)
 
 
-main =
-    Html.program
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }
+type alias Coordinates =
+    ( Int, Int )
+
+
+type Input
+    = Rotate
+    | Shift Coordinates
+
+
+type Direction
+    = Up
+    | Down
+    | Left
+    | Right
+    | None
 
 
 type alias Model =
-    String
+    { falling : Tetromino
+    }
+
+
+defaultModel : Model
+defaultModel =
+    { falling = Tetromino.z
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( "", Cmd.none )
+    ( defaultModel, Cmd.none )
 
 
 type Msg
@@ -31,19 +49,28 @@ update msg model =
     case msg of
         PressDown k ->
             let
-                code =
-                    if (k == 37) then
-                        "Left"
-                    else if (k == 38) then
-                        "Up"
-                    else if (k == 39) then
-                        "Right"
-                    else if (k == 40) then
-                        "Down"
-                    else
-                        "Not an arrow"
+                falling =
+                    case k of
+                        37 ->
+                            -- Left
+                            Tetromino.shift ( 0, -1 ) model.falling
+
+                        38 ->
+                            -- Up
+                            Tetromino.rotate model.falling
+
+                        39 ->
+                            -- Right
+                            Tetromino.shift ( 0, 1 ) model.falling
+
+                        40 ->
+                            -- Down
+                            Tetromino.shift ( -1, 0 ) model.falling
+
+                        _ ->
+                            model.falling
             in
-                ( code, Cmd.none )
+                ( { model | falling = falling }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -54,10 +81,22 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
     let
-        str =
-            if model == "" then
-                "Press a key"
-            else
-                "You pressed: " ++ (toString model)
+        screenWidth =
+            800
+
+        screenHeight =
+            600
+
+        fallingForm =
+            Tetromino.toForm model.falling
     in
-        Html.text str
+        toHtml (collage screenWidth screenHeight [ fallingForm ])
+
+
+main =
+    Html.program
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
