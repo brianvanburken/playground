@@ -5,7 +5,8 @@ import Color exposing (Color)
 
 
 type alias Block =
-    Color
+    { color : Color
+    }
 
 
 size : Float
@@ -22,4 +23,4 @@ toForm block =
         border =
             outlined (solid Color.black) shape
     in
-        group [ filled block shape, border ]
+        group [ filled block.color shape, border ]
