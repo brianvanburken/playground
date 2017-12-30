@@ -1,6 +1,6 @@
 module Exercise01 exposing (decoder)
 
-import Json.Decode exposing (Decoder, fail)
+import Json.Decode exposing (Decoder, int)
 
 
 {- So, you're mystified by JSON decoding in Elm? No worries, let's try and make
@@ -25,7 +25,7 @@ import Json.Decode exposing (Decoder, fail)
 
 decoder : Decoder Int
 decoder =
-    fail "I always fail!"
+    int
 
 
 
