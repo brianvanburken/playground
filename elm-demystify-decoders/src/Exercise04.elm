@@ -1,6 +1,6 @@
 module Exercise04 exposing (decoder)
 
-import Json.Decode exposing (Decoder, fail)
+import Json.Decode exposing (Decoder, field, int)
 
 
 {- Something very powerful about decoding in Elm, is that it decouples the
@@ -28,7 +28,7 @@ import Json.Decode exposing (Decoder, fail)
 
 decoder : Decoder Int
 decoder =
-    fail "tum tum tummmmm"
+    field "age" int
 
 
 
