@@ -1,9 +1,9 @@
-module.exports = function (config) {
-  const logger = require('./initializers/logger')(config);
-  const router = require('./initializers/router')(config);
+module.exports = async function (config) {
+  const path = './initializers/';
 
-  return {
-    logger,
-    router
-  };
+  const logger = require(`${path}bunyan`)(config);
+  const router = require(`${path}express`)(config, logger);
+  const database = await require(`${path}mongodb`)(config, logger);
+
+  return { logger, router, database };
 }
