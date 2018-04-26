@@ -41,3 +41,15 @@ c) `λmnp.mn` => false, it equal `λmnp.pm` to be valid
 `(λw.λv.w)(z)z` => replace `c` with `(λw.λv.w)` as argument (since `c` is called with `zz` with the expression `czz`)\
 `(λv.z)(z) z` => replace `w` with `z` as argument\
 `z` => since the body returns `z` we can reduce it further to `z`
+
+2. `(λx.λy.xyy)(λa.a)b`
+
+3. `(λy.y)(λx.xx)(λz.zq)`
+
+4. `(λz.z)(λz.zz)(λz.zy)` Hint: alpha equivalence
+
+5. `(λx.λy.xyy)(λy.y)y`
+
+6. `(λa.aa)(λb.ba)c`
+
+7. `(λxyz.xz(yz))(λx.z)(λx.a)`
