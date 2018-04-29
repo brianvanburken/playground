@@ -48,3 +48,22 @@ a) `f x = x / 2 + 9`\
 b) `f x = x / (2 + 9)`\
 Answer: Yes, the parenthesis change the result.\
 The difference is that at `a` the variable `x` is divided first due to higher precedence while at `b` the addition is first evaluated.
+
+## Exercises: Heal the Sick
+The following code samples are broken and won’t compile. The first two are as you might enter into the REPL; the third is from a source file. Find the mistakes and fix them so that they will.
+
+1. `let area x = 3. 14 * (x * x)` => space between `3.` and `1`. Fixed: `let area x = 3.14 * (x * x)`
+2. `let double x = b * 2` => the variable `x` is not used and instead a random variable `b` appears in the body; `b` should be `x`. Fixed: `let double x = x * 2`
+3. 
+```haskell
+x = 7
+ y = 10
+f = x + y
+```
+Anwer: problem is that `y` is indented incorrectly. It should be on the same level as `x`.
+Fixed:
+```haskell
+x = 7
+y = 10
+f = x + y
+```
