@@ -25,3 +25,26 @@ let circleArea width = 3.14 * (width * width)
 ```haskell
 let circleArea width = pi * (width * width)
 ```
+
+## Exercises: Parentheses and Association
+Below are some pairs of functions that are alike except for parenthe- sization. Read them carefully and decide if the parentheses change the results of the function. Check your work in GHCi.
+
+1. \
+a) `8 + 7 * 9`\
+b) `(8 + 7) * 9`\
+\
+Answer: Yes, the parenthesis change the result.\
+The difference is that at `a` it reduces down to `8 + 63`, while `b` reduces to `15 * 9`.\
+Here the parenthesis overrules the higher precedence multiplication has over addition.
+
+2. \
+a) `perimeter x y = (x * 2) + (y * 2)`\
+b) `perimeter x y = x * 2 + y * 2`\
+\
+Answer: No, due to the higher precedence of multiplication over addition the results will exactly be the same.
+
+3. \
+a) `f x = x / 2 + 9`\
+b) `f x = x / (2 + 9)`\
+Answer: Yes, the parenthesis change the result.\
+The difference is that at `a` the variable `x` is divided first due to higher precedence while at `b` the addition is first evaluated.
