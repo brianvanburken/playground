@@ -44,13 +44,13 @@ c) `\mnp.mn` => false, it equal `\mnp.pm` to be valid
 
 2. `(\x.\y.xyy)(\a.a)b` => original with two argument `(\a.a)` and `b` \
 `(\y.(\a.a)yy)b` => substitute `x` with first argument\
-`(\a.a)bb` => substitute `y` with `b`
+`(\a.a)bb` => substitute `y` with `b`\
 `bb` => since `a` is just returned we can reduce the body of two `a`'s to two `b`'s
 
-3. `(\y.y)(\x.xx)(\z.zq)` => original with two lambda expressions as arguments
-`(\x.xx)(\z.zq)` => subtitude `y` in the body for the first argument
-`(\z.zq)(\z.zq)` => subtitude `x` with the argument
-`(\z.zq)(q)` => replace `z` with the argument
+3. `(\y.y)(\x.xx)(\z.zq)` => original with two lambda expressions as arguments\
+`(\x.xx)(\z.zq)` => subtitude `y` in the body for the first argument\
+`(\z.zq)(\z.zq)` => subtitude `x` with the argument\
+`(\z.zq)(q)` => replace `z` with the argument\
 `qq` => replace the `z` with argument `q`
 
 4. `(\z.z)(\z.zz)(\z.zy)` => original\
