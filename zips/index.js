@@ -1,5 +1,9 @@
+console.time("total");
+
 const fs = require('fs');
 const archiver = require('archiver');
+
+console.time("archiving");
 
 // create a file to stream archive data to.
 const output = fs.createWriteStream(__dirname + '/output.zip');
@@ -10,6 +14,8 @@ const archive = archiver('zip', {
 output.on('close', function() {
   console.log(archive.pointer() + ' total bytes');
   console.log('archiver has been finalized and the output file descriptor has closed.');
+  console.timeEnd("archiving");
+  console.timeEnd("total");
 });
 
 archive.on('error', function(err) {
