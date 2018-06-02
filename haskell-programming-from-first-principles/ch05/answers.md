@@ -89,3 +89,46 @@ b) `Ord a => a` => False\
 c) `Integer` => True, type is set for `a` so the return type will be the same. Since all arguments are given the return type is returned\
 d) `(Num a, Ord a) => a` => False\
 e) `a` => False
+
+## Exercises: Parametricity
+All you can do with a parametrically polymorphic value is pass or not pass it to some other expression. Prove that to yourself with these small demonstrations.
+
+1. Given the type a -> a, which is the type for id, attempt to make a function that terminates successfully that does something other than returning the same value. This is impossible, but you should try it anyway.\
+Answer: impossible
+
+2. We can get a more comfortable appreciation of parametricity by looking at a -> a -> a. This hypothetical function a -> a -> a has two–and only two–implementations. Write both possi- ble versions of a -> a -> a. After doing so, try to violate the constraints of parametrically polymorphic values we outlined above.\
+Answer: `f x y = x` and `f x y = y`
+
+3. Implement a -> b -> b. How many implementations can it have? Does the behavior change when the types of 𝑎 and 𝑏 change?\
+Answer: `f x y = y` thus only one implementation. If both were `Num` we could do more like addition. But we know nothing about the types so we can only return
+
+## Exercises: Apply Yourself
+Look at these pairs of functions. One function is unapplied, so the compiler will infer maximally polymorphic type. The second function has been applied to a value, so the inferred type signature may have become concrete, or at least less polymorphic. Figure out how the type would change and why, make a note of what you think the new inferred type would be and then check your work in GHCi.
+
+1.
+```haskell
+-- Type signature of general function
+(++) :: [a] -> [a] -> [a]
+-- How might that change when we apply
+-- it to the following value?
+myConcat x = x ++ " yo"
+```
+Answer: change because myConcat has already a value filled in from which the type\
+could be inferred. So `myConcat :: [Char] -> [Char]`
+
+2.
+```haskell
+-- General function
+(*) :: Num a => a -> a -> a
+-- Applied to a value
+myMult x = (x / 3) * 5
+```
+Answer: because `(/)` works with factorials the `(*)` becomes more specific
+
+3.
+```haskell
+take :: Int -> [a] -> [a]
+myTake x = take x "hey you"
+```
+Answer: since there is no partial application the whole take is return with `a` filled\
+in. The `a` is replaced with `Char` since `String` is a list of chars.
