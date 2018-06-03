@@ -132,3 +132,96 @@ myTake x = take x "hey you"
 ```
 Answer: since there is no partial application the whole take is return with `a` filled\
 in. The `a` is replaced with `Char` since `String` is a list of chars.
+
+4.
+```haskell
+(>) :: Ord a => a -> a -> Bool
+myCom x = x > (length [1..10])
+```
+Answer: here `a` becomes an `Int` because `length` returns an `Int`. So the signature becomes `myCom :: Int -> Bool`
+
+5.
+```haskell
+(<) :: Ord a => a -> a -> Bool
+myAlph x = x < 'z'
+```
+Answer: same case as with question 4. Since the right hand side is filled with the char `z` it wil resolve to `myAlph :: Char -> Bool` because `a` must be the same for `(<)`
+
+## Chapter Exercises
+Welcome to another round of “Knowing is not enough; we must apply.”
+
+Multiple choice
+1. A value of type [a] is\
+a) a list of alphabetic characters => False, `a` could be anything!\
+b) a list of lists => False, `a` could be anything since the type is not known\
+c) a list whose elements are all of some type 𝑎 => True\
+d) a list whose elements are all of different types => False, all must be the same type
+
+2. A function of type [[a]] -> [a] could\
+a) take a list of strings as an argument => True, a string is a list of chars so `a` could be subtituted with `Char` \
+b) transform a character into a string => False, then it would only take `a` and place it in a list. So: `a -> [a]`\
+c) transform a string into a list of strings => False\
+d) take two arguments => False, it only takes one argument. A list of list with the same type
+
+3. A function of type [a] -> Int -> a\
+a) takes one argument => False, it takes two argument. List of `a` and an `Int`\
+b) returns one element of type 𝑎 from a list => True\
+c) must return an Int value => False, it returns anything that has the same type as `a`. So `Int` is possible but not a must\
+d) is completely fictional => False, the type for `a` is open so it could be anything
+
+4. A function of type (a, b) -> a\
+a) takes a list argument and returns a Char value => False, there is no explicit type defined. And first argument is a tuple not a list\
+b) has zero arguments => False, it has one argument a tuple with two values\
+c) takes a tuple argument and returns the first value => True, it receives a tuple and since the first `a` is also returned this is possible\
+d) requires that 𝑎 and 𝑏 be of different types => False, both could be different but also the same
+
+### Determine the type
+For the following functions, determine the type of the specified value. We suggest you type them into a file and load the contents of the file in GHCi. In all likelihood, it initially will not have the polymorphic types you might expect due to the monomorphism restriction. That means that top-level declarations by default will have a concrete type if any can be determined. You can fix this by setting up your file like so:
+```haskell
+{-# LANGUAGE NoMonomorphismRestriction #-}
+module DetermineTheType where
+-- simple example
+example = 1
+````
+If you had not included the NoMonomorphismRestriction extension, example would have had the type Integer instead of Num a => a. Do your best to determine the most polymorphic type an expression could have in the following exercises.
+
+1. All function applications return a value. Determine the value returned by these function applications and the type of that value.\
+a) `(* 9) 6` => `54 :: Num a => a -> a`\
+b) `head [(0,"doge"),(1,"kitteh")]` => `(0, "doge") :: Num a => (a, [Char])`\
+c) `head [(0 :: Integer ,"doge"),(1,"kitteh")]` => `(0, "doge") :: (Integer, [Char])`\
+d) `if False then True else False` => `False :: Bool`\
+e) `length [1, 2, 3, 4, 5]` => `5 :: Int`\
+f) `(length [1, 2, 3, 4]) > (length "TACOCAT")` => `False :: Bool`\
+
+2. Given
+```haskell
+x = 5
+y = x + 5
+w = y * 10
+```
+What is the type of `w`? `Num a => a`
+
+3. Given
+```haskell
+x = 5
+y = x + 5
+z y = y * 10
+```
+What is the type of `z`? `Num a => a -> a`
+
+4. Given
+```haskell
+x = 5
+y = x + 5
+f = 4 / y
+```
+What is the type of `f`? `Factorial a => a`
+
+5. Given
+```haskell
+x = "Julie"
+y = " <3 "
+z = "Haskell"
+f = x ++ y ++ z
+```
+What is the type of f? `[Char]`
