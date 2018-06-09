@@ -225,3 +225,215 @@ z = "Haskell"
 f = x ++ y ++ z
 ```
 What is the type of f? `[Char]`
+
+## Does it compile?
+
+For each set of expressions, figure out which expression, if any, causes the compiler to squawk at you (n.b. we do not mean literal squawking) and why. Fix it if you can.
+
+1. ```haskell
+bigNum = (^) 5 $ 10
+wahoo = bigNum $ 10
+```
+
+Does not compile because bigNum is already a solved expression. Applying 10 to it does not work.
+To fix it you can pass bigNum to a arithmetic function like (+) before passing in the 10
+
+2. ```haskell
+x = print
+y = print "woohoo!"
+z = x "hello world"
+```
+Compiles.
+
+3. ```haskell
+a = (+)
+b = 5
+c = b 10
+d = c 200
+```
+Does not compile. Since the expression at `c` applies 10 to 5 as a value. Values cannot be applied to values, only to functions.
+To fix it you can replace `b` in `c = b 10` with `a`.
+
+4. ```haskell
+a = 12 + b
+b = 10000 * c
+```
+Does not compile. `c` does not exist and thus it fails. To fix it you need to define `c`.
+
+## Type variable or specific type constructor?
+1. You will be shown a type declaration, and you should categorize each type. The choices are a fully polymorphic type variable, constrained polymorphic type variable, or concrete type con- structor.
+```haskell
+f :: Num a => a -> b -> Int -> Int
+--           [0]  [1]   [2]    [3]
+```
+Here, the answer would be: constrained polymorphic (Num) ([0]), fully polymorphic ([1]), and concrete ([2] and [3]).
+
+
+2. Categorize each component of the type signature as described in the previous example.
+```haskell
+f :: zed -> Zed -> Blah
+--   (a)    (b)    (c)
+```
+a) fully polymorphic
+b) concreet
+c) concreet
+
+3. Categorize each component of the type signature
+```
+f :: Enum b => a -> b -> C
+--            (a)  (b)  (c)
+```
+a) fully polymorphic
+b) constrained polymorphic
+c) concreet
+
+4. Categorize each component of the type signature
+```
+f :: f -> g -> C
+--  (a)  (b)  (c)
+```
+a) fully polymorphic
+b) fully polymorphic
+c) concreet
+
+## Write a type signature
+
+For the following expressions, please add a type signature. You should be able to rely on GHCi type inference to check your work, although you might not have precisely the same answer as GHCi gives (due to polymorphism, etc).
+
+1. While we haven’t fully explained this syntax yet, you’ve seen it in Chapter 2 and as a solution to an exercise in Chapter 4. This syntax is a way of destructuring a single element of a list by pattern matching.
+```haskell
+functionH :: [a] -> a
+functionH (x:_) = x
+```
+
+2. ```haskell
+functionC :: Ord a => a -> a -> Bool
+functionC x y =
+    if (x > y) then True else False
+```
+
+3. ```haskell
+functionS :: (a, b) -> b
+functionS (x, y) = y
+```
+
+## Given a type, write the function
+1. ```haskell
+i :: a -> a
+i x = x
+```
+
+2. ```haskell
+c :: a -> b -> a
+c x _ = x
+```
+
+3.
+```haskell
+c'' :: b -> a -> b
+c'' x _ = x
+````
+
+4. ```haskell
+c' :: a -> b -> b
+c' _ y = y
+```
+
+5. ```haskell
+r :: [a] -> [a]
+r x = x
+```
+
+6. ```haskell
+co :: (b -> c) -> (a -> b) -> a -> c
+co bToC aToB x = (bToC (aToB x))
+```
+
+7. ```haskell
+a :: (a -> c) -> a -> a
+a _ x = x
+```
+
+8. ```haskell
+a' :: (a -> b) -> a -> b
+a' aToB = aToB
+```
+
+## Fix it
+
+1. and 2. ```haskell
+module sing where
+
+fstString :: [Char] -> [Char] -- replaced ++ with ->
+fstString x = x ++ " in the rain"
+
+sndString :: [Char] -> [Char] -- wrap Char with []
+sndString x = x ++ " over the rainbow"
+
+sing = if (x < y) then fstString x else sndString y -- replace else with or and flip condition
+    where x = "Singin" -- Fix indent
+          y = "Somewhere" -- Rename x to y
+```
+
+3. ```haskell
+module Arith3Broken where
+
+main :: IO ()
+main = do -- lowercase m
+    print (1 + 2) -- wrap expression with parenthesis
+    putStrLn "10" -- convert 10 to a string
+    print (negate (-1)) -- wrap -1 with parenthesis to make it negative and not partial application
+    print ((+) 0 blah)
+        where blah = negate 1
+```
+
+## Type-Kwon-Do
+
+1. ```haskell
+f :: Int -> String
+f = undefined
+
+g :: String -> Char
+g = undefined
+
+h :: Int -> Char
+h x = (g (f x))
+```
+
+2. ```haskell
+data A
+data B
+data C
+
+q :: A -> B
+q = undefined
+
+w :: B -> C
+w = undefined
+
+e :: A -> C
+e x = (w (q x))
+```
+
+3. ```haskell
+data X
+data Y
+data Z
+
+xz :: X -> Z
+xz = undefined
+
+yz :: Y -> Z
+yz = undefined
+
+xform :: (X, Y) -> (Z, Z)
+xform (x, y) = ((xz x), (yz y))
+```
+
+4. ```haskell
+munge :: (x -> y)
+      -> (y -> (w, z))
+      -> x
+      -> w
+munge xToY yToWz x = fst $ yToWz $ xToY x
+```
