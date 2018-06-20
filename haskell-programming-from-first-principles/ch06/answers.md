@@ -73,3 +73,36 @@ Next, take a look at the following code examples and try to decide if they will 
 2. `compare (3 * 4) (3 * 5)` => True, both have the `Ord` typeclass implemented. Thus it works\
 3. `compare "Julie" True` => False, not the same concreet type. Though both do implement `Ord`, they're both different
 4. `(5 + 3) > (3 + 6)` => True, both implement `Ord` needed for `(>)`
+
+## Chapter Exercises
+Multiple choice
+1. The Eq class
+a) includes all types in Haskell => False, IO is not comparable\
+b) is the same as the Ord class => False, Ord is ordering and that is different to comparing\
+c) makes equality tests possible => True, Eq stands for equality\
+d) only includes numeric types => False, String also has Eq
+
+2. The typeclass Ord
+a) allows any two values to be compared => True, you need to compare to say which one is lesser or greater than for ordering\
+b) is a subclass of Eq => True, you need equality to compare\
+c) is a superclass of Eq => False, is a subclass\
+d) has no instance for Bool => False, Ord is implemented for Bool
+
+3. Suppose the typeclass Ord has an operator >. What is the type of >?
+a) `Ord a => a -> a -> Bool` => True\
+b) `Ord a => Int -> Bool` => False\
+c) `Ord a => a -> Char` => False\
+d) `Ord a => Char -> [Char]` => False
+
+4. In `x = divMod 16 12`
+a) the type of 𝑥 is Integer => False, we don't know the concreet type of 16 or 12\
+b) the value of 𝑥 is undecidable => False, it returns a tuple\
+c) the type of 𝑥 is a tuple => True, with the first item the result and second the remainder\
+d) `𝑥` is equal to `12 / 16` => False, `(/)` does not return a tuple
+
+5. The typeclass Integral includes
+a) Int and Integer numbers => True\
+b) integral, real, and fractional numbers => False, not fractional\
+c) Schrodinger’s cat => True && False (joke) it is False\
+d) only positive numbers => False
+
