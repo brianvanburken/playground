@@ -65,3 +65,11 @@ instance (Eq a, Eq b) => Eq (EitherOr a b) where
     (==) (Goodbye x) (Goodbye x') = x == x'
     (==) _ _ = False
 ```
+
+## Exercises: Will They Work?
+Next, take a look at the following code examples and try to decide if they will work, what result they will return if they do, and why or why not (be sure, as always, to test them in your REPL once you have decided on your answer):
+
+1. `max (length [1, 2, 3]) (length [8, 9, 10, 11, 12])` => True, both length return `Int` which implements `Ord` typeclass that is needed for `max`\
+2. `compare (3 * 4) (3 * 5)` => True, both have the `Ord` typeclass implemented. Thus it works\
+3. `compare "Julie" True` => False, not the same concreet type. Though both do implement `Ord`, they're both different
+4. `(5 + 3) > (3 + 6)` => True, both implement `Ord` needed for `(>)`
