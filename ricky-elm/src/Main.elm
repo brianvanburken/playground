@@ -1,6 +1,5 @@
 module Main exposing (main)
 
-import Char
 import Html exposing (Html)
 import Http
 import Parser exposing ((|.), (|=), Count(..), Parser, int, keep, oneOrMore, succeed, symbol)
@@ -8,7 +7,11 @@ import RemoteData exposing (RemoteData(..), WebData)
 
 
 type alias Line =
-    { hour : String, minute : String, seconds : String, text : String }
+    { hour : Int
+    , minute : Int
+    , seconds : Int
+    , text : String
+    }
 
 
 type alias Model =
@@ -32,11 +35,11 @@ parseLine : Parser Line
 parseLine =
     succeed Line
         |. symbol "["
-        |= keep oneOrMore Char.isDigit
+        |= int
         |. symbol ":"
-        |= keep oneOrMore Char.isDigit
+        |= int
         |. symbol "."
-        |= keep oneOrMore Char.isDigit
+        |= int
         |. symbol "]"
         |= keep oneOrMore (\_ -> True)
 
@@ -51,7 +54,7 @@ parseLyrics rawLyrics =
                     line
 
                 Err error ->
-                    Line "0" "0" "0" (toString error)
+                    Line 0 0 0 (toString error)
 
         lines =
             rawLyrics
@@ -86,7 +89,7 @@ view model =
 
 viewLine : Line -> Html Msg
 viewLine line =
-    Html.text (line.hour ++ ":" ++ line.minute ++ ":" ++ line.seconds ++ " = " ++ line.text)
+    Html.text (toString line.hour ++ ":" ++ toString line.minute ++ ":" ++ toString line.seconds ++ " = " ++ line.text)
         |> List.singleton
         |> Html.p []
 
