@@ -49,13 +49,21 @@ parseLine : Parser Line
 parseLine =
     succeed Line
         |. symbol "["
+        |. optionalZero
         |= int
         |. symbol ":"
+        |. optionalZero
         |= int
         |. symbol ":"
+        |. optionalZero
         |= int
         |. symbol "]"
         |= keep oneOrMore anything
+
+
+optionalZero : Parser ()
+optionalZero =
+    oneOf [ symbol "0", succeed () ]
 
 
 anything : Char -> Bool
@@ -78,31 +86,12 @@ parseLyrics rawLyrics =
         lines =
             rawLyrics
                 |> String.split "\n"
-                |> List.map fixString
+                |> List.map (replace "." ":")
+                -- parser won't handle integers separated with . well
                 |> List.map (Parser.run parseLine)
                 |> List.map unpackResult
     in
     lines
-
-
-
--- needed since parser doesn't accept double zero
-
-
-fixString : String -> String
-fixString string =
-    string
-        |> replace "00" "0"
-        |> replace "01" "1"
-        |> replace "02" "2"
-        |> replace "03" "3"
-        |> replace "04" "4"
-        |> replace "05" "5"
-        |> replace "06" "6"
-        |> replace "07" "7"
-        |> replace "08" "8"
-        |> replace "09" "9"
-        |> replace "." ":"
 
 
 init : ( Model, Cmd Msg )
