@@ -12,7 +12,7 @@ import Time exposing (Time)
 
 
 type alias Line =
-    { minutes : Int, seconds : Int, miliseconds : Int, text : String }
+    { minutes : Int, seconds : Int, milliseconds : Int, text : String }
 
 
 type alias Model =
