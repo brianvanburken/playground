@@ -1,0 +1,20 @@
+  <!doctype html>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.9.1/tachyons.min.css"/>
+  <body>
+    <div></div>
+    <script src="elm.js"></script>
+    <script>
+      const app = Elm.Main.embed(document.querySelector("div"));
+
+      app.ports.goToTime.subscribe(function (time) {
+        const audio = document.querySelector("audio");
+        audio.currentTime = time;
+        app.ports.setCurrentTime.send(audio.currentTime || 0);
+      });
+
+      app.ports.getCurrentTime.subscribe(function () {
+        const audio = document.querySelector("audio");
+        app.ports.setCurrentTime.send(audio.currentTime || 0);
+      });
+    </script>
+  </body>
