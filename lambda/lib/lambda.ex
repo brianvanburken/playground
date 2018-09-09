@@ -38,20 +38,16 @@ defmodule Lambda do
   end
 
   defp get_function_zip(name) do
-    zip(name <> ".zip", [name <> ".js"])
+    [ name ]
+    |> zip(name <> ".zip")
     |> encode
   end
 
-  defp zip(archive_name, dirs) when is_list(dirs) do
-    dirs_list = dirs |> Enum.map(&String.to_charlist/1)
-    Zip.create(String.to_charlist(archive_name), dirs_list)
+  defp zip(dirs, archive_name) when is_list(dirs) do
+    dirs_list = dirs |> Enum.map(&String.to_char_list/1)
+    Zip.create(String.to_charlist(archive_name), dirs_list, [:memory])
   end
 
-  defp encode({:ok, file}) do
-    file
-    |> File.read!()
-    |> Base.encode64()
-  end
-
-  defp encode(_), do: raise("Zipping went wrong")
+  defp encode({:ok, {_, blob}}), do: Base.encode64(blob)
+  defp encode({:error, error}), do: raise("Zipping went wrong: " <> Atom.to_string(error))
 end
