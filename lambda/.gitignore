@@ -24,3 +24,5 @@ lambda-*.tar
 
 greetingsOnDemand.zip
 output.txt
+
+node_modules

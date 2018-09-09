@@ -1,3 +1,5 @@
+const cowsay = require("cowsay");
+
 exports.handler = (event, context, callback) => {
     const name = 'name' in event
         ?  event['name']
@@ -5,6 +7,7 @@ exports.handler = (event, context, callback) => {
     const greeting = process.env.GREETING
         ? process.env.GREETING
         : 'Hello'
-    const greetings = greeting + ' ' + name + '!';
-    callback(null, greetings);
+    const text = greeting + ' ' + name + '!';
+    const say = cowsay.say({ text });
+    callback(null, say);
 };
