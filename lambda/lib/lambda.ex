@@ -24,6 +24,11 @@ defmodule Lambda do
       Code: %{
         ZipFile: zipblob
       },
+      Environment: %{
+        Variables: %{
+          GREETING: "Hola"
+        }
+      },
       FunctionName: name,
       Handler: name <> ".handler",
       Runtime: "nodejs8.10",
