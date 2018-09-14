@@ -1,0 +1,34 @@
+<h2>Show poll</h2>
+<input type="hidden" id="poll-id" value="<%= @poll.id %>">
+
+<div class="col-xs-8">
+  <ul>
+    <li>
+      <strong>Title:</strong>
+      <%= @poll.title %>
+    </li>
+
+    <li>
+      <strong>Closed:</strong>
+      <span id="poll-closed"><%= @poll.closed %></span>
+    </li>
+
+    <li>
+      <strong>Entries:</strong>
+      <ul>
+        <%= for entry <- @poll.entries do %>
+          <li class="entry" data-entry-id="<%= entry.id %>">
+            <span class="votes"><%= entry.votes %></span> votes:
+            <span class="title"><%= entry.title %></span>
+            <%= link "Vote", to: "#", class: "btn btn-info vote #{ if @poll.closed, do: "hidden" }" %>
+          </li>
+        <% end %>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div class="col-xs-4">
+  <div id="my-chart"></div>
+</div>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
