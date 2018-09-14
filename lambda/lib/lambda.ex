@@ -33,7 +33,7 @@ defmodule Lambda do
       Handler: name <> ".handler",
       Runtime: "nodejs8.10",
       Version: "0.0.1",
-      Role: "arn:aws:iam::095546587317:role/lambda_basic_execution"
+      Role: System.get_env("ROLE")
     }
   end
 
