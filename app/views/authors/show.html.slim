@@ -1,0 +1,13 @@
+p
+  strong Name:
+  = @author.name
+p
+  strong Biography:
+  = @author.biography
+p
+  strong> Tags:
+  = render @author.tags
+
+= link_to 'Edit', edit_author_path(@author)
+'|
+= link_to 'Back', authors_path

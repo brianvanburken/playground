@@ -1,0 +1,19 @@
+h1 Homepage
+table border="1"
+  thead
+    tr
+      th Title
+      th Type
+      th Content
+      th Author
+      th Published At
+      th Tags
+  tbody
+    - @literature.each do |literature|
+      tr
+        td = link_to literature.title, literature
+        td = literature.type
+        td = truncate literature.content
+        td = link_to literature.author_name, literature.author
+        td = literature.published_at
+        td = render literature.tags

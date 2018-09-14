@@ -1,0 +1,23 @@
+h1 Listing short stories
+
+table
+  thead
+    tr
+      th Title
+      th Short Description
+      th
+      th
+      th
+
+  tbody
+    - @short_stories.each do |short_story|
+      tr
+        td = short_story.title
+        td = short_story.short_description
+        td = link_to 'Show', short_story
+        td = link_to 'Edit', edit_short_story_path(short_story)
+        td = link_to 'Destroy', short_story, data: {:confirm => 'Are you sure?'}, :method => :delete
+
+br
+
+= link_to 'New Short Story', new_short_story_path

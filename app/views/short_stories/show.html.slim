@@ -1,0 +1,16 @@
+= link_to 'Edit', edit_short_story_path(@short_story)
+'|
+= link_to 'Back', short_stories_path
+
+p
+  strong Title:
+  = @short_story.title
+p
+  strong Short description:
+  = @short_story.short_description
+p
+  strong Content:
+  = @short_story.content
+p
+  strong> Tags:
+  = render @short_story.tags
