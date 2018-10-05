@@ -1,15 +1,14 @@
 port module Main exposing (main)
 
+import Browser
 import Cmd.Extra exposing (with)
 import Html exposing (Html)
 import Html.Attributes as Attribute
 import Html.Events as Event
 import Http
-import Parser exposing ((|.), (|=), Count(..), Parser, ignore, int, keep, keyword, map, oneOf, oneOrMore, succeed, symbol, zeroOrMore)
-import Regex exposing (HowMany(..))
+import Parser exposing (..)
 import RemoteData exposing (RemoteData(..), WebData)
-import String.Extra exposing (replace)
-import Time exposing (Time)
+import String
 
 
 type alias Line =
@@ -42,28 +41,20 @@ fetchLyrics =
 type Msg
     = FetchLyrics (WebData String)
     | PlayFromTimestamp Float
-    | CurrentTimestamp Time
+    | CurrentTimestamp Float
 
 
 parseLine : Parser Line
 parseLine =
     succeed Line
         |. symbol "["
-        |. optionalZero
-        |= int
+        |= digits
         |. symbol ":"
-        |. optionalZero
-        |= int
-        |. symbol ":"
-        |. optionalZero
-        |= int
+        |= digits
+        |. symbol "."
+        |= digits
         |. symbol "]"
-        |= keep oneOrMore anything
-
-
-optionalZero : Parser ()
-optionalZero =
-    oneOf [ symbol "0", succeed () ]
+        |= (getChompedString <| chompWhile anything)
 
 
 anything : Char -> Bool
@@ -71,31 +62,41 @@ anything _ =
     True
 
 
+digits : Parser Int
+digits =
+    let
+        stringToInt =
+            String.toInt
+                >> Maybe.withDefault 0
+                >> succeed
+    in
+    getChompedString (chompWhile Char.isDigit)
+        |> andThen stringToInt
+
+
 parseLyrics : String -> List Line
 parseLyrics rawLyrics =
     let
-        unpackResult : Result Parser.Error Line -> Line
+        unpackResult : Result (List DeadEnd) Line -> Line
         unpackResult res =
             case res of
                 Ok line ->
                     line
 
-                Err error ->
-                    Line 0 0 0 (toString error)
+                Err _ ->
+                    Line 0 0 0 ""
 
         lines =
             rawLyrics
                 |> String.split "\n"
-                |> List.map (replace "." ":")
-                -- parser won't handle integers separated with . well
                 |> List.map (Parser.run parseLine)
                 |> List.map unpackResult
     in
     lines
 
 
-init : ( Model, Cmd Msg )
-init =
+init : () -> ( Model, Cmd Msg )
+init _ =
     ( { lyrics = [], rawLyrics = NotAsked, currentTime = 0.0 }, fetchLyrics )
 
 
@@ -109,7 +110,7 @@ view model =
             Html.text "Loading."
 
         Failure err ->
-            Html.text ("Error: " ++ toString err)
+            Html.text "Error: could not download lyrics."
 
         Success _ ->
             Html.div []
@@ -144,7 +145,7 @@ viewLine currentTime line =
 
         cssClass =
             if currentTime > lineTime then
-                "pointer light-gray"
+                "pointer gray"
 
             else
                 "pointer black"
@@ -160,11 +161,11 @@ viewLine currentTime line =
 viewTimestamp : Line -> String
 viewTimestamp { minutes, seconds, milliseconds } =
     "["
-        ++ toString minutes
+        ++ String.fromInt minutes
         ++ ":"
-        ++ toString seconds
+        ++ String.fromInt seconds
         ++ "."
-        ++ toString milliseconds
+        ++ String.fromInt milliseconds
         ++ "]"
 
 
@@ -215,9 +216,9 @@ updateCurrentTime time model =
     { model | currentTime = time }
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-    Html.program
+    Browser.element
         { init = init
         , update = update
         , view = view

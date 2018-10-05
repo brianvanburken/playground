@@ -4,7 +4,9 @@
     <div></div>
     <script src="elm.js"></script>
     <script>
-      const app = Elm.Main.embed(document.querySelector("div"));
+      const app = Elm.Main.init({
+        node: document.querySelector("div")
+      });
       let audio = null;
 
       app.ports.initSubscription.subscribe(() => {
