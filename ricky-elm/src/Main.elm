@@ -1,5 +1,6 @@
 port module Main exposing (main)
 
+import Cmd.Extra exposing (with)
 import Html exposing (Html)
 import Html.Attributes as Attribute
 import Html.Events as Event
@@ -22,13 +23,13 @@ type alias Model =
     }
 
 
-port goToTime : Float -> Cmd msg
+port playFromTimestamp : Float -> Cmd msg
 
 
-port setCurrentTime : (Float -> msg) -> Sub msg
+port currentTimestamp : (Float -> msg) -> Sub msg
 
 
-port getCurrentTime : () -> Cmd msg
+port initSubscription : () -> Cmd msg
 
 
 fetchLyrics : Cmd Msg
@@ -40,9 +41,8 @@ fetchLyrics =
 
 type Msg
     = FetchLyrics (WebData String)
-    | SetCurrentTime Float
-    | GetCurrentTime Time
-    | GoToTime Float
+    | PlayFromTimestamp Float
+    | CurrentTimestamp Time
 
 
 parseLine : Parser Line
@@ -154,17 +154,17 @@ viewLine currentTime line =
         ++ line.text
         |> Html.text
         |> List.singleton
-        |> Html.p [ Attribute.class cssClass, Event.onClick (GoToTime lineTime) ]
+        |> Html.p [ Attribute.class cssClass, Event.onClick (PlayFromTimestamp lineTime) ]
 
 
 viewTimestamp : Line -> String
-viewTimestamp line =
+viewTimestamp { minutes, seconds, milliseconds } =
     "["
-        ++ toString line.minutes
+        ++ toString minutes
         ++ ":"
-        ++ toString line.seconds
+        ++ toString seconds
         ++ "."
-        ++ toString line.miliseconds
+        ++ toString milliseconds
         ++ "]"
 
 
@@ -182,28 +182,22 @@ update msg model =
                     model
                         |> updateLyrics lyrics
                         |> updateRawLyrics response
-                        |> withoutCmd
+                        |> with (initSubscription ())
 
                 _ ->
                     model
                         |> updateRawLyrics response
-                        |> withoutCmd
+                        |> with Cmd.none
 
-        SetCurrentTime time ->
+        CurrentTimestamp time ->
             model
                 |> updateCurrentTime time
-                |> withoutCmd
+                |> with Cmd.none
 
-        GetCurrentTime _ ->
-            ( model, getCurrentTime () )
-
-        GoToTime time ->
-            ( model, goToTime time )
-
-
-withoutCmd : Model -> ( Model, Cmd Msg )
-withoutCmd model =
-    ( model, Cmd.none )
+        PlayFromTimestamp time ->
+            model
+                |> updateCurrentTime time
+                |> with (playFromTimestamp time)
 
 
 updateLyrics : List Line -> Model -> Model
@@ -221,14 +215,6 @@ updateCurrentTime time model =
     { model | currentTime = time }
 
 
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch
-        [ Time.every Time.second GetCurrentTime
-        , setCurrentTime SetCurrentTime
-        ]
-
-
 main : Program Never Model Msg
 main =
     Html.program
@@ -237,3 +223,10 @@ main =
         , view = view
         , subscriptions = subscriptions
         }
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.batch
+        [ currentTimestamp CurrentTimestamp
+        ]

@@ -5,16 +5,21 @@
     <script src="elm.js"></script>
     <script>
       const app = Elm.Main.embed(document.querySelector("div"));
+      let audio = null;
 
-      app.ports.goToTime.subscribe(function (time) {
-        const audio = document.querySelector("audio");
-        audio.currentTime = time;
-        app.ports.setCurrentTime.send(audio.currentTime || 0);
+      app.ports.initSubscription.subscribe(() => {
+        requestAnimationFrame(() => {
+          audio = document.querySelector("audio");
+          if (audio) {
+            audio.ontimeupdate = () => {
+              app.ports.currentTimestamp.send(audio.currentTime || 0);
+            };
+          }
+        });
       });
 
-      app.ports.getCurrentTime.subscribe(function () {
-        const audio = document.querySelector("audio");
-        app.ports.setCurrentTime.send(audio.currentTime || 0);
+      app.ports.playFromTimestamp.subscribe((time) => {
+        if (audio) audio.currentTime = time;
       });
     </script>
   </body>
