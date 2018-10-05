@@ -8,5 +8,5 @@ Allows you sing along with the timeless classics.
 Just execute following command:
 
 ```bash
-elm-package install --yes && elm-live src/Main.elm --output=elm.js --open
+elm-package install --yes && npx elm-live src/Main.elm --output=elm.js --open
 ```

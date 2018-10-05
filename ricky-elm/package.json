@@ -1,0 +1,15 @@
+{
+  "name": "ricky-elm",
+  "version": "1.0.0",
+  "description": "Allows you sing along with the timeless classics.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "elm": "^0.19.0-bugfix2",
+    "elm-live": "^2.7.5"
+  }
+}
