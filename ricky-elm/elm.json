@@ -12,14 +12,12 @@
             "elm/html": "1.0.0",
             "elm/http": "1.0.0",
             "elm/parser": "1.1.0",
-            "elm/regex": "1.0.0",
-            "elm/time": "1.0.0",
-            "elm-community/string-extra": "4.0.0",
             "krisajenkins/remotedata": "5.0.0"
         },
         "indirect": {
             "elm/json": "1.0.0",
             "elm/url": "1.0.0",
+            "elm/time": "1.0.0",
             "elm/virtual-dom": "1.0.2"
         }
     },
