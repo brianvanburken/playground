@@ -16,7 +16,7 @@ defmodule DockerfileGenerator do
 
   defp generate_dockerfile() do
     """
-    FROM node:8.10
+    FROM lambci/lambda:nodejs8.10
 
     COPY . .
 
