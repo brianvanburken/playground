@@ -1,14 +1,12 @@
 module MyWords where
 
 myWord :: String -> [ String ]
-myWord str
+myWord = (splitOn ' ')
+
+splitOn :: Char -> String -> [ String ]
+splitOn char str
     | str == [] = []
-    | otherwise =  (takeWhile notSpace str) : myWord ((dropWhile isSpace . dropWhile notSpace) str)
+    | otherwise = (takeWhile (not . isChar char) str) : splitOn char ((dropWhile (isChar char) . dropWhile (not . isChar char)) str)
 
-notSpace :: Char -> Bool
-notSpace = not . isSpace
-
-isSpace :: Char -> Bool
-isSpace c
-    | c == ' ' = True
-    | otherwise = False
+isChar :: Char -> Char -> Bool
+isChar check = (== check)

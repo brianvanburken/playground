@@ -8,17 +8,15 @@ fourthSen = "Could frame thy fearful\
 sentences = firstSen ++ secondSen ++ thirdSen ++ fourthSen
 
 myLines :: String -> [String]
-myLines txt
-    | txt == [] = []
-    | otherwise = (takeWhile notNewLine txt) : myLines ((dropWhile isNewLine . dropWhile notNewLine) txt)
+myLines = (splitOn '\n')
 
-notNewLine :: Char -> Bool
-notNewLine = not . isNewLine
+splitOn :: Char -> String -> [ String ]
+splitOn char str
+    | str == [] = []
+    | otherwise = (takeWhile (not . isChar char) str) : splitOn char ((dropWhile (isChar char) . dropWhile (not . isChar char)) str)
 
-isNewLine :: Char -> Bool
-isNewLine c
-    | c == '\n' = True
-    | otherwise = False
+isChar :: Char -> Char -> Bool
+isChar check = (== check)
 
 shouldEqual =
        [ "Tyger Tyger, burning bright"
