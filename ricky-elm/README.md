@@ -8,5 +8,5 @@ Allows you sing along with the timeless classics.
 Just execute following command:
 
 ```bash
-npx elm-live src/Main.elm --output=elm.js --open
+npx elm-live src/Main.elm --open -- --output=elm.js
 ```

@@ -16,7 +16,7 @@ type alias Timestamp =
 
 
 type alias Lyric =
-    { startTime : Timestamp, text : String }
+    { endTime : Timestamp, startTime : Timestamp, text : String }
 
 
 type alias Model =
@@ -71,7 +71,7 @@ step entries =
 
 lyric : Parser Lyric
 lyric =
-    succeed Lyric
+    succeed (Lyric (Timestamp 0 0 0))
         |= timestamp
         |= text
 
@@ -176,17 +176,24 @@ getTime { minutes, seconds } =
 viewLyric : Float -> Lyric -> Html Msg
 viewLyric currentTime line =
     let
-        lineTime : Float
-        lineTime =
+        lineStartTime : Float
+        lineStartTime =
             getTime line.startTime
+
+        lineEndTime : Float
+        lineEndTime =
+            getTime line.endTime
 
         cssClass : String
         cssClass =
-            if currentTime > lineTime then
-                "pointer gray"
+            if currentTime > lineStartTime && currentTime < lineEndTime then
+                "black b"
+
+            else if currentTime > lineStartTime then
+                "gray"
 
             else
-                "pointer black"
+                "black"
 
         content : List (Html Msg)
         content =
@@ -196,8 +203,8 @@ viewLyric currentTime line =
             ]
     in
     Html.p
-        [ Attribute.class cssClass
-        , Event.onClick (PlayFromTimestamp lineTime)
+        [ Attribute.class ("pointer " ++ cssClass)
+        , Event.onClick (PlayFromTimestamp lineStartTime)
         ]
         content
 
@@ -219,6 +226,20 @@ viewTimestamp { minutes, seconds, milliseconds } =
         ++ "]"
 
 
+addEndTimes : List Lyric -> List Lyric
+addEndTimes lyrics =
+    case lyrics of
+        [] ->
+            []
+
+        [ current ] ->
+            [ current ]
+
+        current :: next :: rest ->
+            { current | endTime = next.startTime }
+                :: addEndTimes (next :: rest)
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -229,6 +250,7 @@ update msg model =
                         lyrics =
                             rawLyrics
                                 |> parseLyrics
+                                |> addEndTimes
                     in
                     model
                         |> updateLyrics lyrics
