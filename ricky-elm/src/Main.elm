@@ -184,16 +184,23 @@ viewLyric currentTime line =
         lineEndTime =
             getTime line.endTime
 
-        cssClass : String
-        cssClass =
-            if currentTime > lineStartTime && currentTime < lineEndTime then
-                "black b"
+        progressStyling : List (Html.Attribute Msg)
+        progressStyling =
+            if currentTime >= lineStartTime && currentTime < lineEndTime then
+                [ Attribute.style "font-weight" "bold" ]
 
             else if currentTime > lineStartTime then
-                "gray"
+                [ Attribute.style "color" "gray" ]
 
             else
-                "black"
+                []
+
+        attributes : List (Html.Attribute Msg)
+        attributes =
+            [ Event.onClick (PlayFromTimestamp lineStartTime)
+            , Attribute.style "cursor" "pointer"
+            ]
+                ++ progressStyling
 
         content : List (Html Msg)
         content =
@@ -202,11 +209,7 @@ viewLyric currentTime line =
             , Html.text line.text
             ]
     in
-    Html.p
-        [ Attribute.class ("pointer " ++ cssClass)
-        , Event.onClick (PlayFromTimestamp lineStartTime)
-        ]
-        content
+    Html.p attributes content
 
 
 viewTimestamp : Timestamp -> String
