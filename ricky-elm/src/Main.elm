@@ -11,12 +11,16 @@ import RemoteData exposing (RemoteData(..), WebData)
 import String
 
 
-type alias Line =
-    { minutes : Int, seconds : Int, milliseconds : Int, text : String }
+type alias Timestamp =
+    { minutes : Int, seconds : Int, milliseconds : Int }
+
+
+type alias Lyric =
+    { startTime : Timestamp, text : String }
 
 
 type alias Model =
-    { lyrics : List Line
+    { lyrics : List Lyric
     , rawLyrics : WebData String
     , currentTime : Float
     }
@@ -44,9 +48,37 @@ type Msg
     | CurrentTimestamp Float
 
 
-parseLine : Parser Line
-parseLine =
-    succeed Line
+lyricsParser : Parser (List Lyric)
+lyricsParser =
+    loop [] step
+
+
+step : List Lyric -> Parser (Step (List Lyric) (List Lyric))
+step entries =
+    let
+        finish entry_ next =
+            next (entry_ :: entries)
+    in
+    succeed finish
+        |= lyric
+        |= oneOf
+            [ succeed Loop
+                |. symbol "\n"
+            , succeed (Done << List.reverse)
+            , problem "I was expecting a list with newlines but got nothing"
+            ]
+
+
+lyric : Parser Lyric
+lyric =
+    succeed Lyric
+        |= timestamp
+        |= text
+
+
+timestamp : Parser Timestamp
+timestamp =
+    succeed Timestamp
         |. symbol "["
         |= digits
         |. symbol ":"
@@ -54,12 +86,31 @@ parseLine =
         |. symbol "."
         |= digits
         |. symbol "]"
-        |= (getChompedString <| chompWhile anything)
 
 
-anything : Char -> Bool
-anything _ =
-    True
+text : Parser String
+text =
+    oneOrMore (not << isNewLine)
+
+
+zeroOrMore : (Char -> Bool) -> Parser String
+zeroOrMore isOk =
+    succeed ()
+        |. chompWhile isOk
+        |> getChompedString
+
+
+oneOrMore : (Char -> Bool) -> Parser String
+oneOrMore isOk =
+    succeed ()
+        |. chompIf isOk
+        |. chompWhile isOk
+        |> getChompedString
+
+
+isNewLine : Char -> Bool
+isNewLine =
+    (==) '\n'
 
 
 digits : Parser Int
@@ -74,25 +125,10 @@ digits =
         |> andThen stringToInt
 
 
-parseLyrics : String -> List Line
-parseLyrics rawLyrics =
-    let
-        unpackResult : Result (List DeadEnd) Line -> Line
-        unpackResult res =
-            case res of
-                Ok line ->
-                    line
-
-                Err _ ->
-                    Line 0 0 0 ""
-
-        lines =
-            rawLyrics
-                |> String.split "\n"
-                |> List.map (Parser.run parseLine)
-                |> List.map unpackResult
-    in
-    lines
+parseLyrics : String -> List Lyric
+parseLyrics =
+    Parser.run lyricsParser
+        >> Result.withDefault []
 
 
 init : () -> ( Model, Cmd Msg )
@@ -115,7 +151,7 @@ view model =
         Success _ ->
             Html.div []
                 [ viewMp3
-                , Html.div [] (List.map (viewLine model.currentTime) model.lyrics)
+                , Html.div [] (List.map (viewLyric model.currentTime) model.lyrics)
                 ]
 
 
@@ -132,40 +168,54 @@ viewMp3 =
         ]
 
 
-getTime : Line -> Float
-getTime line =
-    toFloat ((line.minutes * 60) + line.seconds)
+getTime : Timestamp -> Float
+getTime { minutes, seconds } =
+    toFloat ((minutes * 60) + seconds)
 
 
-viewLine : Float -> Line -> Html Msg
-viewLine currentTime line =
+viewLyric : Float -> Lyric -> Html Msg
+viewLyric currentTime line =
     let
+        lineTime : Float
         lineTime =
-            getTime line
+            getTime line.startTime
 
+        cssClass : String
         cssClass =
             if currentTime > lineTime then
                 "pointer gray"
 
             else
                 "pointer black"
+
+        content : List (Html Msg)
+        content =
+            [ Html.text (viewTimestamp line.startTime)
+            , Html.text " "
+            , Html.text line.text
+            ]
     in
-    viewTimestamp line
-        ++ " "
-        ++ line.text
-        |> Html.text
-        |> List.singleton
-        |> Html.p [ Attribute.class cssClass, Event.onClick (PlayFromTimestamp lineTime) ]
+    Html.p
+        [ Attribute.class cssClass
+        , Event.onClick (PlayFromTimestamp lineTime)
+        ]
+        content
 
 
-viewTimestamp : Line -> String
+viewTimestamp : Timestamp -> String
 viewTimestamp { minutes, seconds, milliseconds } =
+    let
+        timeNotation : Int -> String
+        timeNotation =
+            String.fromInt
+                >> String.padLeft 2 '0'
+    in
     "["
-        ++ String.fromInt minutes
+        ++ timeNotation minutes
         ++ ":"
-        ++ String.fromInt seconds
+        ++ timeNotation seconds
         ++ "."
-        ++ String.fromInt milliseconds
+        ++ timeNotation milliseconds
         ++ "]"
 
 
@@ -201,9 +251,9 @@ update msg model =
                 |> with (playFromTimestamp time)
 
 
-updateLyrics : List Line -> Model -> Model
-updateLyrics lines model =
-    { model | lyrics = lines }
+updateLyrics : List Lyric -> Model -> Model
+updateLyrics lyrics model =
+    { model | lyrics = lyrics }
 
 
 updateRawLyrics : WebData String -> Model -> Model
