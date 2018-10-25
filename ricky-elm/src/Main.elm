@@ -1,23 +1,26 @@
 port module Main exposing (main)
 
+import Browser
 import Cmd.Extra exposing (with)
 import Html exposing (Html)
 import Html.Attributes as Attribute
 import Html.Events as Event
 import Http
-import Parser exposing ((|.), (|=), Count(..), Parser, ignore, int, keep, keyword, map, oneOf, oneOrMore, succeed, symbol, zeroOrMore)
-import Regex exposing (HowMany(..))
+import Parser exposing (..)
 import RemoteData exposing (RemoteData(..), WebData)
-import String.Extra exposing (replace)
-import Time exposing (Time)
+import String
 
 
-type alias Line =
-    { minutes : Int, seconds : Int, milliseconds : Int, text : String }
+type alias Timestamp =
+    { minutes : Int, seconds : Int, milliseconds : Int }
+
+
+type alias Lyric =
+    { endTime : Timestamp, startTime : Timestamp, text : String }
 
 
 type alias Model =
-    { lyrics : List Line
+    { lyrics : List Lyric
     , rawLyrics : WebData String
     , currentTime : Float
     }
@@ -42,60 +45,94 @@ fetchLyrics =
 type Msg
     = FetchLyrics (WebData String)
     | PlayFromTimestamp Float
-    | CurrentTimestamp Time
+    | CurrentTimestamp Float
 
 
-parseLine : Parser Line
-parseLine =
-    succeed Line
-        |. symbol "["
-        |. optionalZero
-        |= int
-        |. symbol ":"
-        |. optionalZero
-        |= int
-        |. symbol ":"
-        |. optionalZero
-        |= int
-        |. symbol "]"
-        |= keep oneOrMore anything
+lyricsParser : Parser (List Lyric)
+lyricsParser =
+    loop [] step
 
 
-optionalZero : Parser ()
-optionalZero =
-    oneOf [ symbol "0", succeed () ]
-
-
-anything : Char -> Bool
-anything _ =
-    True
-
-
-parseLyrics : String -> List Line
-parseLyrics rawLyrics =
+step : List Lyric -> Parser (Step (List Lyric) (List Lyric))
+step entries =
     let
-        unpackResult : Result Parser.Error Line -> Line
-        unpackResult res =
-            case res of
-                Ok line ->
-                    line
-
-                Err error ->
-                    Line 0 0 0 (toString error)
-
-        lines =
-            rawLyrics
-                |> String.split "\n"
-                |> List.map (replace "." ":")
-                -- parser won't handle integers separated with . well
-                |> List.map (Parser.run parseLine)
-                |> List.map unpackResult
+        finish entry_ next =
+            next (entry_ :: entries)
     in
-    lines
+    succeed finish
+        |= lyric
+        |= oneOf
+            [ succeed Loop
+                |. symbol "\n"
+            , succeed (Done << List.reverse)
+            , problem "I was expecting a list with newlines but got nothing"
+            ]
 
 
-init : ( Model, Cmd Msg )
-init =
+lyric : Parser Lyric
+lyric =
+    succeed (Lyric (Timestamp 0 0 0))
+        |= timestamp
+        |= text
+
+
+timestamp : Parser Timestamp
+timestamp =
+    succeed Timestamp
+        |. symbol "["
+        |= digits
+        |. symbol ":"
+        |= digits
+        |. symbol "."
+        |= digits
+        |. symbol "]"
+
+
+text : Parser String
+text =
+    oneOrMore (not << isNewLine)
+
+
+zeroOrMore : (Char -> Bool) -> Parser String
+zeroOrMore isOk =
+    succeed ()
+        |. chompWhile isOk
+        |> getChompedString
+
+
+oneOrMore : (Char -> Bool) -> Parser String
+oneOrMore isOk =
+    succeed ()
+        |. chompIf isOk
+        |. chompWhile isOk
+        |> getChompedString
+
+
+isNewLine : Char -> Bool
+isNewLine =
+    (==) '\n'
+
+
+digits : Parser Int
+digits =
+    let
+        stringToInt =
+            String.toInt
+                >> Maybe.withDefault 0
+                >> succeed
+    in
+    getChompedString (chompWhile Char.isDigit)
+        |> andThen stringToInt
+
+
+parseLyrics : String -> List Lyric
+parseLyrics =
+    Parser.run lyricsParser
+        >> Result.withDefault []
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
     ( { lyrics = [], rawLyrics = NotAsked, currentTime = 0.0 }, fetchLyrics )
 
 
@@ -109,12 +146,12 @@ view model =
             Html.text "Loading."
 
         Failure err ->
-            Html.text ("Error: " ++ toString err)
+            Html.text "Error: could not download lyrics."
 
         Success _ ->
             Html.div []
                 [ viewMp3
-                , Html.div [] (List.map (viewLine model.currentTime) model.lyrics)
+                , Html.div [] (List.map (viewLyric model.currentTime) model.lyrics)
                 ]
 
 
@@ -131,41 +168,79 @@ viewMp3 =
         ]
 
 
-getTime : Line -> Float
-getTime line =
-    toFloat ((line.minutes * 60) + line.seconds)
+getTime : Timestamp -> Float
+getTime { minutes, seconds } =
+    toFloat ((minutes * 60) + seconds)
 
 
-viewLine : Float -> Line -> Html Msg
-viewLine currentTime line =
+viewLyric : Float -> Lyric -> Html Msg
+viewLyric currentTime line =
     let
-        lineTime =
-            getTime line
+        lineStartTime : Float
+        lineStartTime =
+            getTime line.startTime
 
-        cssClass =
-            if currentTime > lineTime then
-                "pointer light-gray"
+        lineEndTime : Float
+        lineEndTime =
+            getTime line.endTime
+
+        progressStyling : List (Html.Attribute Msg)
+        progressStyling =
+            if currentTime >= lineStartTime && currentTime < lineEndTime then
+                [ Attribute.style "font-weight" "bold" ]
+
+            else if currentTime > lineStartTime then
+                [ Attribute.style "color" "gray" ]
 
             else
-                "pointer black"
+                []
+
+        attributes : List (Html.Attribute Msg)
+        attributes =
+            [ Event.onClick (PlayFromTimestamp lineStartTime)
+            , Attribute.style "cursor" "pointer"
+            ]
+                ++ progressStyling
+
+        content : List (Html Msg)
+        content =
+            [ Html.text (viewTimestamp line.startTime)
+            , Html.text " "
+            , Html.text line.text
+            ]
     in
-    viewTimestamp line
-        ++ " "
-        ++ line.text
-        |> Html.text
-        |> List.singleton
-        |> Html.p [ Attribute.class cssClass, Event.onClick (PlayFromTimestamp lineTime) ]
+    Html.p attributes content
 
 
-viewTimestamp : Line -> String
+viewTimestamp : Timestamp -> String
 viewTimestamp { minutes, seconds, milliseconds } =
+    let
+        timeNotation : Int -> String
+        timeNotation =
+            String.fromInt
+                >> String.padLeft 2 '0'
+    in
     "["
-        ++ toString minutes
+        ++ timeNotation minutes
         ++ ":"
-        ++ toString seconds
+        ++ timeNotation seconds
         ++ "."
-        ++ toString milliseconds
+        ++ timeNotation milliseconds
         ++ "]"
+
+
+addEndTimes : List Lyric -> List Lyric
+addEndTimes lyrics =
+    case lyrics of
+        [] ->
+            []
+
+        [ current ] ->
+            [ current ]
+
+        current :: next :: rest ->
+            { current | endTime = next.startTime }
+                :: addEndTimes (next :: rest)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -178,6 +253,7 @@ update msg model =
                         lyrics =
                             rawLyrics
                                 |> parseLyrics
+                                |> addEndTimes
                     in
                     model
                         |> updateLyrics lyrics
@@ -200,9 +276,9 @@ update msg model =
                 |> with (playFromTimestamp time)
 
 
-updateLyrics : List Line -> Model -> Model
-updateLyrics lines model =
-    { model | lyrics = lines }
+updateLyrics : List Lyric -> Model -> Model
+updateLyrics lyrics model =
+    { model | lyrics = lyrics }
 
 
 updateRawLyrics : WebData String -> Model -> Model
@@ -215,9 +291,9 @@ updateCurrentTime time model =
     { model | currentTime = time }
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-    Html.program
+    Browser.element
         { init = init
         , update = update
         , view = view

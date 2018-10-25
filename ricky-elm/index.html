@@ -1,10 +1,13 @@
-  <!doctype html>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.9.1/tachyons.min.css"/>
+<!doctype html>
+<html>
+  <meta charset="utf-8">
   <body>
     <div></div>
     <script src="elm.js"></script>
     <script>
-      const app = Elm.Main.embed(document.querySelector("div"));
+      const app = Elm.Main.init({
+        node: document.querySelector("div")
+      });
       let audio = null;
 
       app.ports.initSubscription.subscribe(() => {
@@ -23,3 +26,4 @@
       });
     </script>
   </body>
+</html>
