@@ -1,7 +1,6 @@
-# Techday BEMIT
+# Toolkit generator
 
-This is the repository for the techday BEMIT. This repository will generate a
-static site and the toolkit.
+This repository will generate a static site and the toolkit.
 
 ## Getting started
 
