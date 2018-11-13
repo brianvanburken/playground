@@ -15,7 +15,7 @@ class Tree {
     if (this.root !== null) {
       return this.root.traverse([]);
     } else {
-      return [];
+      return null;
     }
   }
 
