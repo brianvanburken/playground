@@ -1,29 +1,28 @@
 defmodule DockerfileGenerator do
   def build do
     generate_dockerfile()
-    |> IO.inspect
+    # |> IO.inspect
     |> write_dockerfile("./greetingsOnDemand/")
-    |> IO.inspect
+    # |> IO.inspect
     |> build_project()
-    |> IO.inspect
+    # |> IO.inspect
     |> run_project()
     |> IO.inspect
-    |> fix_zip()
-    |> IO.inspect
-    |> store_zip()
-    |> IO.inspect
+    # |> fix_zip()
+    # |> IO.inspect
+    # |> store_zip()
+    # |> IO.inspect
   end
 
   defp generate_dockerfile() do
     """
-    FROM lambci/lambda:nodejs8.10
+    FROM lambci/lambda:nodejs
 
     COPY . .
 
-    RUN npm install --production
-
-    CMD zip lambda.zip . | base64 -w 0
     """
+    #    CMD zip lambda.zip . | base64 -w 0
+
   end
 
   defp write_dockerfile(dockerfile, path) do
