@@ -5,7 +5,7 @@ defmodule IslandsEngine.Rules do
             player1: :islands_not_set,
             player2: :islands_not_set
 
-  def new(), do: %Rule{}
+  def new(), do: %Rules{}
 
   def check(%Rules{state: :initialized} = rules, :add_player),
     do: {:ok, %Rules{rules | state: :players_set}}
