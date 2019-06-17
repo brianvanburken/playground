@@ -50,7 +50,7 @@ defmodule IslandsEngine.Game do
       |> update_rules(rules)
       |> reply_success(:ok)
     else
-      :error -> {:reply, :error, state_data}
+      _ -> {:reply, :error, state_data}
     end
   end
 
@@ -67,14 +67,14 @@ defmodule IslandsEngine.Game do
       |> update_rules(rules)
       |> reply_success(:ok)
     else
-      :error ->
-        {:reply, :error, state_data}
-
       {:error, :invalid_coordinate} ->
         {:reply, {:error, :invalid_coordinate}, state_data}
 
       {:error, :invalid_island_type} ->
         {:reply, {:error, :invalid_island_type}, state_data}
+
+      _ ->
+        {:reply, :error, state_data}
     end
   end
 
@@ -94,11 +94,11 @@ defmodule IslandsEngine.Game do
       |> update_rules(rules)
       |> reply_success({hit_or_miss, forested_island, win_status})
     else
-      :error ->
-        {:reply, :error, state_data}
-
       {:error, :invalid_coordinate} ->
         {:reply, {:error, :invalid_coordinate}, state_data}
+
+      _ ->
+        {:reply, :error, state_data}
     end
   end
 end
