@@ -4,13 +4,15 @@ defmodule IslandsEngine.Game do
   @players [:player1, :player2]
 
   def start_link(name) when is_binary(name),
-    do: GenServer.start_link(__MODULE__, name, [])
+    do: GenServer.start_link(__MODULE__, name, name: via_tuple(name))
 
   def init(name) do
     player1 = %{name: name, board: Board.new(), guesses: Guesses.new()}
     player2 = %{name: nil, board: Board.new(), guesses: Guesses.new()}
     {:ok, %{player1: player1, player2: player2, rules: %Rules{}}}
   end
+
+  def via_tuple(name), do: {:via, Registry, {Registry.Game, name}}
 
   def add_player(game, name) when is_binary(name),
     do: GenServer.call(game, {:add_player, name})
@@ -42,6 +44,9 @@ defmodule IslandsEngine.Game do
       Guesses.add(guesses, hit_or_miss, coordinate)
     end)
   end
+
+  def set_islands(game, player) when player in @players,
+    do: GenServer.call(game, {:set_islands, player})
 
   def handle_call({:add_player, name}, _from, state_data) do
     with {:ok, rules} <- Rules.check(state_data.rules, :add_player) do
@@ -99,6 +104,23 @@ defmodule IslandsEngine.Game do
 
       _ ->
         {:reply, :error, state_data}
+    end
+  end
+
+  def handle_call({:set_islands, player}, _from, state_data) do
+    board = player_board(state_data, player)
+
+    with {:ok, rules} <- Rules.check(state_data.rules, {:set_islands, player}),
+         true <- Board.all_islands_positioned?(board) do
+      state_data
+      |> update_rules(rules)
+      |> reply_success({:ok, board})
+    else
+      false ->
+        {:replay, {:error, :not_all_islands_positioned}, state_data}
+
+      _ ->
+        {:replay, :error, state_data}
     end
   end
 end
