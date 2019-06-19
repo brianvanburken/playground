@@ -9,14 +9,8 @@ defmodule IslandsEngine.Game do
     do: GenServer.start_link(__MODULE__, name, name: via_tuple(name))
 
   def init(name) do
-    state_data =
-      case :ets.lookup(:game_state, name) do
-        [] -> fresh_state(name)
-        [{_key, state}] -> state
-      end
-
-    :ets.insert(:game_state, {name, state_data})
-    {:ok, state_data, @timeout}
+    send(self(), {:set_state, name})
+    {:ok, fresh_state(name)}
   end
 
   def via_tuple(name), do: {:via, Registry, {Registry.Game, name}}
@@ -143,4 +137,22 @@ defmodule IslandsEngine.Game do
   def handle_info(:timeout, state_data) do
     {:stop, {:shutdown, :timeout}, state_data}
   end
+
+  def handle_info({:set_state, name}, _state_data) do
+    state_data =
+      case :ets.lookup(:game_state, name) do
+        [] -> fresh_state(name)
+        [{_key, state}] -> state
+      end
+
+    :ets.insert(:game_state, {name, state_data})
+    {:noreply, state_data, @timeout}
+  end
+
+  def terminate({:shutdown, :timeout}, state_data) do
+    :ets.delete(:game_state, state_data.player1.name)
+    :ok
+  end
+
+  def terminate(_reaser, _state), do: :ok
 end
