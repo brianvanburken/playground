@@ -8,5 +8,4 @@ def averageOfThree(grade1: int, grade2: int, grade3: int) -> int:
     >>> average(71, 43, 92)
     68
     """
-
     return (grade1 + grade2 + grade3) // 3
