@@ -28,16 +28,7 @@ def count_words(words: list) -> list:
     >>> count_words(['hello', 'hello', 'world'])
     [('hello', 2), ('world', 1)]
     """
-    return Counter(words).most_common()
-
-
-def take_top_10(counters: list) -> dict:
-    """ Takes a list of counted words and return the top 10 as a dictionary.
-
-    >>> take_top_10([('hello', 2), ('world', 1)])
-    {'hello': 2, 'world': 1}
-    """
-    return dict(counters[0:10])
+    return Counter(words).most_common(10)
 
 
 def top_10_words(url: str) -> dict:
@@ -46,8 +37,7 @@ def top_10_words(url: str) -> dict:
     """
     content = download(url)
     words = extract_words(content)
-    counted = count_words(words)
-    return take_top_10(counted)
+    return count_words(words)
 
 
 if __name__ == "__main__":
