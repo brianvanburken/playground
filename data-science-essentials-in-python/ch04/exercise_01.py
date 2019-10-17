@@ -80,6 +80,9 @@ def close_database(conn) -> None:
 
 
 def index_file(file: str) -> list:
+    """ Reads the contents of a file, extracts the words, and places the result
+    for indexing in the MySQL database.
+    """
     conn, cur = open_connection()
     content = read_file(file)
     words = extract_words(content)
@@ -91,6 +94,13 @@ def index_file(file: str) -> list:
 
 
 if __name__ == '__main__':
+    # Write a Python program that, for each word in a given file, records the
+    # word itself (not the stem!), its ordinal number in the file (starting from
+    # 1), and the part-of-speech marker in a MySQL database. Use NLTK
+    # WordPunctTokenizer (introduced here) to recognize words. Assume that the
+    # words are short enough to fit in the TINYTEXT MySQL data type. Design the
+    # database schema, create all necessary tables, and play with them via the
+    # command-line interface before starting any Python coding.
     file = input("Enter a file to index: ")
     index_file(file)
 
