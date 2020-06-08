@@ -15,7 +15,7 @@ Object.prototype.reduce = function(callback, initialValue) {
         throw new TypeError("Reduce of empty object with no initial value");
     } else if (typeof initialValue !== 'undefined' && len === 0) {
         return initialValue;
-    } else if (tyeof initialValue === 'undefined') {
+    } else if (typeof initialValue === 'undefined') {
         accumulator = this[keys[0]];
         index = 1;
     } else {
