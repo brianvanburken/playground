@@ -1,0 +1,18 @@
+{
+  "name": "elm-css-index",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "focus": "node focus.js",
+    "pd": "node podcast.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "fast-csv": "^4.3.0",
+    "request": "^2.88.2"
+  }
+}
