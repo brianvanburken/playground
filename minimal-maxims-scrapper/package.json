@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "focus": "node focus.js",
-    "pd": "node podcast.js"
+    "focus": "node focus.js"
   },
   "author": "",
   "license": "ISC",
