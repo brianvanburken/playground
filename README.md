@@ -1,3 +1,3 @@
 # Playground
 
-Repository for trying out new things.
+Random stuff from playing with languages, frameworks, and books.
