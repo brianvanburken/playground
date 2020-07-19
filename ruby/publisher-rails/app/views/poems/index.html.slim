@@ -1,0 +1,23 @@
+h1 Listing poems
+
+table
+  thead
+    tr
+      th Title
+      th Metaphor
+      th
+      th
+      th
+
+  tbody
+    - @poems.each do |poem|
+      tr
+        td = poem.title
+        td = poem.metaphor
+        td = link_to 'Show', poem
+        td = link_to 'Edit', edit_poem_path(poem)
+        td = link_to 'Destroy', poem, data: {:confirm => 'Are you sure?'}, :method => :delete
+
+br
+
+= link_to 'New Poem', new_poem_path

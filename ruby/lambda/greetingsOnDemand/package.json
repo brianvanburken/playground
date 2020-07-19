@@ -1,0 +1,8 @@
+{
+  "name": "greetings_on_demand",
+  "version": "1.0.0",
+  "main": "greetingsOnDemand.js",
+  "dependencies": {
+    "cowsay": "^1.3.1"
+  }
+}

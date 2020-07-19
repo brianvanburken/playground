@@ -1,0 +1,10 @@
+= form_for @author do |f|
+  = render 'shared/form_errors', model: @author
+
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.label :biography
+    = f.text_area :biography
+  .actions = f.submit
