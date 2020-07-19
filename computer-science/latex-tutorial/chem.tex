@@ -1,0 +1,21 @@
+\documentclass[a4paper]{article}
+\usepackage{chemfig}
+\begin{document}
+
+\section{basic}
+\chemfig{O=H}
+
+\section{angles}
+\chemfig{A-[1]B-[7]C}
+
+\section{regular polygons}
+\chemfig{A*5(-B=C-D-E=)}
+
+\section{incomplete rings}
+\chemfig{A*5(-B=C-D)}
+
+\section{branches}
+\chemfig{H-C(-[2]H)(-[6]H)-C(=[1]O)-[7]H}
+\chemfig{A*6(-B=C(-CH_3)-D-E-F(=G)=)}
+
+\end{document}
