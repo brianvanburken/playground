@@ -1,0 +1,24 @@
+{
+  "name": "twelve-factor-app",
+  "version": "1.0.0",
+  "description": "An example 12 factor app",
+  "main": "app.js",
+  "scripts": {
+    "start": "node --harmony app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianvanburken/twelve-factor-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brianvanburken/twelve-factor-app/issues"
+  },
+  "homepage": "https://github.com/brianvanburken/twelve-factor-app#readme",
+  "dependencies": {
+    "bunyan": "^1.8.12",
+    "express": "^4.17.1",
+    "mongodb": "^3.2.7"
+  }
+}

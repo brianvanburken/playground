@@ -1,0 +1,49 @@
+# DOCUMENTATION
+
+backgroundPosition, backgroundPosition2, backgroundPosition4
+backgroundRepeat, backgroundRepeat2
+backgroundSize, backgroundSize2
+border, border2, border3
+borderBottom, borderBottom2, borderBottom3
+borderBottomLeftRadius, borderBottomLeftRadius2
+borderBottomRightRadius, borderBottomRightRadius2
+borderColor, borderColor2, borderColor3, borderColor4
+borderImageOutset, borderImageOutset2, borderImageOutset3, borderImageOutset4
+borderImageWidth, borderImageWidth2, borderImageWidth3, borderImageWidth4
+borderLeft, borderLeft2, borderLeft3
+borderRadius, borderRadius2, borderRadius3, borderRadius4
+borderRight, borderRight2, borderRight3
+borderSpacing, borderSpacing2
+borderStyle, borderStyle2, borderStyle3, borderStyle4
+borderTop, borderTop2, borderTop3
+borderTopLeftRadius, borderTopLeftRadius2
+borderTopRightRadius, borderTopRightRadius2
+borderWidth, borderWidth2, borderWidth3, borderWidth4
+columnRule, columnRule2, columnRule3
+columns, columns2
+listStyle, listStyle2, listStyle3
+margin, margin2, margin3, margin4
+objectPosition, objectPosition2, objectPosition4
+padding, padding2, padding3, padding4
+scale, scale2
+scrollMargin, scrollMargin2, scrollMargin3, scrollMargin4
+scrollPadding, scrollPadding2, scrollPadding3, scrollPadding4
+scrollSnapType, scrollSnapType2
+skew, skew2
+stop, stop2
+strokeLinejoin, strokeLinejoin2
+strokePosition, strokePosition2, strokePosition4
+strokeRepeat, strokeRepeat2
+strokeSize, strokeSize2
+textDecoration, textDecoration2, textDecoration3
+textDecorationLine, textDecorationLine2, textDecorationLine3
+textStroke, textStroke2
+transformOrigin, transformOrigin2
+translate, translate2
+
+
+# OTHER
+
+add tansformOrigin3 with the Z-axis value
+extract a list of implemented properties and values
+extract a list of properties and values yet to implement

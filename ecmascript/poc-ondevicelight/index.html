@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="nl" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Change theme based on lightsource</title>
+    <style>
+      body { font-size: 72px; transition: all 2s; }
+      body,
+      body.bright { background: #fff; color: #000; }
+      body.normal { background: #999; color: #333; }
+      body.dim    { background: #333; color: #999; }
+      body.dark   { background: #000; color: #fff; }
+      </style>
+  </head>
+  <body>
+    Hello! Lux value: <span id="lux"></span>
+    <script>
+    window.ondevicelight = function(e) {
+      document.getElementById('lux').innerHTML = e.value;
+      var state = {
+          dark: e.value <= 10,
+           dim: e.value > 10 && e.value <= 50,
+        normal: e.value > 50 && e.value < 1000,
+        bright: e.value >= 1000
+      };
+      for (var key in state) {
+        document.body.classList.remove(key);
+        if (state[key]) { document.body.classList.add(key); }
+      }
+    };
+    </script>
+  </body>
+</html>

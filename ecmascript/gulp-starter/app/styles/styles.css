@@ -1,0 +1,11 @@
+@import "normalize";
+
+:root {
+  --background: #ffffff;
+  --color: #000000;
+}
+
+body {
+  background: var(--background);
+  color: var(--color);
+}
