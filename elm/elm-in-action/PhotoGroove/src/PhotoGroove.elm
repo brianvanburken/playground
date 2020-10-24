@@ -5,6 +5,7 @@ import Browser
 import Html exposing (Html, button, div, h1, h3, img, input, label, text)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Random
 
 
 type alias Photo =
@@ -18,8 +19,11 @@ type alias Model =
     }
 
 
-type alias Msg =
-    { description : String, data : String }
+type Msg
+    = ClickedPhoto String
+    | ClickedSize ThumbnailSize
+    | GotSelectedIndex Int
+    | ClickedSupriseMe
 
 
 type ThumbnailSize
@@ -55,7 +59,7 @@ view model =
     div [ class "content" ]
         [ h1 [] [ text "Photo Groove" ]
         , button
-            [ onClick { description = "ClickedSupriseMe", data = "" } ]
+            [ onClick ClickedSupriseMe ]
             [ text "Suprise Me!" ]
         , h3 [] [ text "Thumbnail Size:" ]
         , div [ id "choose-size" ]
@@ -75,7 +79,7 @@ viewThumbnail selectedUrl thumb =
     img
         [ src (urlPrefix ++ thumb.url)
         , classList [ ( "selected", selectedUrl == thumb.url ) ]
-        , onClick { description = "ClickedPhoto", data = thumb.url }
+        , onClick (ClickedPhoto thumb.url)
         ]
         []
 
@@ -83,9 +87,24 @@ viewThumbnail selectedUrl thumb =
 viewSizeChooser : ThumbnailSize -> Html Msg
 viewSizeChooser size =
     label []
-        [ input [ type_ "radio", name "size" ] []
+        [ input
+            [ type_ "radio"
+            , name "size"
+            , onClick (ClickedSize size)
+            ]
+            []
         , text (sizeToString size)
         ]
+
+
+getPhotoUrl : Int -> String
+getPhotoUrl index =
+    case Array.get index photoArray of
+        Just photo ->
+            photo.url
+
+        Nothing ->
+            ""
 
 
 sizeToString : ThumbnailSize -> String
@@ -101,22 +120,32 @@ sizeToString size =
             "large"
 
 
-update : Msg -> Model -> Model
+randomPhotoPicker : Random.Generator Int
+randomPhotoPicker =
+    Random.int 0 (Array.length photoArray - 1)
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg.description of
-        "ClickedPhoto" ->
-            { model | selectedUrl = msg.data }
+    case msg of
+        ClickedPhoto url ->
+            ( { model | selectedUrl = url }, Cmd.none )
 
-        "ClickedSupriseMe" ->
-            { model | selectedUrl = "2.jpeg" }
+        ClickedSize size ->
+            ( { model | chosenSize = size }, Cmd.none )
 
-        _ ->
-            model
+        GotSelectedIndex index ->
+            ( model, Cmd.none )
+
+        ClickedSupriseMe ->
+            ( model, Random.generate GotSelectedIndex randomPhotoPicker )
 
 
+main : Program () Model Msg
 main =
-    Browser.sandbox
-        { init = initialModel
+    Browser.element
+        { init = \_ -> ( initialModel, Cmd.none )
         , view = view
         , update = update
+        , subscriptions = always Sub.none
         }
