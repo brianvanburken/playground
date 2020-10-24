@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <meta charset="utf-8">
+  <body>
+    <div></div>
+    <script src="elm.js"></script>
+    <script>
+      const app = Elm.Main.init({
+        node: document.querySelector("div")
+      });
+      let audio = null;
+
+      app.ports.initSubscription.subscribe(() => {
+        requestAnimationFrame(() => {
+          audio = document.querySelector("audio");
+          if (audio) {
+            audio.ontimeupdate = () => {
+              app.ports.currentTimestamp.send(audio.currentTime || 0);
+            };
+          }
+        });
+      });
+
+      app.ports.playFromTimestamp.subscribe((time) => {
+        if (audio) audio.currentTime = time;
+      });
+    </script>
+  </body>
+</html>
