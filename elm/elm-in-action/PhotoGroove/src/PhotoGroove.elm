@@ -26,6 +26,7 @@ type Status
 
 type alias Model =
     { status : Status
+    , activity : String
     , chosenSize : ThumbnailSize
     , hue : Int
     , ripple : Int
@@ -34,6 +35,9 @@ type alias Model =
 
 
 port setFilters : FilterOptions -> Cmd msg
+
+
+port activityChanges : (String -> msg) -> Sub msg
 
 
 type alias FilterOptions =
@@ -48,6 +52,7 @@ type Msg
     | ClickedSupriseMe
     | GotRandomPhoto Photo
     | GotPhotos (Result Http.Error (List Photo))
+    | GotActivity String
     | SlidHue Int
     | SlidRipple Int
     | SlidNoise Int
@@ -75,6 +80,7 @@ photoDecoder =
 initialModel : Model
 initialModel =
     { status = Loading
+    , activity = ""
     , chosenSize = Medium
     , hue = 5
     , ripple = 5
@@ -122,6 +128,7 @@ viewLoaded photos selectedUrl model =
     , button
         [ onClick ClickedSupriseMe ]
         [ text "Suprise Me!" ]
+    , div [ class "activity" ] [ text model.activity ]
     , div [ class "filters" ]
         [ viewFilter SlidHue "Hue" model.hue
         , viewFilter SlidRipple "Ripple" model.ripple
@@ -248,6 +255,9 @@ update msg model =
         GotPhotos (Err _) ->
             ( { model | status = Errored "Server error!" }, Cmd.none )
 
+        GotActivity activity ->
+            ( { model | activity = activity }, Cmd.none )
+
         SlidHue hue ->
             applyFilters { model | hue = hue }
 
@@ -282,11 +292,20 @@ applyFilters model =
             ( model, Cmd.none )
 
 
-main : Program () Model Msg
+main : Program Float Model Msg
 main =
     Browser.element
-        { init = always ( initialModel, initialCmd )
+        { init = init
         , view = view
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = \_ -> activityChanges GotActivity
         }
+
+
+init : Float -> ( Model, Cmd Msg )
+init flags =
+    let
+        activity =
+            "Initializing Pasta v" ++ String.fromFloat flags
+    in
+    ( { initialModel | activity = activity }, initialCmd )
