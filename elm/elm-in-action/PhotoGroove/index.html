@@ -34,9 +34,9 @@
       }
       window.customElements.define("range-slider", RangeSlider);
 
-      var app = Elm.PhotoGroove.init({
+      var app = Elm.Main.init({
         node: document.getElementById("app"),
-        flags: Pasta.version,
+        // flags: Pasta.version,
       });
 
       app.ports.setFilters.subscribe(function (options) {
