@@ -1,0 +1,7 @@
+{
+  "name": "kobo-export-to-markdown",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  }
+}
