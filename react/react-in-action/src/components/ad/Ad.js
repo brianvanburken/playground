@@ -1,7 +1,12 @@
-import PropTypes from "prop-types";
-import React from "react";
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const Ad = (props) => {
+/**
+ * Dummy ad component
+ * @method Ad
+ * @param  {object} props 
+ */
+const Ad = props => {
     return (
         <div className="ad">
             <a target="_blank" rel="noreferrer noopener" href={props.url}>
@@ -18,7 +23,7 @@ const Ad = (props) => {
 
 Ad.propTypes = {
     imageUrl: PropTypes.string,
-    url: PropTypes.string,
+    url: PropTypes.string
 };
 
 export default Ad;

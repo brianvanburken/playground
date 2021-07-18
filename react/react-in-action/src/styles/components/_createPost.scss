@@ -33,7 +33,7 @@
             color: #fff;
         }
         &:hover::before {
-            content: "Remove";
+            content: 'Remove';
             color: $blue;
             position: absolute;
             opacity: 1;

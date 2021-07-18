@@ -1,9 +1,14 @@
-import PropTypes from "prop-types";
-import React from "react";
+import PropTypes from 'prop-types';
+import React from 'react';
 
-import UserHeader from "../post/UserHeader";
+import UserHeader from '../post/UserHeader';
 
-const Comment = (props) => {
+/**
+ * Displays an individual comment
+ * @method Comment
+ * @param  {object} props 
+ */
+const Comment = props => {
     const { comment } = props;
     return (
         <div className="comment" key={comment.id}>
@@ -22,8 +27,8 @@ Comment.propTypes = {
         content: PropTypes.string,
         user: PropTypes.object,
         date: PropTypes.number,
-        likes: PropTypes.number,
-    }),
+        likes: PropTypes.number
+    })
 };
 
 export default Comment;

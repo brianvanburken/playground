@@ -1,7 +1,12 @@
-import PropTypes from "prop-types";
-import React from "react";
+import PropTypes from 'prop-types';
+import React from 'react';
 
-const Link = (props) => {
+/**
+ * Displays link content for a given post
+ * @method Link
+ * @param  {object} props
+ */
+const Link = props => {
     const { link } = props;
     return link ? (
         <div className="link">
@@ -18,8 +23,8 @@ Link.propTypes = {
     link: PropTypes.shape({
         url: PropTypes.string,
         title: PropTypes.string,
-        description: PropTypes.string,
-    }),
+        description: PropTypes.string
+    })
 };
 
 export default Link;
