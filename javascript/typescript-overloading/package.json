@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "start": "npm run compile && npm run run",
+    "compile": "npx tsc --strict index.ts",
+    "run": "node index.js"
+  },
+  "dependencies": {
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
+  }
+}
