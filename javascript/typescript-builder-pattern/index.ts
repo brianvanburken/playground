@@ -19,12 +19,14 @@ function Builder<T>(): Builder<T> {
     {},
     {
       get(_target, prop: string) {
+        // If property is "build" we return our internal state to finish
+        // the builder.
         if (prop === "build") {
           return () => state;
         }
 
-        prop = prop.replace("with", "");
-        prop = prop.charAt(0).toLowerCase() + prop.slice(1);
+        // Remove "with" and uncapitalize property
+        prop = prop.charAt(4).toLowerCase() + prop.slice(5);
 
         return (x: unknown): Builder<T> => {
           state[prop.toString()] = x;
@@ -47,7 +49,7 @@ interface A {
 
 const a = Builder<A>()
   .withProp1("test")
-  .withProp2(0)
+  .withProp2(2)
   .withProp3(undefined)
   .withProp3([])
   .withProp3([""])
