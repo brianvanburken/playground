@@ -1,10 +1,22 @@
 import Bookable from "../../domain/Bookable";
 
+export const initialState: BookablesState = {
+  group: "Rooms",
+  bookableIndex: 0,
+  hasDetails: true,
+  bookables: [],
+  isLoading: true,
+  error: undefined,
+};
+
 export interface BookablesState {
-  bookables: Bookable[];
   group: string;
   bookableIndex: number;
   hasDetails: boolean;
+
+  bookables: Bookable[];
+  error?: Error;
+  isLoading: boolean;
 }
 
 export interface SetGroupAction {
@@ -25,18 +37,39 @@ export interface NextBookable {
   type: BookableActionType.NextBookable;
 }
 
+export interface FetchBookablesRequest {
+  type: BookableActionType.FetchBookablesRequest;
+}
+
+export interface FetchBookablesSuccess {
+  type: BookableActionType.FetchBookablesSuccess;
+  payload: Bookable[];
+}
+
+export interface FetchBookablesError {
+  type: BookableActionType.FetchBookablesError;
+  payload: Error;
+}
+
 export const enum BookableActionType {
   SetGroup,
   SetBookable,
   ToggleHasDetails,
   NextBookable,
+
+  FetchBookablesRequest,
+  FetchBookablesSuccess,
+  FetchBookablesError,
 }
 
 export type BookableAction =
   | SetGroupAction
   | SetBookableAction
   | ToggleHasDetails
-  | NextBookable;
+  | NextBookable
+  | FetchBookablesRequest
+  | FetchBookablesSuccess
+  | FetchBookablesError;
 
 export default function reducer(state: BookablesState, action: BookableAction) {
   switch (action.type) {
@@ -63,6 +96,28 @@ export default function reducer(state: BookablesState, action: BookableAction) {
       return {
         ...state,
         bookableIndex: (state.bookableIndex + 1) % count,
+      };
+
+    case BookableActionType.FetchBookablesRequest:
+      return {
+        ...state,
+        isLoading: true,
+        error: undefined,
+        bookables: [],
+      };
+
+    case BookableActionType.FetchBookablesSuccess:
+      return {
+        ...state,
+        isLoading: false,
+        bookables: action.payload,
+      };
+
+    case BookableActionType.FetchBookablesError:
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
       };
     default:
       return state;

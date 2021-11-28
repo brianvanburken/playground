@@ -1,22 +1,47 @@
-import { ChangeEvent, useReducer } from "react";
-import { FaArrowRight } from "react-icons/fa";
-import { bookables, days, sessions } from "../../static.json";
-import reducer, { BookableActionType, BookablesState } from "./reducer";
-
-const initialState: BookablesState = {
-  group: "Rooms",
-  bookableIndex: 0,
-  hasDetails: true,
-  bookables,
-};
+import { ChangeEvent, useEffect, useReducer } from "react";
+import { FaArrowRight, FaSpinner } from "react-icons/fa";
+import Bookable from "../../domain/Bookable";
+import { days, sessions } from "../../static.json";
+import { getData } from "../../utils/api";
+import reducer, { BookableActionType, initialState } from "./reducer";
 
 export default function BookablesList() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { group, bookableIndex, hasDetails } = state;
+  const { group, bookableIndex, hasDetails, isLoading, error, bookables } =
+    state;
 
   const bookablesInGroup = bookables.filter((b) => b.group === group);
   const groups = Array.from(new Set(bookables.map((b) => b.group)));
   const bookable = bookablesInGroup[bookableIndex];
+
+  useEffect(() => {
+    dispatch({ type: BookableActionType.FetchBookablesRequest });
+    getData<Bookable[]>("http://localhost:3001/bookables")
+      .then((bookables) =>
+        dispatch({
+          type: BookableActionType.FetchBookablesSuccess,
+          payload: bookables,
+        })
+      )
+      .catch((error: Error) =>
+        dispatch({
+          type: BookableActionType.FetchBookablesError,
+          payload: error,
+        })
+      );
+  }, []);
+
+  if (error) {
+    return <p>{error.message}</p>;
+  }
+
+  if (isLoading) {
+    return (
+      <p>
+        <FaSpinner /> Loading bookables...
+      </p>
+    );
+  }
 
   function changeGroup(event: ChangeEvent<HTMLSelectElement>) {
     dispatch({

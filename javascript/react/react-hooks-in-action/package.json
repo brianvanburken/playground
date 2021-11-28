@@ -23,7 +23,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start:server": "npx json-server --watch db.json --port 3001"
   },
   "eslintConfig": {
     "extends": [
@@ -44,6 +45,7 @@
     ]
   },
   "devDependencies": {
+    "json-server": "^0.17.0",
     "prettier": "^2.5.0",
     "prettier-plugin-organize-imports": "^2.3.4"
   }
