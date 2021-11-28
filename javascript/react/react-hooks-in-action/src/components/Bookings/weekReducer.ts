@@ -21,7 +21,7 @@ export interface TodayAction {
 
 export interface SetDateAction {
   type: WeekActionType.SetDate;
-  payload: Date;
+  payload: string;
 }
 
 export type WeekAction =

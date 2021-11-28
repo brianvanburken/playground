@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useReducer } from "react";
+import { ChangeEvent, useEffect, useReducer, useRef } from "react";
 import { FaArrowRight, FaSpinner } from "react-icons/fa";
 import Bookable from "../../domain/Bookable";
 import { days, sessions } from "../../static.json";
@@ -13,6 +13,9 @@ export default function BookablesList() {
   const bookablesInGroup = bookables.filter((b) => b.group === group);
   const groups = Array.from(new Set(bookables.map((b) => b.group)));
   const bookable = bookablesInGroup[bookableIndex];
+
+  const timerRef = useRef<number>();
+  const nextButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     dispatch({ type: BookableActionType.FetchBookablesRequest });
@@ -30,6 +33,18 @@ export default function BookablesList() {
         })
       );
   }, []);
+
+  useEffect(() => {
+    timerRef.current = window.setInterval(() => {
+      dispatch({ type: BookableActionType.NextBookable });
+    }, 3000);
+
+    return stopPresentation;
+  }, []);
+
+  function stopPresentation() {
+    window.clearInterval(timerRef.current);
+  }
 
   if (error) {
     return <p>{error.message}</p>;
@@ -55,6 +70,7 @@ export default function BookablesList() {
       type: BookableActionType.SetBookable,
       payload: selectedIndex,
     });
+    nextButtonRef?.current?.focus();
   }
 
   function nextBookable() {
@@ -92,7 +108,12 @@ export default function BookablesList() {
           ))}
         </ul>
         <p>
-          <button className="btn" onClick={nextBookable} autoFocus>
+          <button
+            className="btn"
+            onClick={nextBookable}
+            autoFocus
+            ref={nextButtonRef}
+          >
             <FaArrowRight />
             <span>Next</span>
           </button>
@@ -113,6 +134,9 @@ export default function BookablesList() {
                   />
                   Show Details
                 </label>
+                <button className="btn" onClick={stopPresentation}>
+                  Stop
+                </button>
               </span>
             </div>
 
