@@ -1,28 +1,53 @@
-import { useState } from "react";
+import { ChangeEvent, useReducer } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import { bookables, days, sessions } from "../../static.json";
+import reducer, { BookableActionType, BookablesState } from "./reducer";
+
+const initialState: BookablesState = {
+  group: "Rooms",
+  bookableIndex: 0,
+  hasDetails: true,
+  bookables,
+};
 
 export default function BookablesList() {
-  const [group, setGroup] = useState("Kit");
-  const [bookableIndex, setBookableIndex] = useState(0);
-  const [hasDetails, setHasDetails] = useState(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { group, bookableIndex, hasDetails } = state;
 
   const bookablesInGroup = bookables.filter((b) => b.group === group);
   const groups = Array.from(new Set(bookables.map((b) => b.group)));
   const bookable = bookablesInGroup[bookableIndex];
 
+  function changeGroup(event: ChangeEvent<HTMLSelectElement>) {
+    dispatch({
+      type: BookableActionType.SetGroup,
+      payload: event.target.value,
+    });
+  }
+
   function changeBookable(selectedIndex: number) {
-    setBookableIndex(selectedIndex);
+    dispatch({
+      type: BookableActionType.SetBookable,
+      payload: selectedIndex,
+    });
   }
 
   function nextBookable() {
-    setBookableIndex((i) => (i + 1) % bookablesInGroup.length);
+    dispatch({
+      type: BookableActionType.NextBookable,
+    });
+  }
+
+  function toggleDetails() {
+    dispatch({
+      type: BookableActionType.ToggleHasDetails,
+    });
   }
 
   return (
     <>
       <div>
-        <select value={group} onChange={(e) => setGroup(e.target.value)}>
+        <select value={group} onChange={changeGroup}>
           {groups.map((g) => (
             <option value={g} key={g}>
               {g}
@@ -59,7 +84,7 @@ export default function BookablesList() {
                   <input
                     type="checkbox"
                     checked={hasDetails}
-                    onChange={() => setHasDetails((has) => !has)}
+                    onChange={toggleDetails}
                   />
                   Show Details
                 </label>
