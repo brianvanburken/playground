@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, useEffect, useRef, useState } from "react";
+import { ChangeEvent, Dispatch, useEffect, useState } from "react";
 import { FaArrowRight, FaSpinner } from "react-icons/fa";
 import Bookable from "../../domain/Bookable";
 import { getData } from "../../utils/api";
@@ -19,8 +19,6 @@ export default function BookablesList({
   const group = bookable?.group;
   const bookablesInGroup = bookables.filter((b) => b.group === group);
   const groups = Array.from(new Set(bookables.map((b) => b.group)));
-
-  const nextButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -55,7 +53,6 @@ export default function BookablesList({
 
   function changeBookable(selectedBookable: Bookable) {
     setBookable(selectedBookable);
-    nextButtonRef?.current?.focus();
   }
 
   function nextBookable() {
@@ -87,12 +84,7 @@ export default function BookablesList({
         ))}
       </ul>
       <p>
-        <button
-          className="btn"
-          onClick={nextBookable}
-          autoFocus
-          ref={nextButtonRef}
-        >
+        <button className="btn" onClick={nextBookable} autoFocus>
           <FaArrowRight />
           <span>Next</span>
         </button>

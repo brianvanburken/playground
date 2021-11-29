@@ -13,3 +13,7 @@ export function getWeek(forDate: Date, daysOffset = 0) {
     end: addDays(date, 6 - day)
   };
 }
+
+export function shortISO(date: Date) {
+  return date.toISOString().split("T")[0];
+}
