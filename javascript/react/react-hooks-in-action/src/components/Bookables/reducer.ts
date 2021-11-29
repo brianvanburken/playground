@@ -3,7 +3,6 @@ import Bookable from "../../domain/Bookable";
 export const initialState: BookablesState = {
   group: "Rooms",
   bookableIndex: 0,
-  hasDetails: true,
   bookables: [],
   isLoading: true,
   error: undefined,
@@ -12,7 +11,6 @@ export const initialState: BookablesState = {
 export interface BookablesState {
   group: string;
   bookableIndex: number;
-  hasDetails: boolean;
 
   bookables: Bookable[];
   error?: Error;
@@ -27,10 +25,6 @@ export interface SetGroupAction {
 export interface SetBookableAction {
   type: BookableActionType.SetBookable;
   payload: number;
-}
-
-export interface ToggleHasDetails {
-  type: BookableActionType.ToggleHasDetails;
 }
 
 export interface NextBookable {
@@ -54,7 +48,6 @@ export interface FetchBookablesError {
 export const enum BookableActionType {
   SetGroup,
   SetBookable,
-  ToggleHasDetails,
   NextBookable,
 
   FetchBookablesRequest,
@@ -65,7 +58,6 @@ export const enum BookableActionType {
 export type BookableAction =
   | SetGroupAction
   | SetBookableAction
-  | ToggleHasDetails
   | NextBookable
   | FetchBookablesRequest
   | FetchBookablesSuccess
@@ -83,11 +75,6 @@ export default function reducer(state: BookablesState, action: BookableAction) {
       return {
         ...state,
         bookableIndex: action.payload,
-      };
-    case BookableActionType.ToggleHasDetails:
-      return {
-        ...state,
-        hasDetails: !state.hasDetails,
       };
     case BookableActionType.NextBookable:
       const count = state.bookables.filter(

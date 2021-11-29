@@ -19,7 +19,7 @@ export default function WeekPicker({ date }: WeekPickerProps) {
   function goToDate() {
     dispatch({
       type: WeekActionType.SetDate,
-      payload: dateText
+      payload: dateText,
     });
   }
 
