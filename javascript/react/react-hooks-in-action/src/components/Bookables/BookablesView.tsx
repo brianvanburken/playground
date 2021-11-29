@@ -1,19 +1,14 @@
-import { useReducer } from "react";
-import BookablesList from "./BookablesList";
+import { useState } from "react";
+import Bookable from "../../domain/Bookable";
 import BookableDetails from "./BookableDetails";
-import reducer, { initialState } from "./reducer";
+import BookablesList from "./BookablesList";
 
 export default function BookablesView() {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const bookablesInGroup = state.bookables.filter(
-    (b) => b.group === state.group
-  );
-  const bookable = bookablesInGroup[state.bookableIndex];
+  const [bookable, setBookable] = useState<Bookable>();
 
   return (
     <>
-      <BookablesList state={state} dispatch={dispatch} />
+      <BookablesList bookable={bookable} setBookable={setBookable} />
       <BookableDetails bookable={bookable} />
     </>
   );

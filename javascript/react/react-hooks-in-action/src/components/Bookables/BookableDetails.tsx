@@ -3,7 +3,7 @@ import Bookable from "../../domain/Bookable";
 import { days, sessions } from "../../static.json";
 
 export interface BookableDetailsProps {
-  bookable: Bookable;
+  bookable?: Bookable;
 }
 
 export default function BookableDetails({ bookable }: BookableDetailsProps) {
