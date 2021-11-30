@@ -1,15 +1,41 @@
+import { useContext } from "react";
+import { FaEdit } from "react-icons/fa";
 import Bookable from "../../domain/Bookable";
-import Booking from "../../domain/Booking";
+import BookingModel from "../../domain/Booking";
+import UserContext from "../Users/UserContext";
+import Booking from "./Booking";
 
 export interface BookingDetailsProps {
-  booking?: Booking;
+  booking?: BookingModel;
   bookable?: Bookable;
 }
 
-export default function BookingDetails(_: BookingDetailsProps) {
+export default function BookingDetails({
+  booking,
+  bookable,
+}: BookingDetailsProps) {
+  const user = useContext(UserContext);
+  const isBooker = booking && user && booking.bookerId === user.id;
+
   return (
-    <div className="booking-details placeholder">
-      <h3>Booking Details</h3>
+    <div className="booking-details">
+      <h2>
+        Booking Details
+        {isBooker && (
+          <span className="controls">
+            <button className="btn">
+              <FaEdit />
+            </button>
+          </span>
+        )}
+      </h2>
+      {booking ? (
+        <Booking booking={booking} bookable={bookable} />
+      ) : (
+        <div className="booking-details-fields">
+          <p>Select a booking or a booking slot.</p>
+        </div>
+      )}
     </div>
   );
 }

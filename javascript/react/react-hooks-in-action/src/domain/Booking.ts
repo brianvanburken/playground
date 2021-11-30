@@ -8,6 +8,9 @@ export type Session =
 export default interface Booking {
   session: Session;
   date: string;
-  bookableId: number;
   title: string;
+  notes?: string;
+
+  bookableId: number;
+  bookerId?: number;
 }
