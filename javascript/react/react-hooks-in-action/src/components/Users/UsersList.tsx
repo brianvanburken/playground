@@ -1,7 +1,7 @@
-import { Dispatch, useEffect, useState } from "react";
+import { Dispatch, useEffect } from "react";
 import { FaSpinner } from "react-icons/fa";
 import User from "../../domain/User";
-import { getData } from "../../utils/api";
+import useFetch from "../../utils/useFetch";
 
 export interface UsersListProps {
   user?: User;
@@ -9,26 +9,21 @@ export interface UsersListProps {
 }
 
 export default function UsersList({ user, setUser }: UsersListProps) {
-  const [users, setUsers] = useState<User[]>([]);
-  const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: users = [],
+    status,
+    error,
+  } = useFetch<User[]>("http://localhost:3001/users");
 
   useEffect(() => {
-    setIsLoading(true);
-    getData<User[]>("http://localhost:3001/users")
-      .then((users) => {
-        setUser(users[0]);
-        setUsers(users);
-      })
-      .catch(setError)
-      .finally(() => setIsLoading(false));
-  }, [setUser]);
+    setUser(users[0]);
+  }, [users, setUser]);
 
-  if (error) {
+  if (error && status === "error") {
     return <p>{error.message}</p>;
   }
 
-  if (isLoading) {
+  if (status === "loading") {
     return (
       <p>
         <FaSpinner /> Loading users...

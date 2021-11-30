@@ -1,7 +1,7 @@
-import { ChangeEvent, Dispatch, useEffect, useState } from "react";
+import { ChangeEvent, Dispatch, useEffect } from "react";
 import { FaArrowRight, FaSpinner } from "react-icons/fa";
 import Bookable from "../../domain/Bookable";
-import { getData } from "../../utils/api";
+import useFetch from "../../utils/useFetch";
 
 export interface BookablesListProps {
   bookable?: Bookable;
@@ -12,31 +12,25 @@ export default function BookablesList({
   bookable,
   setBookable,
 }: BookablesListProps) {
-  const [bookables, setBookables] = useState<Bookable[]>([]);
-  const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: bookables = [],
+    status,
+    error,
+  } = useFetch<Bookable[]>("http://localhost:3001/bookables");
 
   const group = bookable?.group;
   const bookablesInGroup = bookables.filter((b) => b.group === group);
   const groups = Array.from(new Set(bookables.map((b) => b.group)));
 
   useEffect(() => {
-    setIsLoading(true);
+    setBookable(bookables[0]);
+  }, [bookables, setBookable]);
 
-    getData<Bookable[]>("http://localhost:3001/bookables")
-      .then((bookables) => {
-        setBookable(bookables[0]);
-        setBookables(bookables);
-      })
-      .catch(setError)
-      .finally(() => setIsLoading(false));
-  }, [setBookable]);
-
-  if (error) {
+  if (error && status === "error") {
     return <p>{error.message}</p>;
   }
 
-  if (isLoading) {
+  if (status === "loading") {
     return (
       <p>
         <FaSpinner /> Loading bookables...

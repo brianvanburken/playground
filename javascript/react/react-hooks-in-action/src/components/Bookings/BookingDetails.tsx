@@ -1,8 +1,7 @@
-import { useContext } from "react";
 import { FaEdit } from "react-icons/fa";
 import Bookable from "../../domain/Bookable";
 import BookingModel from "../../domain/Booking";
-import UserContext from "../Users/UserContext";
+import { useUser } from "../Users/UserContext";
 import Booking from "./Booking";
 
 export interface BookingDetailsProps {
@@ -14,7 +13,7 @@ export default function BookingDetails({
   booking,
   bookable,
 }: BookingDetailsProps) {
-  const user = useContext(UserContext);
+  const [user] = useUser();
   const isBooker = booking && user && booking.bookerId === user.id;
 
   return (

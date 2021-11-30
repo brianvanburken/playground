@@ -39,7 +39,7 @@ export function getGrid(bookable: Bookable, startDate: Date) {
   };
 }
 
-export function transformBookings(bookingsArray: Booking[]) {
+export function transformBookings(bookingsArray: Booking[]): Grid {
   return bookingsArray.reduce((bookings: Partial<Grid>, booking: Booking) => {
     const { session, date } = booking;
 

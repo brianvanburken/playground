@@ -1,21 +1,21 @@
-import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { FaSpinner } from "react-icons/fa";
 import User from "../../domain/User";
-import UserContext, { UserSetContext } from "./UserContext";
+import useFetch from "../../utils/useFetch";
+import { useUser } from "./UserContext";
 
 export default function UserPicker() {
-  const [users, setUsers] = useState<User[]>();
-  const user = useContext(UserContext);
-  const setUser = useContext(UserSetContext);
+  const [user, setUser] = useUser();
+
+  const {
+    data: users = [],
+    status,
+    error,
+  } = useFetch<User[]>("http://localhost:3001/users");
 
   useEffect(() => {
-    (async () => {
-      const response = await fetch("http://localhost:3001/users");
-      const users: User[] = await response.json();
-      setUsers(users);
-      setUser(users[0]);
-    })();
-  }, [setUser]);
+    setUser(users[0]);
+  }, [users, setUser]);
 
   function handleSelect(e: ChangeEvent<HTMLSelectElement>) {
     const selectedID = parseInt(e.target.value, 10);
@@ -23,7 +23,11 @@ export default function UserPicker() {
     setUser(selectedUser);
   }
 
-  if (!users) {
+  if (error && status === "error") {
+    return <p>{error.message}</p>;
+  }
+
+  if (status === "loading") {
     return <FaSpinner />;
   }
 
