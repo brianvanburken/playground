@@ -52,7 +52,13 @@ export default function App() {
                 </>
               }
             >
-              <Suspense fallback={<FaSpinner />}>
+              <Suspense
+                fallback={
+                  <>
+                    <FaSpinner /> Loading page and data...
+                  </>
+                }
+              >
                 <Routes>
                   <Route path="/bookings" element={<BookingsPage />} />
                   <Route path="/bookables/*" element={<BookablesPage />} />

@@ -1,4 +1,3 @@
-import { FaSpinner } from "react-icons/fa";
 import { useQuery } from "react-query";
 import Bookable from "../../domain/Bookable";
 import { getData } from "../../utils/api";
@@ -8,12 +7,10 @@ import Bookings from "./Bookings";
 import { useBookingsParams } from "./bookingsHooks";
 
 export default function BookingsPage() {
-  const {
-    status,
-    error,
-    data: bookables = [],
-  } = useQuery<Bookable[], Error>("bookables", () =>
-    getData<Bookable[]>("http://localhost:3001/bookables")
+  const { data: bookables = [] } = useQuery<Bookable[], Error>(
+    "bookables",
+    () => getData<Bookable[]>("http://localhost:3001/bookables"),
+    { suspense: true }
   );
 
   const { date, bookableId } = useBookingsParams();
@@ -23,13 +20,6 @@ export default function BookingsPage() {
   function getUrl(id: number) {
     const root = `/bookings?bookableId=${id}`;
     return date ? `${root}&date=${shortISO(date)}` : root;
-  }
-
-  if (error && status === "error") {
-    return <p>{error.message}</p>;
-  }
-  if (status === "loading") {
-    return <FaSpinner />;
   }
 
   return (

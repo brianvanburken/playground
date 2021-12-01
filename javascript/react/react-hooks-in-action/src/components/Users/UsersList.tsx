@@ -1,5 +1,4 @@
 import { Dispatch, useEffect } from "react";
-import { FaSpinner } from "react-icons/fa";
 import { useQuery } from "react-query";
 import User from "../../domain/User";
 import { getData } from "../../utils/api";
@@ -10,29 +9,15 @@ export interface UsersListProps {
 }
 
 export default function UsersList({ user, setUser }: UsersListProps) {
-  const {
-    data: users = [],
-    status,
-    error,
-  } = useQuery<User[], Error>("users", () =>
-    getData<User[]>("http://localhost:3001/users")
+  const { data: users = [] } = useQuery<User[], Error>(
+    "users",
+    () => getData<User[]>("http://localhost:3001/users"),
+    { suspense: true }
   );
 
   useEffect(() => {
     setUser(users[0]);
   }, [users, setUser]);
-
-  if (error && status === "error") {
-    return <p>{error.message}</p>;
-  }
-
-  if (status === "loading") {
-    return (
-      <p>
-        <FaSpinner /> Loading users...
-      </p>
-    );
-  }
 
   return (
     <ul className="users items-list-nav">
