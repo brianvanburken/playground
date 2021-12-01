@@ -6,7 +6,7 @@ export async function getData<T>(url: string): Promise<T> {
   if (!response.ok) {
     throw Error("There was a problem fetching data.");
   }
-  return await response.json();
+  return response.json();
 }
 
 export async function getBookings(
@@ -22,4 +22,39 @@ export async function getBookings(
   const query = `bookableId=${bookableId}&date_gte=${start}&date_lte=${end}`;
 
   return getData<Booking[]>(`${urlRoot}?${query}`);
+}
+
+export async function createItem<T>(url: string, item: T): Promise<T> {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(item),
+  });
+  if (!response.ok) {
+    throw new Error("There was a problem creating the item!");
+  }
+  return response.json();
+}
+
+export async function editItem<T>(url: string, item: T): Promise<T> {
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(item),
+  });
+  if (!response.ok) {
+    throw new Error("There was a problem updating the item!");
+  }
+  return response.json();
+}
+
+export async function deleteItem<T>(url: string): Promise<T> {
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error("There was a problem deleting the item!");
+  }
+  return response.json();
 }

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import {FaEdit} from "react-icons/fa";
+import {Link} from "react-router-dom";
 import Bookable from "../../domain/Bookable";
 import { days, sessions } from "../../static.json";
 
@@ -13,6 +15,7 @@ export default function BookableDetails({ bookable }: BookableDetailsProps) {
     setHasDetails((has) => !has);
   }
 
+
   return bookable ? (
     <div className="bookable-details item">
       <div className="item-header">
@@ -26,6 +29,14 @@ export default function BookableDetails({ bookable }: BookableDetailsProps) {
             />
             Show Details
           </label>
+          <Link
+            to={`/bookables/${bookable.id}/edit`}
+            replace={true}
+            className="btn btn-header"
+          >
+            <FaEdit />
+            <span>Edit</span>
+          </Link>
         </span>
       </div>
 

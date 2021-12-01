@@ -53,13 +53,17 @@ export default function BookingsGrid({
 
   return (
     <>
-      {status ==="error" && (
+      {status === "error" && (
         <p className="bookingsError">
           {`There was a problem loading the bookings data (${error})`}
         </p>
       )}
 
-      <table className={status === "success" ? "bookingsGrid active" : "bookingsGrid"}>
+      <table
+        className={
+          status === "success" ? "bookingsGrid active" : "bookingsGrid"
+        }
+      >
         <thead>
           <tr>
             <th>

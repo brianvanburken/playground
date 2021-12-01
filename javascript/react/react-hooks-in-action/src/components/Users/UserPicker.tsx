@@ -1,7 +1,8 @@
 import { ChangeEvent, useEffect } from "react";
 import { FaSpinner } from "react-icons/fa";
+import { useQuery } from "react-query";
 import User from "../../domain/User";
-import useFetch from "../../utils/useFetch";
+import { getData } from "../../utils/api";
 import { useUser } from "./UserContext";
 
 export default function UserPicker() {
@@ -11,7 +12,9 @@ export default function UserPicker() {
     data: users = [],
     status,
     error,
-  } = useFetch<User[]>("http://localhost:3001/users");
+  } = useQuery<User[], Error>("users", () =>
+    getData<User[]>("http://localhost:3001/users")
+  );
 
   useEffect(() => {
     setUser(users[0]);

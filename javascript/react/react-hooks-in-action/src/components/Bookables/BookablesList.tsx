@@ -1,59 +1,39 @@
-import { ChangeEvent, Dispatch, useEffect } from "react";
-import { FaArrowRight, FaSpinner } from "react-icons/fa";
+import { ChangeEvent } from "react";
+import { FaArrowRight } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import Bookable from "../../domain/Bookable";
-import useFetch from "../../utils/useFetch";
 
 export interface BookablesListProps {
   bookable?: Bookable;
-  setBookable: Dispatch<Bookable>;
+  bookables: Bookable[];
+  getUrl: (id: number) => string;
 }
 
 export default function BookablesList({
   bookable,
-  setBookable,
+  bookables,
+  getUrl,
 }: BookablesListProps) {
-  const {
-    data: bookables = [],
-    status,
-    error,
-  } = useFetch<Bookable[]>("http://localhost:3001/bookables");
-
   const group = bookable?.group;
   const bookablesInGroup = bookables.filter((b) => b.group === group);
   const groups = Array.from(new Set(bookables.map((b) => b.group)));
 
-  useEffect(() => {
-    setBookable(bookables[0]);
-  }, [bookables, setBookable]);
-
-  if (error && status === "error") {
-    return <p>{error.message}</p>;
-  }
-
-  if (status === "loading") {
-    return (
-      <p>
-        <FaSpinner /> Loading bookables...
-      </p>
-    );
-  }
+  const navigate = useNavigate();
 
   function changeGroup(event: ChangeEvent<HTMLSelectElement>) {
     const bookablesInSelectedGroup = bookables.filter(
       (b) => b.group === event.target.value
     );
-    setBookable(bookablesInSelectedGroup[0]);
-  }
-
-  function changeBookable(selectedBookable: Bookable) {
-    setBookable(selectedBookable);
+    if (bookablesInSelectedGroup.length > 0) {
+      navigate(getUrl(bookablesInSelectedGroup[0].id));
+    }
   }
 
   function nextBookable() {
     const i = (bookable && bookablesInGroup.indexOf(bookable)) ?? 0;
     const nextIndex = (i + 1) % bookablesInGroup.length;
     const nextBookable = bookablesInGroup[nextIndex];
-    setBookable(nextBookable);
+    navigate(getUrl(nextBookable.id));
   }
 
   return (
@@ -71,9 +51,9 @@ export default function BookablesList({
             key={b.id}
             className={b.id === bookable?.id ? "selected" : undefined}
           >
-            <button className="btn" onClick={() => changeBookable(b)}>
+            <Link to={getUrl(b.id)} className="btn">
               {b.title}
-            </button>
+            </Link>
           </li>
         ))}
       </ul>

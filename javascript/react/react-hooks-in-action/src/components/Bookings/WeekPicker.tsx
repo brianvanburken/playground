@@ -1,40 +1,32 @@
-import { Dispatch, useState } from "react";
+import { RefObject, useRef } from "react";
 import {
   FaCalendarCheck,
   FaCalendarDay,
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import { WeekAction, WeekActionType } from "./weekReducer";
+import { addDays, shortISO } from "../../utils/date-wrangler";
+import { useBookingsParams } from "./bookingsHooks";
 
-export interface WeekPickerProps {
-  dispatch: Dispatch<WeekAction>;
-}
+export default function WeekPicker() {
+  const textboxRef = useRef<HTMLInputElement>();
 
-export default function WeekPicker({ dispatch }: WeekPickerProps) {
-  const [dateText, setDateText] = useState("2020-06-24");
+  const { date, setBookingsDate: goToDate } = useBookingsParams();
 
-  function goToDate() {
-    dispatch({
-      type: WeekActionType.SetDate,
-      payload: dateText,
-    });
-  }
+  const dates = {
+    prev: shortISO(addDays(date, -7)),
+    next: shortISO(addDays(date, 7)),
+    today: shortISO(new Date()),
+  };
 
   return (
     <div>
       <p className="date-picker">
-        <button
-          className="btn"
-          onClick={() => dispatch({ type: WeekActionType.PrevWeek })}
-        >
+        <button className="btn" onClick={() => goToDate(dates.prev)}>
           <FaChevronLeft />
           <span>Prev</span>
         </button>
-        <button
-          className="btn"
-          onClick={() => dispatch({ type: WeekActionType.Today })}
-        >
+        <button className="btn" onClick={() => goToDate(dates.today)}>
           <FaCalendarDay />
           <span>Today</span>
         </button>
@@ -43,19 +35,19 @@ export default function WeekPicker({ dispatch }: WeekPickerProps) {
           <input
             type="text"
             placeholder="e.g. 2020-09-02"
-            value={dateText}
-            onChange={(e) => setDateText(e.target.value)}
+            defaultValue="2020-06-24"
+            ref={textboxRef as RefObject<HTMLInputElement>}
           />
-          <button className="go btn" onClick={goToDate}>
+          <button
+            className="go btn"
+            onClick={() => goToDate(textboxRef?.current?.value ?? "")}
+          >
             <FaCalendarCheck />
             <span>Go</span>
           </button>
         </span>
 
-        <button
-          className="btn"
-          onClick={() => dispatch({ type: WeekActionType.NextWeek })}
-        >
+        <button className="btn" onClick={() => dates.next}>
           <span>Next</span>
           <FaChevronRight />
         </button>
