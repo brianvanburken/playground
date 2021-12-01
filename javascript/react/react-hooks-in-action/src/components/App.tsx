@@ -1,15 +1,19 @@
-import { FaCalendarAlt, FaDoorOpen, FaUsers } from "react-icons/fa";
+import { lazy, Suspense } from "react";
+import { FaCalendarAlt, FaDoorOpen, FaSpinner, FaUsers } from "react-icons/fa";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter as Router, Link, Route, Routes } from "react-router-dom";
 import "../App.css";
-import BookablesPage from "./Bookables/BookablesPage";
-import BookingsPage from "./Bookings/BookingsPage";
+import ErrorBoundary from "./UI/ErrorBoundary";
 import { UserProvider } from "./Users/UserContext";
 import UserPicker from "./Users/UserPicker";
-import UsersPage from "./Users/UsersPage";
 
 export default function App() {
   const queryClient = new QueryClient();
+
+  const BookablesPage = lazy(() => import("./Bookables/BookablesPage"));
+  const BookingsPage = lazy(() => import("./Bookings/BookingsPage"));
+  const UsersPage = lazy(() => import("./Users/UsersPage"));
+
   return (
     <QueryClientProvider client={queryClient}>
       <UserProvider>
@@ -40,11 +44,22 @@ export default function App() {
               </nav>
               <UserPicker />
             </header>
-            <Routes>
-              <Route path="/bookings" element={<BookingsPage />} />
-              <Route path="/bookables/*" element={<BookablesPage />} />
-              <Route path="/users" element={<UsersPage />} />
-            </Routes>
+            <ErrorBoundary
+              fallback={
+                <>
+                  <h1>Something went wrong!</h1>
+                  <p>Try reloading the page.</p>
+                </>
+              }
+            >
+              <Suspense fallback={<FaSpinner />}>
+                <Routes>
+                  <Route path="/bookings" element={<BookingsPage />} />
+                  <Route path="/bookables/*" element={<BookablesPage />} />
+                  <Route path="/users" element={<UsersPage />} />
+                </Routes>
+              </Suspense>
+            </ErrorBoundary>
           </div>
         </Router>
       </UserProvider>
