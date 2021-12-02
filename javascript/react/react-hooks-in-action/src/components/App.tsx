@@ -1,9 +1,10 @@
 import { lazy, Suspense } from "react";
-import { FaCalendarAlt, FaDoorOpen, FaSpinner, FaUsers } from "react-icons/fa";
+import { FaCalendarAlt, FaDoorOpen, FaUsers } from "react-icons/fa";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter as Router, Link, Route, Routes } from "react-router-dom";
 import "../App.css";
 import ErrorBoundary from "./UI/ErrorBoundary";
+import PageSpinner from "./UI/PageSpinner";
 import { UserProvider } from "./Users/UserContext";
 import UserPicker from "./Users/UserPicker";
 
@@ -52,13 +53,7 @@ export default function App() {
                 </>
               }
             >
-              <Suspense
-                fallback={
-                  <>
-                    <FaSpinner /> Loading page and data...
-                  </>
-                }
-              >
+              <Suspense fallback={<PageSpinner />}>
                 <Routes>
                   <Route path="/bookings" element={<BookingsPage />} />
                   <Route path="/bookables/*" element={<BookablesPage />} />

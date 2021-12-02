@@ -1,5 +1,5 @@
-import { FaSpinner } from "react-icons/fa";
 import { useParams } from "react-router-dom";
+import PageSpinner from "../UI/PageSpinner";
 import BookableForm from "./BookableForm";
 import {
   useBookable,
@@ -39,7 +39,7 @@ export default function BookablesEdit() {
   }
 
   if (isLoading || isUpdating || isDeleting) {
-    return <FaSpinner />;
+    return <PageSpinner />;
   }
 
   return (

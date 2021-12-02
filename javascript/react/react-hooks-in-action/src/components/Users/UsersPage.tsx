@@ -1,8 +1,8 @@
 import { Suspense, useState } from "react";
-import { FaSpinner } from "react-icons/fa";
 import { useQueryClient } from "react-query";
 import User from "../../domain/User";
 import { getData } from "../../utils/api";
+import PageSpinner from "../UI/PageSpinner";
 import { useUser } from "./UserContext";
 import UserDetails from "./UserDetails";
 import UsersList from "./UsersList";
@@ -34,9 +34,11 @@ export default function UsersPage() {
   return user ? (
     <main className="users-page">
       <UsersList user={user} setUser={switchUser} />
-      <Suspense fallback={<FaSpinner />}>
-        <UserDetails userId={user?.id ?? 0} />
+      <Suspense fallback={<PageSpinner />}>
+        <UserDetails userId={user.id} />
       </Suspense>
     </main>
-  ) : null;
+  ) : (
+    <PageSpinner />
+  );
 }

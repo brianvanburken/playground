@@ -1,7 +1,7 @@
 import { Dispatch, useEffect } from "react";
-import { FaSpinner } from "react-icons/fa";
 import Bookable from "../../domain/Bookable";
 import Booking, { Session } from "../../domain/Booking";
+import Spinner from "../UI/Spinner";
 import { useBookings, useGrid } from "./bookingsHooks";
 import { GridSession } from "./grid-builder";
 import { WeekState } from "./weekReducer";
@@ -68,7 +68,7 @@ export default function BookingsGrid({
           <tr>
             <th>
               <span className="status">
-                <FaSpinner />
+                <Spinner />
               </span>
             </th>
             {dates.map((d) => (

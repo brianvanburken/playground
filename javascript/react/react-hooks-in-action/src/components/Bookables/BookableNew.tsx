@@ -1,8 +1,8 @@
-import { FaSpinner } from "react-icons/fa";
 import { useMutation, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import Bookable from "../../domain/Bookable";
 import { createItem } from "../../utils/api";
+import PageSpinner from "../UI/PageSpinner";
 import BookableForm from "./BookableForm";
 import useFormState from "./useFormState";
 
@@ -38,7 +38,7 @@ export default function BookableNew() {
   }
 
   if (status === "loading") {
-    return <FaSpinner />;
+    return <PageSpinner />;
   }
 
   return <BookableForm formState={formState} handleSubmit={handleSubmit} />;

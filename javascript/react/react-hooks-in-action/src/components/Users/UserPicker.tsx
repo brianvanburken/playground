@@ -1,8 +1,8 @@
 import { ChangeEvent, useEffect } from "react";
-import { FaSpinner } from "react-icons/fa";
 import { useQuery } from "react-query";
 import User from "../../domain/User";
 import { getData } from "../../utils/api";
+import Spinner from "../UI/Spinner";
 import { useUser } from "./UserContext";
 
 export default function UserPicker() {
@@ -31,7 +31,7 @@ export default function UserPicker() {
   }
 
   if (status === "loading") {
-    return <FaSpinner />;
+    return <Spinner />;
   }
 
   return (
