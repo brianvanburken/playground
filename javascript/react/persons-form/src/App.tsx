@@ -10,17 +10,14 @@ export default function App() {
 
   const addPersoon = useCallback(
     (natuurlijkPersoon: NatuurlijkPersoonModel) => {
-      console.log({ natuurlijkPersoon, editingPersoon });
-      if (editingPersoon) {
-        setPersonen(
-          personen.map((p) =>
+      const newPersonen = editingPersoon
+        ? personen.map((p) =>
             isSamePersoon(p, editingPersoon) ? natuurlijkPersoon : p
           )
-        );
-        setEditPersoon(undefined);
-      } else {
-        setPersonen([...personen, natuurlijkPersoon]);
-      }
+        : [...personen, natuurlijkPersoon];
+
+      setPersonen(newPersonen);
+      setEditPersoon(undefined);
       setShowForm(false);
     },
     [setPersonen, setShowForm]
@@ -42,19 +39,22 @@ export default function App() {
   );
 
   const hideForm = useCallback(() => {
+    setEditPersoon(undefined);
     setShowForm(false);
   }, [setShowForm]);
 
   return (
     <>
       <div>
-        {personen.map((p) => (
-          <NatuurlijkPersoonListItem
-            persoon={p}
-            deletePersoon={deletePersoon}
-            editPersoon={editPersoon}
-          />
-        ))}
+        {personen
+          .filter((p) => !isSamePersoon(p, editingPersoon))
+          .map((p) => (
+            <NatuurlijkPersoonListItem
+              persoon={p}
+              deletePersoon={deletePersoon}
+              editPersoon={editPersoon}
+            />
+          ))}
       </div>
       {isFormShown && (
         <NatuurlijkPersoonForm
@@ -70,6 +70,6 @@ export default function App() {
   );
 }
 
-function isSamePersoon(a: NatuurlijkPersoonModel, b: NatuurlijkPersoonModel) {
-  return a.id === b.id;
+function isSamePersoon(a: NatuurlijkPersoonModel, b?: NatuurlijkPersoonModel) {
+  return a.id === b?.id;
 }
