@@ -47,7 +47,7 @@ export default function NatuurlijkPersoonForm({
             minLength: 8,
             maxLength: 9,
             validate: {
-              elfproef: optional((bsn) => elfproef(bsn)),
+              elfproef: ifFilledIn(elfproef),
             },
           })}
         />
@@ -84,7 +84,7 @@ export default function NatuurlijkPersoonForm({
           {...register("voorvoegselGeslachtsnaam", {
             maxLength: 10,
             validate: {
-              included: optional(isIncluded(voorvoegsels)),
+              included: ifFilledIn(isIncluded(voorvoegsels)),
             },
           })}
         />
@@ -148,7 +148,17 @@ export default function NatuurlijkPersoonForm({
             required: !getValues("geborenInBuitenland"),
             maxLength: 240,
             validate: {
-              included: optional(isIncluded(geboortegemeentes)),
+              included: (v: string | undefined) => {
+                console.log(
+                  v,
+                  !getValues("geborenInBuitenland"),
+                  isIncluded(geboortegemeentes)(v ?? "")
+                );
+                return (
+                  !getValues("geborenInBuitenland") &&
+                  isIncluded(geboortegemeentes)(v ?? "")
+                );
+              },
             },
           })}
         />
@@ -175,8 +185,8 @@ export default function NatuurlijkPersoonForm({
             required: true,
             pattern: /^\d{2}-\d{2}-\d{4}$/,
             validate: {
-              future: dateInFuture,
-              olderThan16: datePast16YearsAgo,
+              future: ifFilledIn(dateInFuture),
+              olderThan16: ifFilledIn(datePast16YearsAgo),
             },
           })}
         />
@@ -228,17 +238,11 @@ function reverseDateFormat(d: string) {
   return d.split("-").reverse().join("-");
 }
 
-function dateInFuture(d: string | undefined) {
-  if (!d) {
-    return false;
-  }
+function dateInFuture(d: string) {
   return new Date(reverseDateFormat(d)) < new Date();
 }
 
-function datePast16YearsAgo(d: string | undefined) {
-  if (!d) {
-    return false;
-  }
+function datePast16YearsAgo(d: string) {
   const reversedDate = reverseDateFormat(d);
   const inputDate = new Date(reversedDate);
   const date = new Date();
@@ -246,12 +250,10 @@ function datePast16YearsAgo(d: string | undefined) {
   return inputDate <= date;
 }
 
-function optional(f: (_: string) => boolean) {
-  return (v: string | undefined) => {
-    return !v || f(v);
-  };
+function ifFilledIn(f: (_: string) => boolean) {
+  return (v: string | undefined) => !v || f(v);
 }
 
 function isIncluded(list: string[]) {
-  return (v: string) => !list.includes(v.trim().toLowerCase());
+  return (v: string) => list.includes(v.trim().toLowerCase());
 }

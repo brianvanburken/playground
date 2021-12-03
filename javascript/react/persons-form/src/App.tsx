@@ -45,17 +45,15 @@ export default function App() {
 
   return (
     <>
-      <div>
-        {personen
-          .filter((p) => !isSamePersoon(p, editingPersoon))
-          .map((p) => (
-            <NatuurlijkPersoonListItem
-              persoon={p}
-              deletePersoon={deletePersoon}
-              editPersoon={editPersoon}
-            />
-          ))}
-      </div>
+      {personen
+        .filter((p) => !isSamePersoon(p, editingPersoon))
+        .map((p) => (
+          <NatuurlijkPersoonListItem
+            persoon={p}
+            deletePersoon={deletePersoon}
+            editPersoon={editPersoon}
+          />
+        ))}
       {isFormShown && (
         <NatuurlijkPersoonForm
           editingPersoon={editingPersoon}
@@ -65,7 +63,7 @@ export default function App() {
       )}
       {!isFormShown && (
         <button onClick={() => setShowForm(true)}>Persoon toevoegen</button>
-      )}{" "}
+      )}
     </>
   );
 }
