@@ -1,0 +1,11 @@
+label {
+  display: flex;
+
+  flex-direction: column;
+
+  padding: 1em 0;
+}
+
+.error {
+  color: red;
+}
