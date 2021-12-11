@@ -1,3 +1,6 @@
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { IconButton, ListItem, ListItemText } from "@mui/material";
 import { NatuurlijkPersoonModel } from "./NatuurlijkPersoonModel";
 
 interface NatuurlijkPersoonListItemProps {
@@ -12,12 +15,25 @@ export default function NatuurlijkPersoonListItem({
   editPersoon,
 }: NatuurlijkPersoonListItemProps) {
   return (
-    <div>
-      <div>{getPersoonnaam(persoon)}</div>
-      <div>{persoon.woonplaats}</div>
-      <button onClick={() => editPersoon(persoon)}>Wijzigen</button>
-      <button onClick={() => deletePersoon(persoon)}>Verwijderen</button>
-    </div>
+    <>
+      <ListItem
+        secondaryAction={
+          <>
+            <IconButton onClick={() => deletePersoon(persoon)}>
+              <DeleteIcon />
+            </IconButton>
+            <IconButton onClick={() => editPersoon(persoon)}>
+              <EditIcon />
+            </IconButton>
+          </>
+        }
+      >
+        <ListItemText
+          primary={getPersoonnaam(persoon)}
+          secondary={getWoonplaats(persoon)}
+        />
+      </ListItem>
+    </>
   );
 }
 
@@ -27,4 +43,8 @@ function getPersoonnaam(persoon: NatuurlijkPersoonModel): string {
       ? " " + persoon.voorvoegselGeslachtsnaam
       : ""
   } ${persoon.geslachtsnaam}`;
+}
+
+function getWoonplaats(persoon: NatuurlijkPersoonModel): string {
+  return `${persoon.woonplaats}, ${persoon.land}`;
 }

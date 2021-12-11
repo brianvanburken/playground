@@ -1,3 +1,5 @@
+import AddIcon from "@mui/icons-material/Add";
+import { Button, Container, Divider, List } from "@mui/material";
 import { useCallback, useState } from "react";
 import NatuurlijkPersoonForm from "./NatuurlijkPersoonForm";
 import NatuurlijkPersoonListItem from "./NatuurlijkPersoonListItem";
@@ -20,14 +22,14 @@ export default function App() {
       setEditPersoon(undefined);
       setShowForm(false);
     },
-    [setPersonen, setShowForm]
+    [setPersonen, setShowForm, editingPersoon, personen]
   );
 
   const deletePersoon = useCallback(
     (natuurlijkPersoon: NatuurlijkPersoonModel) => {
       setPersonen(personen.filter((p) => isSamePersoon(p, natuurlijkPersoon)));
     },
-    [setPersonen, setShowForm]
+    [setPersonen, personen]
   );
 
   const editPersoon = useCallback(
@@ -44,16 +46,24 @@ export default function App() {
   }, [setShowForm]);
 
   return (
-    <>
-      {personen
-        .filter((p) => !isSamePersoon(p, editingPersoon))
-        .map((p) => (
-          <NatuurlijkPersoonListItem
-            persoon={p}
-            deletePersoon={deletePersoon}
-            editPersoon={editPersoon}
-          />
-        ))}
+    <Container>
+      <List>
+        {personen
+          .filter((p) => !isSamePersoon(p, editingPersoon))
+          .map((p, i, all) => (
+            <>
+              <NatuurlijkPersoonListItem
+                key={p.id}
+                persoon={p}
+                deletePersoon={deletePersoon}
+                editPersoon={editPersoon}
+              />
+              {i < all.length - 1 && all.length > 1 ? (
+                <Divider variant="inset" component="li" />
+              ) : null}
+            </>
+          ))}
+      </List>
       {isFormShown && (
         <NatuurlijkPersoonForm
           editingPersoon={editingPersoon}
@@ -62,9 +72,15 @@ export default function App() {
         />
       )}
       {!isFormShown && (
-        <button onClick={() => setShowForm(true)}>Persoon toevoegen</button>
+        <Button
+          onClick={() => setShowForm(true)}
+          variant="contained"
+          endIcon={<AddIcon />}
+        >
+          Persoon toevoegen
+        </Button>
       )}
-    </>
+    </Container>
   );
 }
 
