@@ -4,21 +4,65 @@
     <button id="toggle">Trigger modal</button>
 
     <script>
+      const template = document.createElement("template");
+      template.innerHTML = `
+        <style>
+        .modal {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          z-index: 99999;
+        }
+
+        .modal__background {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: black;
+          opacity: 0.8;
+          z-index: 0;
+        }
+
+        .modal__content {
+          background: white;
+          z-index: 1;
+        }
+        </style>
+
+        <div class="modal">
+          <div class="modal__content">
+            <slot></slot>
+            <button id="close-modal">Close modal</button>
+          </div>
+          <div class="modal__background"></div>
+        </div>
+        `;
+
       customElements.define(
         "app-modal",
         class extends HTMLElement {
           constructor() {
             super();
+            this.shadow = this.attachShadow({ mode: "open" });
+            this.shadowRoot.appendChild(template.content.cloneNode(true));
+
             this._watchEscape = this._watchEscape.bind(this);
             this._close = this._close.bind(this);
           }
 
           // Added to page
           connectedCallback() {
-            this.closeButton = document.createElement("button");
-            this.closeButton.innerHTML = "Close modal";
+            this.closeButton = this.shadowRoot.getElementById("close-modal");
             this.closeButton.addEventListener("click", this._close);
-            this.appendChild(this.closeButton);
 
             document.addEventListener("keyup", this._watchEscape);
           }
