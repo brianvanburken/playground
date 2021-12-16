@@ -1,0 +1,97 @@
+<body>
+  <style>
+    .modal {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      z-index: 99999;
+    }
+
+    .modal__background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      opacity: 0.8;
+      z-index: 0;
+    }
+
+    .modal__content {
+      background: white;
+      z-index: 1;
+    }
+  </style>
+
+  <input/ >
+  <label>Another input <input/ ></label>
+  <button>Some button</button>
+
+  <div class="modal">
+    <div class="modal__background"></div>
+    <div class="modal__content">
+      <p>Focus should be trapped within this element.</p>
+      <label
+        >Input in modal
+        <input />
+      </label>
+      <button>Close</button>
+    </div>
+  </div>
+
+  <script>
+    const KEYCODE_TAB = 9;
+    const FOCUSABLE_ELEMENTS_SELECTORS = [
+      "a[href]:not([disabled])",
+      "button:not([disabled])",
+      "textarea:not([disabled])",
+      "input:not([disabled])",
+      "select:not([disabled])",
+    ];
+
+    const modalContent = document.querySelector(".modal__content");
+
+    const focusableElements = modalContent.querySelectorAll(
+      FOCUSABLE_ELEMENTS_SELECTORS.join(",")
+    );
+
+    const firstFocusableEl = focusableElements[0];
+    const lastFocusableEl = focusableElements[focusableElements.length - 1];
+
+    function catchFocus(e) {
+      const isTabPressed = e.key === "Tab" || e.keyCode === KEYCODE_TAB;
+      const isShiftActive = e.shiftKey;
+
+      if (!isTabPressed) {
+        return;
+      }
+
+      // When there isn't a focus yet and Tab is pressed within the DOM we
+      // set focus to the first focusable element
+      if (e.target === document.body) {
+        firstFocusableEl.focus();
+        e.preventDefault();
+        // If we focus backward and we're already on the first focusable
+        // element we set focus to the last one.
+      } else if (isShiftActive && document.activeElement === firstFocusableEl) {
+        lastFocusableEl.focus();
+        e.preventDefault();
+        // If we focus forward and we're already on the last focusable
+        // element we set focus to the first one
+      } else if (document.activeElement === lastFocusableEl) {
+        firstFocusableEl.focus();
+        e.preventDefault();
+      }
+    }
+
+    document.addEventListener("keydown", catchFocus);
+  </script>
+</body>
