@@ -1,0 +1,72 @@
+<html>
+  <head> </head>
+  <body>
+    <button id="toggle">Trigger modal</button>
+
+    <script>
+      customElements.define(
+        "app-modal",
+        class extends HTMLElement {
+          constructor() {
+            super();
+            this._watchEscape = this._watchEscape.bind(this);
+            this._close = this._close.bind(this);
+          }
+
+          // Added to page
+          connectedCallback() {
+            this.closeButton = document.createElement("button");
+            this.closeButton.innerHTML = "Close modal";
+            this.closeButton.addEventListener("click", this._close);
+            this.appendChild(this.closeButton);
+
+            document.addEventListener("keyup", this._watchEscape);
+          }
+
+          // Removed from page
+          disconnectedCallback() {
+            document.removeEventListener("keyup", this._watchEscape);
+          }
+
+          _close(event) {
+            this._dispatchCloseEvent();
+          }
+
+          _watchEscape(event) {
+            if (event.key === "Escape") {
+              this._dispatchCloseEvent();
+            }
+          }
+
+          _dispatchCloseEvent() {
+            const event = new CustomEvent("app-modal-close", {
+              bubbles: true,
+              cancelable: false,
+            });
+            this.dispatchEvent(event);
+          }
+        }
+      );
+
+      const toggleButtonElement = document.getElementById("toggle");
+
+      toggleButtonElement.onclick = () => {
+        const modalContent = document.createElement("div");
+        modalContent.innerHTML = "<div>Modal child</div>";
+
+        const newModal = document.createElement("app-modal");
+        newModal.appendChild(modalContent);
+
+        document.body.appendChild(newModal);
+        toggleButtonElement.setAttribute("disabled", true);
+
+        function closeModal() {
+          document.body.removeChild(newModal);
+          toggleButtonElement.removeAttribute("disabled");
+        }
+
+        newModal.addEventListener("app-modal-close", closeModal);
+      };
+    </script>
+  </body>
+</html>
