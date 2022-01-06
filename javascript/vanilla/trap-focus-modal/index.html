@@ -1,0 +1,153 @@
+<body>
+  <style>
+    .modal {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      z-index: 99999;
+    }
+
+    .modal[aria-hidden="true"] {
+      display: none;
+    }
+
+    .modal__background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      opacity: 0.8;
+      z-index: 0;
+    }
+
+    .modal__content {
+      background: white;
+      z-index: 1;
+    }
+  </style>
+
+  <div
+    class="modal"
+    data-modal-id="modal-id"
+    role="dialog"
+    aria-hidden="true"
+    aria-labelledby="modal-header"
+  >
+    <div class="modal__background"></div>
+    <div class="modal__content">
+      <h1 id="modal-header">Modal title</h1>
+      <p>Focus should be trapped within this element.</p>
+      <label
+        >Input in modal
+        <input />
+      </label>
+      <button data-modal-close>Close</button>
+    </div>
+  </div>
+
+  <input/ >
+  <label>Another input <input/ ></label>
+  <button data-modal-trigger="modal-id">Toggle modal</button>
+
+  <script>
+    // TODO: setup using data-modal-id a way to toggle multiple modals?
+    const $modal = document.querySelector(".modal");
+
+    document
+      .querySelectorAll("[data-modal-trigger]")
+      .forEach(($modalTrigger) => {
+        const modalId = $modalTrigger.getAttribute("data-modal-trigger");
+        console.log(modalId, `[data-modal-id]="${modalId}"`);
+        const $modal = document.querySelector(`[data-modal-id="${modalId}"]`);
+
+        if ($modal) {
+          $modalTrigger.addEventListener(
+            "click",
+            pipe(preventDefault, openModal($modal))
+          );
+        }
+      });
+
+    function openModal($modal) {
+      return () => {
+        $modal.setAttribute("aria-hidden", false);
+        // We add 'true' to make the event bubble up. Else we only get focus
+        // events when the document is targeted
+        document.addEventListener("focus", trapFocusInElement($modal), true);
+
+        // We also catch keydown for escape-key exit of modal
+        document.addEventListener("keydown", catchEscapeClose);
+
+        // We store the last focused element for the user to return on
+        // else, the user has to navigate al the way back to where they were.
+        const $lastFocusedElement = document.activeElement;
+
+        // We add tabindex so the focus is on the modal itself instead of the
+        // previous activeElement. Setting focus on the modal is to
+        // ensure the same behaviour as normal tabbing within the document
+        $modal.setAttribute("tabindex", 0);
+        $modal.focus();
+
+        const handleClickCloseModal = pipe(
+          preventDefault,
+          closeModal($modal, $lastFocusedElement)
+        );
+
+        // Get close button within modal
+        $modal
+          .querySelector("[data-modal-close]")
+          .addEventListener("click", handleClickCloseModal);
+
+        document
+          .querySelector(".modal__background")
+          .addEventListener("click", handleClickCloseModal);
+      };
+    }
+
+    function pipe(...functions) {
+      return (args) => functions.reduce((arg, fn) => fn(arg), args);
+    }
+
+    function preventDefault(e) {
+      e && e.preventDefault();
+      return e;
+    }
+
+    function closeModal($modal, $lastFocusedElement) {
+      return () => {
+        document.removeEventListener("focus", trapFocusInElement($modal));
+        document.removeEventListener("keydown", catchEscapeClose);
+        $modal.setAttribute("aria-hidden", true);
+        // Set focus back to last element if we have it
+        $lastFocusedElement && $lastFocusedElement.focus();
+      };
+    }
+
+    function isEventKeyEscape(e) {
+      const KEYCODE_ESCAPE = 27;
+      const KEY_ESCAPE = "Escape";
+      return e.key === KEY_ESCAPE || e.keyCode === KEYCODE_ESCAPE;
+    }
+
+    function catchEscapeClose(e) {
+      if (isEventKeyEscape(e)) {
+        closeModal();
+      }
+    }
+
+    // We trap focus within the element
+    function trapFocusInElement($element) {
+      return (event) => {
+        if (!$element.contains(event.target)) {
+          event.stopPropagation();
+          $element.focus();
+        }
+      };
+    }
+  </script>
+</body>
