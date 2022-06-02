@@ -1,0 +1,10 @@
+{
+  "name": "stylelint-example",
+  "scripts": {
+    "lint": "npx stylelint **/*.css"
+  },
+  "devDependencies": {
+    "stylelint": "^14.8.5",
+    "stylelint-config-standard": "^25.0.0"
+  }
+}
