@@ -1,0 +1,8 @@
+{
+  "name": "tic-tac-toe",
+  "devDependencies": {
+    "elm-format": "^0.8.5",
+    "elm-review": "^2.7.2",
+    "elm-test": "^0.19.1-revision7"
+  }
+}
