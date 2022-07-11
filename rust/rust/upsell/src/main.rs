@@ -1,6 +1,5 @@
 use std::collections::HashSet;
 
-#[derive(Debug)]
 struct OwnedVehicle {
     person_id: String,
     vehicle_id: String,
@@ -11,10 +10,19 @@ struct Policy {
     vehicle_id: String,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 struct UpsellOpportunity {
     person_id: String,
     vehicle_id: String,
+}
+
+impl From<&OwnedVehicle> for UpsellOpportunity {
+    fn from(v: &OwnedVehicle) -> Self {
+        Self {
+            person_id: v.person_id.clone(),
+            vehicle_id: v.vehicle_id.clone(),
+        }
+    }
 }
 
 fn get_owned_vehicles(_person_ids: Vec<String>) -> Vec<OwnedVehicle> {
@@ -45,10 +53,12 @@ fn find_potential_upsells(policies: Vec<Policy>) -> Vec<UpsellOpportunity> {
 
     return get_owned_vehicles(person_ids)
         .iter()
-        .filter(|v| !vehicle_ids.contains(&v.vehicle_id))
-        .map(|v| UpsellOpportunity {
-            person_id: v.person_id.clone(),
-            vehicle_id: v.vehicle_id.clone(),
+        .filter_map(|v| {
+            if !vehicle_ids.contains(&v.vehicle_id) {
+                Some(UpsellOpportunity::from(v))
+            } else {
+                None
+            }
         })
         .collect();
 }

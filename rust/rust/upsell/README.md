@@ -12,6 +12,7 @@ There is a service available that takes a list of person ids, and returns a list
 Keep in mind that this function wraps an external API, so calls to it are costly and relatively slow
 
 ## Pseudocode
+
 ```elixir
 # For the sake of the exercise, the types have the same shape.
 # (Feel free to take advantage of that).
