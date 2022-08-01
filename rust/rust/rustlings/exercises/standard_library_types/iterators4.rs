@@ -1,4 +1,5 @@
 // iterators4.rs
+// Execute `rustlings hint iterators4` or use the `hint` watch subcommand for a hint.
 
 pub fn factorial(num: u64) -> u64 {
     // Complete this function to return the factorial of num
@@ -11,7 +12,7 @@ pub fn factorial(num: u64) -> u64 {
     // - recursion
     // Execute `rustlings hint iterators4` for hints.
     match num {
-        0 => 0,
+        0 => 1,
         1 => 1,
         1.. => (1..num + 1).product(),
     }
@@ -20,6 +21,11 @@ pub fn factorial(num: u64) -> u64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn factorial_of_0() {
+        assert_eq!(1, factorial(0));
+    }
 
     #[test]
     fn factorial_of_1() {
