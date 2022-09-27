@@ -1,0 +1,27 @@
+[package]
+name = "egghead-creating-a-digital-garden-cli-with-rust"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "garden"
+path = "src/main.rs"
+
+[lib]
+name = "digital_garden"
+path = "src/lib.rs"
+
+[dependencies]
+assert_fs = "1.0.7"
+color-eyre = "0.6.2"
+directories = "4.0.1"
+edit = "0.1.4"
+predicates = "2.1.1"
+rprompt = "1.0.5"
+slug = "0.1.4"
+structopt = "0.3.26"
+
+[dev-dependencies]
+assert_cmd = "2.0.4"
