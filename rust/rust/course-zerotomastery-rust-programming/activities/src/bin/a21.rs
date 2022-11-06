@@ -25,4 +25,16 @@ fn find_user(name: &str) -> Option<i32> {
     }
 }
 
-fn main() {}
+impl User {
+    fn new(user_id: i32, name: String) -> Self {
+        Self { user_id, name }
+    }
+}
+
+fn main() {
+    let username = "matt";
+    let result = find_user(username)
+        .map(|id| User::new(id, username.to_owned()))
+        .map_or("not found".to_owned(), |user| format!("{:?}", user));
+    println!("{:?}", result);
+}
