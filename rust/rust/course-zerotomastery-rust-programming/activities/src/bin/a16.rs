@@ -8,7 +8,18 @@
 // * Use a struct containing the student's name and locker assignment
 // * The locker assignment should use an Option<i32>
 
-// * Use a struct containing the student's name and locker assignment
-// * The locker assignment should use an Option<i32>
+struct Student {
+    name: String,
+    locker: Option<i32>,
+}
 
-fn main() {}
+fn main() {
+    let bob = Student {
+        name: "Bob".to_owned(),
+        locker: Some(102),
+    };
+
+    if let Some(assignment) = bob.locker {
+        println!("{:?}", assignment)
+    }
+}
