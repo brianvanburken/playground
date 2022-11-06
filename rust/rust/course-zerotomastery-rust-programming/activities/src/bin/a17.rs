@@ -12,4 +12,7 @@
 //   to uppercase and lowercase
 //   * Try searching for: to_uppercase, to_lowercase
 
-fn main() {}
+fn main() {
+    println!("lowercase={:?}", "BOB".to_lowercase());
+    println!("uppercase={:?}", "bob".to_uppercase());
+}
