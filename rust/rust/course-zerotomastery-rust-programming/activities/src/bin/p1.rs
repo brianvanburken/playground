@@ -28,7 +28,7 @@
 //   the functionality for that menu in isolation.
 // * A vector is the easiest way to store the bills at stage 1, but a
 //   hashmap will be easier to work with at stages 2 and 3.
-use std::io;
+use std::{collections::HashMap, io};
 
 #[derive(Debug, Clone)]
 pub struct Bill {
@@ -44,16 +44,26 @@ impl Bill {
 
 #[derive(Debug)]
 pub struct Bills {
-    ledger: Vec<Bill>,
+    ledger: HashMap<String, Bill>,
 }
 
 impl Bills {
     fn new() -> Self {
-        Self { ledger: vec![] }
+        Self {
+            ledger: HashMap::new(),
+        }
     }
 
     fn add_bill(&mut self, bill: Bill) {
-        self.ledger.push(bill);
+        self.ledger.insert(bill.name.to_string(), bill);
+    }
+
+    fn remove(&mut self, name: &String) -> bool {
+        self.ledger.remove(name).is_some()
+    }
+
+    fn print(&self) {
+        println!("{:?}", self.ledger.values())
     }
 }
 
@@ -87,6 +97,7 @@ fn get_input_number() -> Option<f64> {
 enum ManagerCommand {
     AddBill,
     ViewBills,
+    RemoveBill,
 }
 
 impl ManagerCommand {
@@ -94,6 +105,7 @@ impl ManagerCommand {
         match input {
             "1" => Some(Self::AddBill),
             "2" => Some(Self::ViewBills),
+            "3" => Some(Self::RemoveBill),
             _ => None,
         }
     }
@@ -101,6 +113,7 @@ impl ManagerCommand {
     fn print() {
         println!("1. Add bill");
         println!("2. View bills");
+        println!("3. Remove bill");
     }
 }
 
@@ -122,8 +135,22 @@ mod actions {
         bills.add_bill(bill);
     }
 
+    pub fn remove_bill(bills: &mut Bills) {
+        bills.print();
+        println!("Enter bill name to remove:");
+        let bill_name = match get_input_string() {
+            Some(input) => input,
+            None => return,
+        };
+        if bills.remove(&bill_name) {
+            println!("Bill is removed.")
+        } else {
+            println!("Bill not found!")
+        }
+    }
+
     pub fn view_bills(bills: &Bills) {
-        println!("{:?}", bills);
+        bills.print();
     }
 }
 
@@ -139,6 +166,7 @@ fn main() {
         match ManagerCommand::from_str(input.as_str()) {
             Some(ManagerCommand::AddBill) => actions::add_bill(&mut bills),
             Some(ManagerCommand::ViewBills) => actions::view_bills(&bills),
+            Some(ManagerCommand::RemoveBill) => actions::remove_bill(&mut bills),
             None => return,
         }
     }
