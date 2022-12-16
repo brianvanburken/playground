@@ -12,4 +12,44 @@
 // * Use a single function to print out the perimeter of the shapes
 //   * The function must utilize impl trait as a function parameter
 
-fn main() {}
+trait Perimiter {
+    fn calculate_perimiter(&self) -> f64;
+}
+
+struct Square {
+    side: f64,
+}
+
+impl Perimiter for Square {
+    fn calculate_perimiter(&self) -> f64 {
+        self.side * 4.0
+    }
+}
+
+struct Triangle {
+    side_a: f64,
+    side_b: f64,
+    side_c: f64,
+}
+
+impl Perimiter for Triangle {
+    fn calculate_perimiter(&self) -> f64 {
+        self.side_a + self.side_b + self.side_c
+    }
+}
+
+fn get_perimiter(obj: impl Perimiter) -> f64 {
+    obj.calculate_perimiter()
+}
+
+fn main() {
+    println!("perimeter = {:?}", get_perimiter(Square { side: 5.0 }));
+    println!(
+        "perimeter = {:?}",
+        get_perimiter(Triangle {
+            side_a: 5.0,
+            side_b: 3.0,
+            side_c: 7.0
+        })
+    );
+}
