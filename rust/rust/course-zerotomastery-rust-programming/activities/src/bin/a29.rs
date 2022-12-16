@@ -9,6 +9,8 @@
 // * Use the debug token "{:?}" to print out the information
 // * Use the compiler to guide you to the correct generic constraints needed
 
+use std::fmt::Debug;
+
 #[derive(Debug)]
 enum ServicePriority {
     High,
@@ -35,4 +37,14 @@ impl Priority for Guest {
     }
 }
 
-fn main() {}
+fn print_type<T>(guest: T)
+where
+    T: Debug + Priority,
+{
+    println!("Guest, {:?}, priority: {:?}", guest, guest.get_priority())
+}
+
+fn main() {
+    print_type(ImportantGuest {});
+    print_type(Guest {});
+}
