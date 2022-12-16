@@ -62,12 +62,20 @@ impl Bills {
         self.ledger.remove(name).is_some()
     }
 
+    fn update(&mut self, name: &str, amount: f64) -> bool {
+        if let Some(bill) = self.ledger.get_mut(name) {
+            bill.amount = amount;
+            return true;
+        }
+        false
+    }
+
     fn print(&self) {
         println!("{:?}", self.ledger.values())
     }
 }
 
-fn get_input_string() -> Option<String> {
+fn get_input_as_string() -> Option<String> {
     let mut buffer = String::new();
     while io::stdin().read_line(&mut buffer).is_err() {
         println!("Please enter data again:")
@@ -80,9 +88,9 @@ fn get_input_string() -> Option<String> {
     }
 }
 
-fn get_input_number() -> Option<f64> {
+fn get_input_as_number() -> Option<f64> {
     loop {
-        let input = match get_input_string() {
+        let input = match get_input_as_string() {
             Some(input) => input,
             None => return None,
         };
@@ -98,6 +106,7 @@ enum ManagerCommand {
     AddBill,
     ViewBills,
     RemoveBill,
+    UpdateBill,
 }
 
 impl ManagerCommand {
@@ -106,6 +115,7 @@ impl ManagerCommand {
             "1" => Some(Self::AddBill),
             "2" => Some(Self::ViewBills),
             "3" => Some(Self::RemoveBill),
+            "4" => Some(Self::UpdateBill),
             _ => None,
         }
     }
@@ -114,20 +124,21 @@ impl ManagerCommand {
         println!("1. Add bill");
         println!("2. View bills");
         println!("3. Remove bill");
+        println!("4. Update bill");
     }
 }
 
 mod actions {
-    use crate::{get_input_number, get_input_string, Bill, Bills};
+    use crate::{get_input_as_number, get_input_as_string, Bill, Bills};
 
     pub fn add_bill(bills: &mut Bills) {
         println!("Input name of bill:");
-        let name = match get_input_string() {
+        let name = match get_input_as_string() {
             Some(input) => input,
             None => return,
         };
         println!("Amount:");
-        let amount = match get_input_number() {
+        let amount = match get_input_as_number() {
             Some(amount) => amount,
             None => return,
         };
@@ -138,7 +149,7 @@ mod actions {
     pub fn remove_bill(bills: &mut Bills) {
         bills.print();
         println!("Enter bill name to remove:");
-        let bill_name = match get_input_string() {
+        let bill_name = match get_input_as_string() {
             Some(input) => input,
             None => return,
         };
@@ -152,9 +163,28 @@ mod actions {
     pub fn view_bills(bills: &Bills) {
         bills.print();
     }
+
+    pub fn update_bill(bills: &mut Bills) {
+        bills.print();
+        println!("Enter bill name to update:");
+        let bill_name = match get_input_as_string() {
+            Some(input) => input,
+            None => return,
+        };
+        println!("New amount for bill:");
+        let amount = match get_input_as_number() {
+            Some(amount) => amount,
+            None => return,
+        };
+        if bills.update(&bill_name, amount) {
+            println!("Bill is updated.")
+        } else {
+            println!("Bill not found!")
+        }
+    }
 }
 
-fn main() {
+fn run_program() -> Option<()> {
     let mut bills = Bills::new();
     loop {
         println!("");
@@ -162,12 +192,18 @@ fn main() {
         ManagerCommand::print();
         println!("");
         println!("Enter selection: ");
-        let input = get_input_string().expect("No user input");
+        let input = get_input_as_string()?;
         match ManagerCommand::from_str(input.as_str()) {
             Some(ManagerCommand::AddBill) => actions::add_bill(&mut bills),
             Some(ManagerCommand::ViewBills) => actions::view_bills(&bills),
             Some(ManagerCommand::RemoveBill) => actions::remove_bill(&mut bills),
-            None => return,
+            Some(ManagerCommand::UpdateBill) => actions::update_bill(&mut bills),
+            None => break,
         }
     }
+    None
+}
+
+fn main() {
+    run_program();
 }
