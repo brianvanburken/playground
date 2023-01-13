@@ -13,3 +13,11 @@ fn main() {
     let long = "this is a long message";
     println!("{}", longest(short, long))
 }
+
+fn longest<'a>(a: &'a str, b: &'a str) -> &'a str {
+    if a < b {
+        b
+    } else {
+        a
+    }
+}
