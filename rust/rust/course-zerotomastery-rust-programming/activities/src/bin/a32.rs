@@ -12,4 +12,26 @@
 
 const MOCK_DATA: &'static str = include_str!("mock-data.csv");
 
-fn main() {}
+#[derive(Debug)]
+struct Person<'a> {
+    first_name: &'a str,
+    title: &'a str,
+}
+
+impl<'a> From<&'a str> for Person<'a> {
+    fn from(s: &'a str) -> Self {
+        let data: Vec<&str> = s.split(",").collect();
+        match data[..] {
+            [_, first_name, _, _, title] => Person { first_name, title },
+            _ => panic!("Expected uniform CSV line"),
+        }
+    }
+}
+
+fn main() {
+    MOCK_DATA
+        .lines()
+        .skip(1) // Skip header
+        .map(Person::from)
+        .for_each(|p| println!("Person: name {} and title {}", p.first_name, p.title));
+}
