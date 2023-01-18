@@ -22,8 +22,40 @@
 // * Utilize the `thiserror` crate for your error type
 // * Run `cargo test --bin a37` to test your implementation
 
+use std::convert::TryFrom;
+use thiserror::Error;
+
 #[derive(Debug, Eq, PartialEq)]
 struct Rgb(u8, u8, u8);
+
+#[derive(Error, Debug)]
+pub enum RgbParseError {
+    #[error("Invalid length. It should be 6 characters long")]
+    InvalidLength,
+    #[error("Invalid characters. Only 0-9 and A-F are allowed")]
+    InvalidCharacters,
+    #[error("Error parsing value: {0}")]
+    ParseIntError(#[from] std::num::ParseIntError),
+    #[error("Missing hash")]
+    MissingHash,
+}
+
+impl TryFrom<&str> for Rgb {
+    type Error = RgbParseError;
+
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
+        if !s.starts_with("#") {
+            return Err(RgbParseError::MissingHash);
+        }
+        if s.len() != 7 {
+            return Err(RgbParseError::InvalidLength);
+        }
+        let r = u8::from_str_radix(&s[1..=2], 16)?;
+        let g = u8::from_str_radix(&s[3..=4], 16)?;
+        let b = u8::from_str_radix(&s[5..=6], 16)?;
+        Ok(Rgb(r, g, b))
+    }
+}
 
 fn main() {
     // Use `cargo test --bin a37` to test your implementation
