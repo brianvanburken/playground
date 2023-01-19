@@ -18,4 +18,36 @@
 // * Use the .next() method to advance the iterator to confirm it works correctly
 // * Only the Iterator trait needs to be implemented for this activity
 
-fn main() {}
+struct ScoreMultiplier {
+    amount: usize,
+    iteration: usize,
+    bonus: usize,
+}
+
+impl ScoreMultiplier {
+    fn new() -> Self {
+        Self {
+            amount: 0,
+            iteration: 1,
+            bonus: 0,
+        }
+    }
+}
+
+impl Iterator for ScoreMultiplier {
+    type Item = usize;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.amount += self.iteration + self.bonus;
+        Some(self.amount)
+    }
+}
+
+fn main() {
+    let mut multiplier = ScoreMultiplier::new();
+    println!("{:?}", multiplier.next());
+    println!("{:?}", multiplier.next());
+    println!("{:?}", multiplier.next());
+    multiplier.bonus = 1;
+    println!("{:?}", multiplier.next());
+    println!("{:?}", multiplier.next());
+}
