@@ -65,6 +65,30 @@ fn main() {
 mod test {
     use super::Rgb;
     use std::convert::TryFrom;
+    use test_case::test_case;
+
+    #[test_case("#FF0000" => Ok(Rgb(255, 0, 0)))]
+    #[test_case("FF0000" => Err(RgbParseError::MissingHash))]
+    #[test_case("#FF00" => Err(RgbParseError::InvalidLength))]
+    #[test_case("#GG0000" => Err(RgbParseError::InvalidCharacter))]
+    #[test_case("#FFFFFF" => Ok(Rgb(255, 255, 255)))]
+    #[test_case("#1000000" => Err(RgbParseError::InvalidLength))]
+    #[test_case("#012345" => Err(RgbParseError::InvalidLength))]
+    #[test_case("#1x2345" => Err(RgbParseError::InvalidCharacter))]
+    #[test_case("#" => Err(RgbParseError::InvalidLength))]
+    #[test_case("" => Err(RgbParseError::InvalidLength))]
+    #[test_case("#abcdefg" => Err(RgbParseError::InvalidLength))]
+    #[test_case("#abcdeff" => Ok(Rgb(171, 205, 239)))]
+    #[test_case("#ABCDEF" => Ok(Rgb(171, 205, 239)))]
+    #[test_case("#AbCdEf" => Ok(Rgb(171, 205, 239)))]
+    #[test_case("#GBCDEF" => Err(RgbParseError::InvalidCharacter))]
+    #[test_case("#1234567" => Err(RgbParseError::InvalidLength))]
+    #[test_case("#123456789" => Err(RgbParseError::InvalidLength))]
+    #[test_case("#1A2B3C4D5E" => Err(RgbParseError::InvalidLength))]
+    #[test_case("#1A2B3C4D5E6F" => Err(RgbParseError::InvalidLength))]
+    fn test_try_from(s: &str) -> Result<Rgb, RgbParseError> {
+        Rgb::try_from(s)
+    }
 
     #[test]
     fn converts_valid_hex_color() {
