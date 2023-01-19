@@ -21,8 +21,117 @@
 // * Test your program by changing the vehicle status from both a storefront
 //   and from corporate
 
-struct Corporate;
+use std::{cell::RefCell, rc::Rc};
 
-struct StoreFront;
+#[derive(Debug)]
+enum Vehicle {
+    Car,
+    Truck,
+}
+
+#[derive(Debug, Hash, PartialOrd, PartialEq)]
+enum Status {
+    Available,
+    Maintenance,
+    Rented,
+    Unavailable,
+}
+
+#[derive(Debug)]
+struct Rental {
+    status: Status,
+    vehicle: Vehicle,
+    vin: String,
+}
+
+#[derive(Debug)]
+struct Corporate {
+    rentals: Rc<RefCell<Vec<Rental>>>,
+}
+
+#[derive(Debug)]
+struct StoreFront {
+    rentals: Rc<RefCell<Vec<Rental>>>,
+}
 
 fn main() {}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn update_status() {
+        let vehicles = vec![
+            Rental {
+                status: Status::Available,
+                vehicle: Vehicle::Car,
+                vin: "123".to_owned(),
+            },
+            Rental {
+                status: Status::Maintenance,
+                vehicle: Vehicle::Truck,
+                vin: "abc".to_owned(),
+            },
+        ];
+
+        let vehicles = Rc::new(RefCell::new(vehicles));
+
+        let corporate = Corporate {
+            rentals: Rc::clone(&vehicles),
+        };
+        let storefront = StoreFront {
+            rentals: Rc::clone(&vehicles),
+        };
+
+        {
+            let mut rentals = storefront.rentals.borrow_mut();
+            if let Some(car) = rentals.get_mut(0) {
+                assert_eq!(car.status, Status::Available);
+                car.status = Status::Rented;
+            }
+        }
+
+        {
+            let mut rentals = corporate.rentals.borrow_mut();
+            if let Some(car) = rentals.get_mut(0) {
+                assert_eq!(car.status, Status::Rented);
+                car.status = Status::Available;
+            }
+        }
+
+        let mut rentals = storefront.rentals.borrow();
+        if let Some(car) = rentals.get(0) {
+            assert_eq!(car.status, Status::Available);
+        }
+    }
+
+    #[test]
+    fn test_borrow_rc() {
+        let rentals = Rc::new(RefCell::new(vec![
+            Rental {
+                status: Status::Available,
+                vehicle: Vehicle::Car,
+                vin: "123456".to_string(),
+            },
+            Rental {
+                status: Status::Unavailable,
+                vehicle: Vehicle::Truck,
+                vin: "654321".to_string(),
+            },
+        ]));
+        let corporate = Corporate {
+            rentals: rentals.clone(),
+        };
+        let storefront = StoreFront {
+            rentals: rentals.clone(),
+        };
+
+        let corporate_rentals = corporate.rentals.borrow();
+        let storefront_rentals = storefront.rentals.borrow();
+
+        assert_eq!(corporate_rentals.len(), 2);
+        assert_eq!(storefront_rentals.len(), 2);
+        assert_eq!(Rc::strong_count(&rentals), 3);
+    }
+}
