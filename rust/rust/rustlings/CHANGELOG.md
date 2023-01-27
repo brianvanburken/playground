@@ -1,3 +1,109 @@
+<a name="5.3.0"></a>
+## 5.3.0 (2022-12-23)
+
+#### Added
+
+- **cli**: Added a percentage display in watch mode
+- Added a `flake.nix` for Nix users
+
+#### Changed
+
+- **structs3**: Added an additional test
+- **macros**: Added a link to MacroKata in the README
+
+#### Fixed
+
+- **strings3**: Added a link to `std` in the hint
+- **threads1**: Corrected a hint link
+- **iterators1**: Clarified hint steps
+- **errors5**: Fix a typo in the hint
+- **options1**: Clarified on the usage of the 24-hour system
+- **threads2, threads3**: Explicitly use `Arc::clone`
+- **structs3**: Clarifed the hint
+- **quiz2, as_ref_mut, options1, traits1, traits2**: Clarified hints
+- **traits1, traits2, cli**: Tidied up unmatching backticks
+- **enums2**: Removed unneccessary indirection of self
+- **enums3**: Added an extra tuple comment
+
+#### Housekeeping
+
+- Added a VSCode extension recommendation
+- Applied some Clippy and rustfmt formatting
+- Added a note on Windows PowerShell and other shell compatibility
+
+<a name="5.2.1"></a>
+## 5.2.1 (2022-09-06)
+
+#### Fixed
+
+- **quiz1**: Reworded the comment to actually reflect what's going on in the tests.
+  Also added another assert just to make sure.
+- **rc1**: Fixed a typo in the hint.
+- **lifetimes**: Add quotes to the `println!` output, for readability.
+
+#### Housekeeping
+
+- Fixed a typo in README.md
+
+<a name="5.2.0"></a>
+## 5.2.0 (2022-08-27)
+
+#### Added
+
+- Added a `reset` command
+
+#### Changed
+
+- **options2**: Convert the exercise to use tests
+
+#### Fixed
+
+- **threads3**: Fixed a typo
+- **quiz1**: Adjusted the explanations to be consistent with
+  the tests
+
+<a name="5.1.1"></a>
+## 5.1.1 (2022-08-17)
+
+#### Bug Fixes
+
+- Fixed an incorrect assertion in options1
+
+<a name="5.1.0"></a>
+## 5.1.0 (2022-08-16)
+
+#### Features
+
+- Added a new `rc1` exercise.
+- Added a new `cow1` exercise.
+
+#### Bug Fixes
+
+- **variables5**: Corrected reference to previous exercise
+- **functions4**: Fixed line number reference
+- **strings3**: Clarified comment wording
+- **traits4, traits5**: Fixed line number reference
+- **traits5**:
+  - Fixed typo in "parameter"
+  - Made exercise prefer a traits-based solution
+- **lifetimes2**: Improved hint
+- **threads3**: Fixed typo in hint
+- **box1**: Replaced `unimplemented!` with `todo!`
+- **errors5**: Provided an explanation for usage of `Box<dyn Error>`
+- **quiz2**: Fixed a typo
+- **macros**: Updated the macros book link
+- **options1**:
+  - Removed unused code
+  - Added more granular tests
+- Fixed some comment syntax shenanigans in info.toml
+
+#### Housekeeping
+
+- Fixed a typo in .editorconfig
+- Fixed a typo in integration_tests.rs
+- Clarified manual installation instructions using `cargo install --path .`
+- Added a link to our Zulip in the readme file
+
 <a name="5.0.0"></a>
 ## 5.0.0 (2022-07-16)
 
