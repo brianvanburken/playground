@@ -11,7 +11,6 @@ pub struct Pagination {
     /// The index of the last item which has to be returned
     pub end: usize,
 }
-
 /// Extract query parameters from the `/questions` route
 /// # Example query
 /// GET requests to this route can have a pagination attached so we just
