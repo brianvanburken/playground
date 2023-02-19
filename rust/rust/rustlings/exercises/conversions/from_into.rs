@@ -37,21 +37,19 @@ impl Default for Person {
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
-        let (name, age) = match s.split_once(',') {
-            Some((name, age)) => (name.trim(), age.trim()),
-            None => ("", ""),
-        };
+        let (name, age) = s
+            .split_once(',')
+            .map_or(("", ""), |(name, age)| (name.trim(), age.trim()));
 
-        if name.len() == 0 {
+        if name.is_empty() {
             return Person::default();
         }
 
-        return age
-            .parse::<usize>()
+        age.parse::<usize>()
             .map_or(Person::default(), |age| Person {
                 name: String::from(name),
                 age,
-            });
+            })
     }
 }
 

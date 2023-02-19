@@ -3,15 +3,15 @@
 
 #[derive(Debug)]
 enum Message {
-    Quit,
-    Move { x: i32, y: i32 },
+    Move { x: usize, y: usize },
     Echo(String),
-    ChangeColor(i32, i32, i32),
+    ChangeColor(u8, u8, u8),
+    Quit,
 }
 
 impl Message {
     fn call(&self) {
-        println!("{:?}", &self);
+        println!("{:?}", self);
     }
 }
 

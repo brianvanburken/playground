@@ -6,11 +6,11 @@ fn trim_me(input: &str) -> String {
 }
 
 fn compose_me(input: &str) -> String {
-    input.to_string() + " world!"
+    format!("{} world!", input)
 }
 
 fn replace_me(input: &str) -> String {
-    input.replace("cars", "balloons").to_string()
+    input.replace("cars", "balloons")
 }
 
 #[cfg(test)]

@@ -41,11 +41,7 @@ impl TryFrom<(i16, i16, i16)> for Color {
         let blue: Result<u8, _> = b.try_into();
 
         match (red, green, blue) {
-            (Ok(r), Ok(g), Ok(b)) => Ok(Color {
-                red: r,
-                green: g,
-                blue: b,
-            }),
+            (Ok(red), Ok(green), Ok(blue)) => Ok(Color { red, green, blue }),
             _ => Err(IntoColorError::IntConversion),
         }
     }
@@ -55,16 +51,7 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
-        let converted: [Result<u8, _>; 3] = arr.map(|c| c.try_into());
-
-        match converted {
-            [Ok(r), Ok(g), Ok(b)] => Ok(Color {
-                red: r,
-                green: g,
-                blue: b,
-            }),
-            _ => Err(IntoColorError::IntConversion),
-        }
+        (arr[0], arr[1], arr[2]).try_into()
     }
 }
 
@@ -75,20 +62,7 @@ impl TryFrom<&[i16]> for Color {
         if slice.len() != 3 {
             return Err(IntoColorError::BadLen);
         }
-
-        let converted = slice
-            .iter()
-            .map(|&c| c.try_into())
-            .collect::<Vec<Result<u8, _>>>();
-
-        match converted[..] {
-            [Ok(r), Ok(g), Ok(b)] => Ok(Color {
-                red: r,
-                green: g,
-                blue: b,
-            }),
-            _ => Err(IntoColorError::IntConversion),
-        }
+        (slice[0], slice[1], slice[2]).try_into()
     }
 }
 

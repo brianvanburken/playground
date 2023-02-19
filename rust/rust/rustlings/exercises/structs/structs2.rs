@@ -33,7 +33,7 @@ mod tests {
     fn your_order() {
         let order_template = create_order_template();
         let your_order = Order {
-            name: String::from("Hacker in Rust"),
+            name: "Hacker in Rust".to_string(),
             count: 1,
             ..order_template
         };

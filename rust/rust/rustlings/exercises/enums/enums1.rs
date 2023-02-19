@@ -3,10 +3,10 @@
 
 #[derive(Debug)]
 enum Message {
-    Quit,
+    ChangeColor,
     Echo,
     Move,
-    ChangeColor,
+    Quit,
 }
 
 fn main() {

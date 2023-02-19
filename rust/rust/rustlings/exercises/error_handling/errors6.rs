@@ -28,8 +28,10 @@ impl ParsePosNonzeroError {
 }
 
 fn parse_pos_nonzero(s: &str) -> Result<PositiveNonzeroInteger, ParsePosNonzeroError> {
-    let x: i64 = s.parse().map_err(ParsePosNonzeroError::from_parse_int)?;
-    PositiveNonzeroInteger::new(x).map_err(ParsePosNonzeroError::from_creation)
+    s.parse::<i64>()
+        .map_err(ParsePosNonzeroError::from_parse_int)
+        .map(PositiveNonzeroInteger::new)?
+        .map_err(ParsePosNonzeroError::from_creation)
 }
 
 // Don't change anything below this line.

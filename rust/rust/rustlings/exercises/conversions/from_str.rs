@@ -44,34 +44,28 @@ enum ParsePersonError {
 impl FromStr for Person {
     type Err = ParsePersonError;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
-        if s.len() == 0 {
+        if s.trim().is_empty() {
             return Err(ParsePersonError::Empty);
         }
 
-        if !s.contains(',') {
+        if s.matches(',').count() != 1 {
             return Err(ParsePersonError::BadLen);
         }
 
-        let (name, age) = match s.split_once(',') {
-            Some((name, age)) => (name.trim(), age.trim()),
-            _ => ("", ""),
-        };
+        let (name, age) = s
+            .split_once(',')
+            .map_or(("", ""), |(name, age)| (name.trim(), age.trim()));
 
-        if age.contains(',') {
-            return Err(ParsePersonError::BadLen);
-        }
-
-        if name.len() == 0 {
+        if name.is_empty() {
             return Err(ParsePersonError::NoName);
         }
 
-        return age
-            .parse::<usize>()
+        age.parse::<usize>()
             .map(|age| Person {
                 name: String::from(name),
                 age,
             })
-            .map_err(ParsePersonError::ParseInt);
+            .map_err(ParsePersonError::ParseInt)
     }
 }
 

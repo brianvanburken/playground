@@ -36,19 +36,19 @@ pub fn divide(a: i32, b: i32) -> Result<i32, DivisionError> {
 // Complete the function and return a value of the correct type so the test passes.
 // Desired output: Ok([1, 11, 1426, 3])
 fn result_with_list() -> Result<Vec<i32>, DivisionError> {
-    let numbers = vec![27, 297, 38502, 81];
-    return numbers
+    vec![27, 297, 38502, 81]
         .into_iter()
         .map(|n| divide(n, 27))
-        .into_iter()
-        .collect();
+        .collect()
 }
 
 // Complete the function and return a value of the correct type so the test passes.
 // Desired output: [Ok(1), Ok(11), Ok(1426), Ok(3)]
 fn list_of_results() -> Vec<Result<i32, DivisionError>> {
-    let numbers = vec![27, 297, 38502, 81];
-    return numbers.into_iter().map(|n| divide(n, 27)).collect();
+    vec![27, 297, 38502, 81]
+        .into_iter()
+        .map(|n| divide(n, 27))
+        .collect()
 }
 
 #[cfg(test)]

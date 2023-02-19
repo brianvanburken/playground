@@ -4,6 +4,6 @@
 // Execute `rustlings hint generics1` or use the `hint` watch subcommand for a hint.
 
 fn main() {
-    let mut shopping_list: Vec<_> = Vec::new();
+    let mut shopping_list: Vec<&str> = Vec::new();
     shopping_list.push("milk");
 }
