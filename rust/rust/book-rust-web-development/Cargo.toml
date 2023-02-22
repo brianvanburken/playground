@@ -11,5 +11,5 @@ tokio = { version = "1.1.1", features = ["full"] }
 handle-errors = { path = "handle-errors" }
 uuid = { version = "0.8", features = ["v4"] }
 tracing = { version = "0.1", features = ["log"] }
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-subscriber = "0.2"
 sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "migrate", "postgres" ] }
