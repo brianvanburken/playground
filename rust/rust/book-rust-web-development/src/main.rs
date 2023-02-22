@@ -4,6 +4,7 @@ use handle_errors::return_error;
 use tracing_subscriber::fmt::format::FmtSpan;
 use warp::{http::Method, Filter};
 
+mod profanity;
 mod routes;
 mod store;
 mod types;
@@ -18,7 +19,7 @@ async fn main() {
     sqlx::migrate!()
         .run(&store.clone().connection)
         .await
-        .expect("Cannot migrate DB");
+        .expect("Cannot run migrations");
 
     let store_filter = warp::any().map(move || store.clone());
 

@@ -20,7 +20,7 @@ impl Store {
             .connect(db_url)
             .await
             .map(|connection| Self { connection })
-            .unwrap_or_else(|e| panic!("Couldn't establish DB connection: {}", e))
+            .unwrap_or_else(|e| panic!("Couldn't establish DB connection: {e}"))
     }
 
     pub async fn get_questions(

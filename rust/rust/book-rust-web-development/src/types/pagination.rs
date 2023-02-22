@@ -36,14 +36,14 @@ pub fn extract_pagination(params: HashMap<String, String>) -> Result<Pagination,
             limit: params
                 .get("limit")
                 .unwrap()
-                .parse::<u32>()
-                .map(|limit| Some(limit))
+                .parse()
+                .map(Some)
                 .map_err(Error::ParseError)?,
             // Takes the "offset" parameter in the query and tries to convert it to a number
             offset: params
                 .get("offset")
                 .unwrap()
-                .parse::<u32>()
+                .parse()
                 .map_err(Error::ParseError)?,
         });
     }
