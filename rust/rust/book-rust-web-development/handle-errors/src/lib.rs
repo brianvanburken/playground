@@ -4,31 +4,40 @@ use warp::{
     reject::Reject,
     Rejection, Reply,
 };
-use tracing::{event, Level, instrument};
+use argon2::Error as ArgonError;
 use reqwest::Error as ReqwestError;
 use reqwest_middleware::Error as MiddlewareReqwestError;
+use tracing::{event, Level, instrument};
 
 #[derive(Debug)]
 pub enum Error {
-    ParseError(std::num::ParseIntError),
-    MissingParameters,
-    DatabaseQueryError,
-    ReqwestAPIError(ReqwestError),
-    MiddlewareReqwestAPIError(MiddlewareReqwestError),
+    ArgonLibraryError(ArgonError),
+    CannotDecryptToken,
     ClientError(APILayerError),
-    ServerError(APILayerError)
+    DatabaseQueryError(sqlx::Error),
+    MiddlewareReqwestAPIError(MiddlewareReqwestError),
+    MissingParameters,
+    ParseError(std::num::ParseIntError),
+    ReqwestAPIError(ReqwestError),
+    ServerError(APILayerError),
+    Unauthorized,
+    WrongPassword,
 }
 
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match &self {
-            Error::ParseError(ref err) => write!(f, "Cannot parse parameter: {err}"),
-            Error::MissingParameters => write!(f, "Missing parameter"),
-            Error::DatabaseQueryError => write!(f, "Cannot update, invalid data."),
-            Error::ReqwestAPIError(err) => write!(f, "External API error: {err}"),
-            Error::MiddlewareReqwestAPIError(err) => write!(f, "External API error: {err}"),
+            Error::ArgonLibraryError(_) => write!(f, "Cannot verifiy password"),
+            Error::CannotDecryptToken => write!(f, "Cannot decrypt error"),
             Error::ClientError(err) => write!(f, "External Client error: {err}"),
+            Error::DatabaseQueryError(_) => write!(f, "Cannot update, invalid data."),
+            Error::MiddlewareReqwestAPIError(err) => write!(f, "External API error: {err}"),
+            Error::MissingParameters => write!(f, "Missing parameter"),
+            Error::ParseError(ref err) => write!(f, "Cannot parse parameter: {err}"),
+            Error::ReqwestAPIError(err) => write!(f, "External API error: {err}"),
             Error::ServerError(err) => write!(f, "External Server error: {err}"),
+            Error::Unauthorized => write!(f, "No permission to change the underlying resource"),
+            Error::WrongPassword => write!(f, "Wrong password"),
         }
     }
 }
@@ -48,14 +57,33 @@ impl std::fmt::Display for APILayerError {
 impl Reject for Error {}
 impl Reject for APILayerError {}
 
+const DUPLICATE_KEY: u32 = 23505;
+
 #[instrument]
 pub async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
-    if let Some(crate::Error::DatabaseQueryError) = r.find() {
-        event!(Level::ERROR, "Database query error");
-        Ok(warp::reply::with_status(
-            crate::Error::DatabaseQueryError.to_string(),
-            StatusCode::UNPROCESSABLE_ENTITY,
-        ))
+    if let Some(crate::Error::DatabaseQueryError(e)) = r.find() {
+        match e {
+            sqlx::Error::Database(err) => {
+                if err.code().unwrap().parse::<u32>().unwrap() ==
+                DUPLICATE_KEY {
+                    Ok(warp::reply::with_status(
+                        "Account already exsists".to_string(),
+                        StatusCode::UNPROCESSABLE_ENTITY,
+                    ))
+                } else {
+                    Ok(warp::reply::with_status(
+                        "Cannot update data".to_string(),
+                        StatusCode::UNPROCESSABLE_ENTITY,
+                    ))
+                }
+            },
+            _ => {
+                Ok(warp::reply::with_status(
+                    "Cannot update data".to_string(),
+                    StatusCode::UNPROCESSABLE_ENTITY,
+                ))
+            }
+        }
     } else if let Some(crate::Error::ReqwestAPIError(e)) = r.find() {
         event!(Level::ERROR, "{}", e);
         Ok(warp::reply::with_status(
@@ -97,6 +125,30 @@ pub async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
         Ok(warp::reply::with_status(
             error.to_string(),
             StatusCode::UNPROCESSABLE_ENTITY,
+        ))
+    } else if let Some(crate::Error::ReqwestAPIError(e)) = r.find() {
+        event!(Level::ERROR, "{}", e);
+        Ok(warp::reply::with_status(
+            "Internal Server Error".to_string(),
+            StatusCode::INTERNAL_SERVER_ERROR,
+        ))
+    } else if let Some(crate::Error::WrongPassword) = r.find() {
+        event!(Level::ERROR, "Entered wrong password");
+        Ok(warp::reply::with_status(
+            "Wrong E-Mail/Password combination".to_string(),
+            StatusCode::UNAUTHORIZED,
+        ))
+    } else if let Some(crate::Error::ReqwestAPIError(e)) = r.find() {
+        event!(Level::ERROR, "{}", e);
+        Ok(warp::reply::with_status(
+            "Internal Server Error".to_string(),
+            StatusCode::INTERNAL_SERVER_ERROR,
+        ))
+    } else if let Some(crate::Error::Unauthorized) = r.find() {
+        event!(Level::ERROR, "Not matching account id");
+        Ok(warp::reply::with_status(
+            "No permission to change underlying resource".to_string(),
+            StatusCode::UNAUTHORIZED,
         ))
     } else {
         event!(Level::WARN, "Requested route was not found");
