@@ -1,6 +1,7 @@
 use reqwest_middleware::ClientBuilder;
 use reqwest_retry::{policies::ExponentialBackoff, RetryTransientMiddleware};
 use serde::{Deserialize, Serialize};
+use std::env;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct APIResponse {
@@ -33,28 +34,30 @@ pub async fn check_profanity(content: String) -> Result<String, handle_errors::E
         .with(RetryTransientMiddleware::new_with_policy(retry_policy))
         .build();
 
+    let api_key = env::var("BAD_WORDS_API_KEY").unwrap();
+
     let res = client
         .post("https://api.apilayer.com/bad_words?censor_character=*")
-        // .header("apikey", "API_KEY")
-        .header("apikey", "VfjGr288HVdV2OoBT711Zibhq4zlhdj4")
+        .header("apikey", api_key)
         .body(content)
         .send()
         .await
         .map_err(handle_errors::Error::MiddlewareReqwestAPIError)?;
 
-    if !res.status().is_success() {
-        if res.status().is_client_error() {
-            let err = transform_error(res).await;
-            return Err(handle_errors::Error::ClientError(err));
-        } else {
-            let err = transform_error(res).await;
-            return Err(handle_errors::Error::ServerError(err));
-        }
+    if res.status().is_success() {
+        return res
+            .json::<BadWordsResponse>()
+            .await
+            .map(|res| res.censored_content)
+            .map_err(handle_errors::Error::ReqwestAPIError);
     }
 
-    match res.json::<BadWordsResponse>().await {
-        Ok(res) => Ok(res.censored_content),
-        Err(e) => Err(handle_errors::Error::ReqwestAPIError(e)),
+    if res.status().is_client_error() {
+        let err = transform_error(res).await;
+        Err(handle_errors::Error::ClientError(err))
+    } else {
+        let err = transform_error(res).await;
+        Err(handle_errors::Error::ServerError(err))
     }
 }
 

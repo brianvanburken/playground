@@ -32,13 +32,13 @@ fn map_database_error(error: sqlx::Error) -> Error {
 }
 
 impl Store {
-    pub async fn new(db_url: &str) -> Self {
+    pub async fn new(db_url: &str) -> Result<Self, sqlx::Error> {
+        tracing::warn!("{}", db_url);
         PgPoolOptions::new()
             .max_connections(5)
             .connect(db_url)
             .await
             .map(|connection| Self { connection })
-            .unwrap_or_else(|e| panic!("Couldn't establish DB connection: {e}"))
     }
 
     pub async fn get_questions(

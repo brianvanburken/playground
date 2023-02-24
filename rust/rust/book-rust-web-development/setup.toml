@@ -1,0 +1,6 @@
+# This should never be committed, for this example it is fine.
+log_level = "warn"
+database_host = "localhost"
+database_port = 5432
+database_name = "rustwebdev"
+port = 8080
