@@ -1,13 +1,13 @@
+use argon2::Error as ArgonError;
+use reqwest::Error as ReqwestError;
+use reqwest_middleware::Error as MiddlewareReqwestError;
+use tracing::{event, instrument, Level};
 use warp::{
     filters::{body::BodyDeserializeError, cors::CorsForbidden},
     http::StatusCode,
     reject::Reject,
     Rejection, Reply,
 };
-use argon2::Error as ArgonError;
-use reqwest::Error as ReqwestError;
-use reqwest_middleware::Error as MiddlewareReqwestError;
-use tracing::{event, Level, instrument};
 
 #[derive(Debug)]
 pub enum Error {
@@ -66,8 +66,7 @@ pub async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
     if let Some(crate::Error::DatabaseQueryError(e)) = r.find() {
         match e {
             sqlx::Error::Database(err) => {
-                if err.code().unwrap().parse::<u32>().unwrap() ==
-                DUPLICATE_KEY {
+                if err.code().unwrap().parse::<u32>().unwrap() == DUPLICATE_KEY {
                     Ok(warp::reply::with_status(
                         "Account already exsists".to_string(),
                         StatusCode::UNPROCESSABLE_ENTITY,
@@ -78,13 +77,11 @@ pub async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
                         StatusCode::UNPROCESSABLE_ENTITY,
                     ))
                 }
-            },
-            _ => {
-                Ok(warp::reply::with_status(
-                    "Cannot update data".to_string(),
-                    StatusCode::UNPROCESSABLE_ENTITY,
-                ))
             }
+            _ => Ok(warp::reply::with_status(
+                "Cannot update data".to_string(),
+                StatusCode::UNPROCESSABLE_ENTITY,
+            )),
         }
     } else if let Some(crate::Error::ReqwestAPIError(e)) = r.find() {
         event!(Level::ERROR, "{}", e);
@@ -159,5 +156,4 @@ pub async fn return_error(r: Rejection) -> Result<impl Reply, Rejection> {
             StatusCode::NOT_FOUND,
         ))
     }
-
 }

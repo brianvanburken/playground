@@ -35,9 +35,10 @@ pub async fn check_profanity(content: String) -> Result<String, handle_errors::E
         .build();
 
     let api_key = env::var("BAD_WORDS_API_KEY").unwrap();
+    let api_layer_url = env::var("API_LAYER_URL").expect("APILAYER URL NOT SET");
 
     let res = client
-        .post("https://api.apilayer.com/bad_words?censor_character=*")
+        .post(format!("{api_layer_url}/bad_words?censor_character=*"))
         .header("apikey", api_key)
         .body(content)
         .send()
@@ -65,5 +66,45 @@ async fn transform_error(res: reqwest::Response) -> handle_errors::APILayerError
     handle_errors::APILayerError {
         status: res.status().as_u16(),
         message: res.json::<APIResponse>().await.unwrap().message,
+    }
+}
+
+#[cfg(test)]
+mod profanity_tests {
+    use super::{check_profanity, env};
+
+    use mock_server::{MockServer, OneshotHandler};
+
+    #[tokio::test]
+    async fn run() {
+        let handler = run_mock();
+        censor_profane_words().await;
+        no_profane_words().await;
+        let _ = handler.sender.send(1);
+    }
+
+    fn run_mock() -> OneshotHandler {
+        env::set_var("API_LAYER_URL", "http://127.0.0.1:3030");
+        env::set_var("BAD_WORDS_API_KEY", "YES");
+
+        let socket = "127.0.0.1:3030"
+            .to_string()
+            .parse()
+            .expect("Not a valid address");
+        let mock = MockServer::new(socket);
+
+        mock.oneshot()
+    }
+
+    async fn censor_profane_words() {
+        let content = "This is a shitty sentence".to_string();
+        let censored_content = check_profanity(content).await;
+        assert_eq!(censored_content.unwrap(), "this is a ****** sentence");
+    }
+
+    async fn no_profane_words() {
+        let content = "this is a sentence".to_string();
+        let censored_content = check_profanity(content).await;
+        assert_eq!(censored_content.unwrap(), "");
     }
 }

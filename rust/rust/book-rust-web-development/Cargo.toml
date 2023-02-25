@@ -1,29 +1,31 @@
 [package]
-name = "rust-web-development"
-version = "0.1.0"
+name = "rust-web-dev"
+version = "1.0.0"
 edition = "2021"
 
 [dependencies]
-warp = "0.3"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-tokio = { version = "1.1.1", features = ["full"] }
 handle-errors = { path = "handle-errors" }
-uuid = { version = "0.8", features = ["v4"] }
-tracing = { version = "0.1", features = ["log"] }
-tracing-subscriber = "0.2"
-sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "migrate", "postgres" ] }
+mock-server = { path = "mock-server" }
+
+chrono = "0.4.19"
+clap = { version = "3.1.7", features = ["derive"] }
+dotenv = "0.15.0"
+openssl = { version = "0.10.32", features = ["vendored"] }
+paseto = "2.0"
+proc-macro2 = "1.0.37"
+rand = "0.8"
 reqwest = { version = "0.11", features = ["json"] }
 reqwest-middleware = "0.1.1"
 reqwest-retry = "0.1.1"
-rand = "0.8"
 rust-argon2 = "1.0"
-paseto = "2.0"
-chrono = "0.4.19"
-dotenv = "0.15.0"
-clap = { version = "3.1.7", features = ["derive"] }
-proc-macro2 = "1.0.37"
-openssl = { version = "0.10.32", features = ["vendored"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "migrate", "postgres" ] }
+tokio = { version = "1.1.1", features = ["full"] }
+tracing = { version = "0.1", features = ["log"] }
+tracing-subscriber = "0.2"
+uuid = { version = "0.8", features = ["v4"] }
+warp = "0.3"
 
 [build-dependencies]
 platforms = "2.0.0"
