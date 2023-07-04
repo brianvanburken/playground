@@ -151,11 +151,13 @@ for (const file of htmlFiles) {
   });
 }
 
-
+const timestamp = new Date().toISOString()
+  .split('.')[0]
+  .replace(/[-.:ZT]/gi, '');
 
 new Epub({
   title: 'NHA Sport en Voeding',
-  output: path.join(__dirname, 'nha_sport_voeding.epub'),
+  output: path.join(__dirname, `nha_sport_voeding_${timestamp}.epub`),
   author: 'NHA',
   lang: 'nl',
   tocTitle: 'Inhoudsopgave',
