@@ -19,11 +19,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const downloadPath = path.join(__dirname, './downloads/');
 const staticPath = path.join(__dirname, './assets/');
+const pagesPath = path.join(__dirname, './tmp_pages/');
 
 const cdnPath = 'https://online.nha.eu';
 
 try { mkdirSync(staticPath, {recursive: true }); } catch (e) {}
 try { mkdirSync(downloadPath, {recursive: true }); } catch (e) {}
+try { mkdirSync(pagesPath, {recursive: true }); } catch (e) {}
 
 const files = readdirSync('./');
 const htmlFiles = files.filter(name => name.endsWith('.html'));
@@ -60,11 +62,21 @@ for (const file of htmlFiles) {
     .replace(/<span class="content-math.*?">(.*?)<\/span>/gi, '<math>$1</math>') // replace mathblocks
     .replace(/\sclass=".*?"\s?/gi, ' ')
     .replace(/<(.*?) >/gi, '<$1>')
-    .replace(/<h2(.*?)><span.*?>(.*?)<\/span>(.*?)<\/h2>/gi, '<h2$1>$2 $3</h2>')
+    .replace(/<h2(.*?)><span.*?>(.*?)<\/span>(.*?)<\/h2>/gi, '<h2>$2 $3</h2>')
+    .replace(/<h3(.*?)><span.*?>(.*?)<\/span>(.*?)<\/h3>/gi, '<h3>$2 $3</h3>')
     .replace(/<span>\s*<\/span>/gi, '')
-    .replace(/<button>Bekijk antwoord<\/button>/gi, '')
+    .replaceAll('Bekijk antwoord', '')
     .replaceAll('<a href="#hw">Ga naar huiswerk</a>', '')
     .replaceAll('<table', '<table border="1"')
+    .replace(/<\w+>(\s|\n|\r)*<\/\w+>/gi, '')
+    .replace('<div></div>', '')
+
+  for (let i = 0; i < 5; i++) {
+    article = article
+      .replace(/<\w+>(\s|\n|\r)*<\/\w+>/gi, '')
+      .replace('<div></div>', '')
+      .replace(/<div>(.*?)<\/div>/gi, '$1')
+  }
 
   // const pageToc = Array.from(window.document
   //   .querySelectorAll('#rscontent h2'))
@@ -144,6 +156,8 @@ for (const file of htmlFiles) {
     }
   }
 
+  writeFileSync(`${pagesPath}${slug}.html`, `<html><body>${article}`);
+
   content.push({
     title,
     data: article,
@@ -152,7 +166,7 @@ for (const file of htmlFiles) {
 }
 
 const timestamp = new Date().toISOString()
-  .split('.')[0]
+  .split('T')[0]
   .replace(/[-.:ZT]/gi, '');
 
 new Epub({

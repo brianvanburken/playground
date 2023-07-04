@@ -1,5 +1,6 @@
 node_modules
 assets
 downloads
+tmp_pages
 *.html
 *.epub
