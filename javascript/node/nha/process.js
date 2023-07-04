@@ -12,6 +12,11 @@ import { optimize } from 'svgo';
 const randomIntFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const prepareFormula = formula => `${encodeURIComponent('\\' + formula.replace(`$\\math`, "math").replace(/\$$/gmi, ''))}`;
+const css = `
+  td { padding-left: 5px; padding-right: 5px; }
+  table { border-collapse: collapse; width: 100%; }
+  table, td, th, tr { border: 1px solid lightgray; }
+`;
 
 const { JSDOM } = jsdom;
 
@@ -67,7 +72,6 @@ for (const file of htmlFiles) {
     .replace(/<span>\s*<\/span>/gi, '')
     .replaceAll('Bekijk antwoord', '')
     .replaceAll('<a href="#hw">Ga naar huiswerk</a>', '')
-    .replaceAll('<table', '<table border="1"')
     .replace(/<\w+>(\s|\n|\r)*<\/\w+>/gi, '')
     .replace('<div></div>', '')
 
@@ -156,7 +160,7 @@ for (const file of htmlFiles) {
     }
   }
 
-  writeFileSync(`${pagesPath}${slug}.html`, `<html><body>${article}`);
+  writeFileSync(`${pagesPath}${slug}.html`, `<html><style>${css}</style><body>${article}`);
 
   content.push({
     title,
@@ -176,5 +180,6 @@ new Epub({
   lang: 'nl',
   tocTitle: 'Inhoudsopgave',
   content,
-  verbose: true
+  verbose: true,
+  css,
 });
