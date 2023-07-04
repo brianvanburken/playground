@@ -1,5 +1,5 @@
 import path from 'path';
-import {  mkdirSync, readdirSync, readFileSync, existsSync, createWriteStream } from 'fs';
+import {  mkdirSync, readdirSync, readFileSync, existsSync, createWriteStream, copyFileSync, writeFileSync } from 'fs';
 import jsdom from "jsdom";
 import slugify from 'slugify';
 import fetch from 'node-fetch';
@@ -7,20 +7,23 @@ import Epub from "epub-gen";
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import Jimp from 'jimp';
+import { optimize } from 'svgo';
 
 const randomIntFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-const prepareFormula = formula => `${encodeURIComponent('\\' + formula.replace(`$\\math`, "math").replace('}$', '}'))}`;
+const prepareFormula = formula => `${encodeURIComponent('\\' + formula.replace(`$\\math`, "math").replace(/\$$/gmi, ''))}`;
 
 const { JSDOM } = jsdom;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const downloadPath = path.join(__dirname, './downloads/');
 const staticPath = path.join(__dirname, './assets/');
 
 const cdnPath = 'https://online.nha.eu';
 
 try { mkdirSync(staticPath, {recursive: true }); } catch (e) {}
+try { mkdirSync(downloadPath, {recursive: true }); } catch (e) {}
 
 const files = readdirSync('./');
 const htmlFiles = files.filter(name => name.endsWith('.html'));
@@ -80,7 +83,7 @@ for (const file of htmlFiles) {
       let filename = paths.pop();
       const hash = paths.pop();
       filename = `${hash}_${filename}`;
-      const file = `${staticPath}${filename}`;
+      const file = `${downloadPath}${filename}`;
       const downloadUrl = `${cdnPath}${resource}`
       const fileExists = existsSync(file);
       if (resource.startsWith('/static/image/') && !fileExists) {
@@ -89,11 +92,17 @@ for (const file of htmlFiles) {
         await delay(randomIntFromInterval(4056, 17061));
       } else if (fileExists) {
         console.info(`[INFO]: already downloaded ${file}`);
+      }
+
+      const optimizedFile = `${staticPath}${filename}`;
+      if (fileExists && !existsSync(optimizedFile)) {
+        console.info(`[INFO]: preparing asset ${filename}`);
         const image = await Jimp.read(file);
+        filename = filename.replace('.png', '.jpg');
         image
           .grayscale()
-          .quality(80)
-          .write(file);
+          .quality(60)
+          .write(optimizedFile);
       }
 
       article = article.replace(resource, `file://assets/${filename}`);
@@ -105,7 +114,7 @@ for (const file of htmlFiles) {
   for (const { formula, hash, uri } of math_blocks) {
     try {
       const filename = `${hash}.svg`;
-      const file = `${staticPath}${filename}`;
+      const file = `${downloadPath}${filename}`;
       const downloadUrl = `${cdnPath}/math?${uri}`;
       const fileExists = existsSync(file);
 
@@ -115,6 +124,18 @@ for (const file of htmlFiles) {
         await delay(randomIntFromInterval(4056, 17061));
       } else if (fileExists) {
         console.info(`[INFO]: already generated math ${formula}`);
+      }
+
+      const optimizedFile = `${staticPath}${filename}`;
+      if (fileExists && !existsSync(optimizedFile)) {
+        console.info(`[INFO]: preparing asset ${filename}`);
+        const svgContents = readFileSync(file);
+        const optimizedSvg = optimize(svgContents, {
+          path: file,
+          multipass: true,
+        })
+
+        writeFileSync(optimizedFile, optimizedSvg.data);
       }
 
       article = article.replace(`<math>${formula}</math>`, `<img src="file://assets/${filename}">`);
