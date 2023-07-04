@@ -5,10 +5,12 @@ import slugify from 'slugify';
 import fetch from 'node-fetch';
 import Epub from "epub-gen";
 import { fileURLToPath } from 'url';
+import crypto from 'crypto';
 import Jimp from 'jimp';
 
 const randomIntFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+const prepareFormula = formula => `${encodeURIComponent('\\' + formula.replace(`$\\math`, "math").replace('}$', '}'))}`;
 
 const { JSDOM } = jsdom;
 
@@ -41,8 +43,18 @@ for (const file of htmlFiles) {
     strict: true,
   });
   const htmlArticle = window.document.getElementById("rscontent").innerHTML;
+
+  const math_blocks = Array.from(window.document.getElementsByClassName('content-math'))
+    .map(el => el.textContent)
+    .map(formula => ({
+      formula,
+      uri: prepareFormula(formula),
+      hash: crypto.createHash('md5').update(formula).digest('hex'),
+    }));
+
   let article = htmlArticle
     .replace(/<div class="content-question-question">(.*?)<\/div>/gi, '<h3>$1</h3>') // replace question in sample questions with simple h3
+    .replace(/<span class="content-math.*?">(.*?)<\/span>/gi, '<math>$1</math>') // replace mathblocks
     .replace(/\sclass=".*?"\s?/gi, ' ')
     .replace(/<(.*?) >/gi, '<$1>')
     .replace(/<h2(.*?)><span.*?>(.*?)<\/span>(.*?)<\/h2>/gi, '<h2$1>$2 $3</h2>')
@@ -85,6 +97,27 @@ for (const file of htmlFiles) {
       }
 
       article = article.replace(resource, `file://assets/${filename}`);
+    } catch(err) {
+      console.error(`[ERROR]: ${err}`)
+    }
+  }
+
+  for (const { formula, hash, uri } of math_blocks) {
+    try {
+      const filename = `${hash}.svg`;
+      const file = `${staticPath}${filename}`;
+      const downloadUrl = `${cdnPath}/math?${uri}`;
+      const fileExists = existsSync(file);
+
+      if (!fileExists) {
+        console.info(`[INFO]: generating math ${formula}`);
+        fetch(downloadUrl).then(res => res.body.pipe(createWriteStream(file)))
+        await delay(randomIntFromInterval(4056, 17061));
+      } else if (fileExists) {
+        console.info(`[INFO]: already generated math ${formula}`);
+      }
+
+      article = article.replace(`<math>${formula}</math>`, `<img src="file://assets/${filename}">`);
     } catch(err) {
       console.error(`[ERROR]: ${err}`)
     }
