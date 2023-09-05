@@ -16,6 +16,7 @@ const css = `
   td { padding-left: 5px; padding-right: 5px; }
   table { border-collapse: collapse; width: 100%; }
   table, td, th, tr { border: 1px solid lightgray; }
+  blockquote { background: lightgray; }
 `;
 
 const { JSDOM } = jsdom;
