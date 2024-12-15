@@ -1,0 +1,13 @@
+{application,phoenix_live_reload,
+             [{config_mtime,1736964860},
+              {optional_applications,[]},
+              {applications,[kernel,stdlib,elixir,logger,phoenix,file_system]},
+              {description,"Provides live-reload functionality for Phoenix"},
+              {modules,['Elixir.Phoenix.LiveReloader',
+                        'Elixir.Phoenix.LiveReloader.Application',
+                        'Elixir.Phoenix.LiveReloader.Channel',
+                        'Elixir.Phoenix.LiveReloader.Socket',
+                        'Elixir.Phoenix.LiveReloader.WebConsoleLogger']},
+              {registered,[]},
+              {vsn,"1.5.3"},
+              {mod,{'Elixir.Phoenix.LiveReloader.Application',[]}}]}.
