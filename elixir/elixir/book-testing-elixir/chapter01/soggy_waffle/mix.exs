@@ -15,7 +15,10 @@ defmodule SoggyWaffle.MixProject do
       version: "0.1.0",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      preferred_cli_env: [
+        "test.watch": :test
+      ]
     ]
   end
 
@@ -32,7 +35,8 @@ defmodule SoggyWaffle.MixProject do
       {:httpoison, "~> 1.6"},
       {:jason, "~> 1.1"},
       # test only
-      {:exvcr, "~> 0.11.0", only: [:test]}
+      {:exvcr, "~> 0.11.0", only: [:test]},
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 end
