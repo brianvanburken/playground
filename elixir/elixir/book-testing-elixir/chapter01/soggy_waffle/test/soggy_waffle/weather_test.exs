@@ -113,6 +113,16 @@ defmodule SoggyWaffle.WeatherTest do
     assert Weather.imminent_rain?(weather_data, now)
   end
 
+  test "defaults to now" do
+    now = DateTime.utc_now() |> DateTime.add(5, :second)
+
+    weather_data = [
+      weather_struct(now, :rain)
+    ]
+
+    assert Weather.imminent_rain?(weather_data)
+  end
+
   defp weather_struct(datetime, condition) do
     %Weather{
       datetime: datetime,
