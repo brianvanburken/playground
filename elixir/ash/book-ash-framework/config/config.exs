@@ -11,7 +11,8 @@ config :ash,
   include_embedded_source_by_default?: false,
   show_keysets_for_all_actions?: false,
   default_page_type: :keyset,
-  policies: [no_filter_static_forbidden_reads?: false]
+  policies: [no_filter_static_forbidden_reads?: false],
+  allow_forbidden_field_for_relationships_by_default?: true
 
 config :spark,
   formatter: [
