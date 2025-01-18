@@ -11,5 +11,7 @@ defmodule Tunez.Music do
       define :update_artist, action: :update
       define :destroy_artist, action: :destroy
     end
+
+    resource Tunez.Music.Album
   end
 end
