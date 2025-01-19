@@ -11,6 +11,11 @@ defmodule Tunez.Music.Artist do
     default_accept [:name, :biography]
   end
 
+  changes do
+    change set_attribute(:inserted_at, &DateTime.utc_now/0), on: [:create]
+    change set_attribute(:updated_at, &DateTime.utc_now/0)
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -19,6 +24,8 @@ defmodule Tunez.Music.Artist do
     end
 
     attribute :biography, :string
+
+    attribute :previous_names, {:array, :string}, do: default([])
 
     create_timestamp :inserted_at
     create_timestamp :updated_at
