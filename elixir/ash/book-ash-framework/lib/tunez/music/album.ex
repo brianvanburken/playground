@@ -1,6 +1,8 @@
 defmodule Tunez.Music.Album do
   use Ash.Resource, otp_app: :tunez, domain: Tunez.Music, data_layer: AshPostgres.DataLayer
 
+  def next_year, do: Date.utc_today().year() + 1
+
   postgres do
     table "albums"
     repo Tunez.Repo
@@ -16,6 +18,25 @@ defmodule Tunez.Music.Album do
     update :update do
       accept [:name, :year_released, :cover_image_url]
     end
+  end
+
+  preparations do
+    prepare build(sort: [year_released: :desc])
+  end
+
+  validations do
+    validate numericality(:year_released,
+               greater_than: 1950,
+               less_than_or_equal_to: &__MODULE__.next_year/0
+             ),
+             where: [present(:year_released)],
+             message: "must be between 1950 and next year"
+
+    validate match(
+               :cover_image_url,
+               ~r{(^https?://|/images/).+(\.png|\.jpg)%}
+             ),
+             message: "must start with https:// or /images/"
   end
 
   attributes do
