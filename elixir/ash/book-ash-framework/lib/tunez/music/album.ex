@@ -6,6 +6,18 @@ defmodule Tunez.Music.Album do
     repo Tunez.Repo
   end
 
+  actions do
+    defaults [:read, :destroy]
+
+    create :create do
+      accept [:name, :year_released, :cover_image_url, :artist_id]
+    end
+
+    update :update do
+      accept [:name, :year_released, :cover_image_url]
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 
