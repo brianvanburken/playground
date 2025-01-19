@@ -60,4 +60,9 @@ defmodule Tunez.Music.Album do
       allow_nil? false
     end
   end
+
+  identities do
+    identity :unique_album_names_per_artist, [:name, :artist_id],
+      message: "already exists for this artist"
+  end
 end
