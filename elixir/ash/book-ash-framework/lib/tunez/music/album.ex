@@ -28,6 +28,11 @@ defmodule Tunez.Music.Album do
     prepare build(sort: [year_released: :desc])
   end
 
+  changes do
+    change set_attribute(:inserted_at, &DateTime.utc_now/0), on: [:create]
+    change set_attribute(:updated_at, &DateTime.utc_now/0)
+  end
+
   validations do
     validate numericality(:year_released,
                greater_than: 1950,
