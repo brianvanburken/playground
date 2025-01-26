@@ -43,14 +43,15 @@ defmodule Tunez.Music.Artist do
 
     attribute :name, :string do
       allow_nil? false
+      public? true
     end
 
     attribute :biography, :string
 
     attribute :previous_names, {:array, :string}, do: default([])
 
-    create_timestamp :inserted_at
-    create_timestamp :updated_at
+    create_timestamp :inserted_at, public?: true
+    create_timestamp :updated_at, public?: true
   end
 
   relationships do
