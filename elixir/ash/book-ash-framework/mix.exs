@@ -33,10 +33,6 @@ defmodule Tunez.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ash_phoenix, "~> 2.0"},
-      {:ash_postgres, "~> 2.0"},
-      {:ash, "~> 3.0"},
-      {:igniter, "~> 0.3"},
       {:phoenix, "~> 1.7.14"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
@@ -62,7 +58,9 @@ defmodule Tunez.MixProject do
       {:gettext, "~> 0.26 and >= 0.26.1"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:igniter, "~> 0.3", only: [:dev]},
+      {:phoenix_test, "~> 0.5.1", only: :test, runtime: false}
     ]
   end
 
@@ -74,15 +72,15 @@ defmodule Tunez.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ash.setup", "assets.setup", "assets.build", "run priv/repo/seeds.exs"],
+      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       seed: [
-        "run priv/repo/seeds/01-artists.exs",
-        "run priv/repo/seeds/02-albums.exs",
-        "run priv/repo/seeds/09-tracks.exs"
+        # "run priv/repo/seeds/01-artists.exs",
+        # "run priv/repo/seeds/02-albums.exs",
+        # "run priv/repo/seeds/08-tracks.exs"
       ],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ash.setup --quiet", "test"],
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind tunez", "esbuild tunez"],
       "assets.deploy": [

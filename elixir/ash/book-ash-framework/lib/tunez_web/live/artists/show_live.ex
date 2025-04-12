@@ -7,12 +7,26 @@ defmodule TunezWeb.Artists.ShowLive do
     {:ok, socket}
   end
 
-  def handle_params(%{"id" => artist_id}, _url, socket) do
-    artist = Tunez.Music.get_artist_by_id!(artist_id, load: [:albums])
+  def handle_params(_params, _url, socket) do
+    artist = %{
+      id: "test-artist-1",
+      name: "Artist Name",
+      biography: "Sample biography content here"
+    }
+
+    albums = [
+      %{
+        id: "test-album-1",
+        name: "Test Album",
+        year_released: 2023,
+        cover_image_url: nil
+      }
+    ]
 
     socket =
       socket
       |> assign(:artist, artist)
+      |> assign(:albums, albums)
       |> assign(:page_title, artist.name)
 
     {:noreply, socket}
@@ -24,21 +38,18 @@ defmodule TunezWeb.Artists.ShowLive do
       <.h1>
         {@artist.name}
       </.h1>
-      <:subtitle :if={@artist.previous_names != []}>
-        formerly known as: {Enum.join(@artist.previous_names, ", ")})
-      </:subtitle>
       <:action>
         <.button_link
           kind="error"
-          text
+          inverse
           data-confirm={"Are you sure you want to delete #{@artist.name}?"}
-          phx-click="destroy_artist"
+          phx-click="destroy-artist"
         >
           Delete Artist
         </.button_link>
       </:action>
       <:action>
-        <.button_link navigate={~p"/artists/#{@artist.id}/edit"} kind="primary" outline>
+        <.button_link navigate={~p"/artists/#{@artist.id}/edit"} kind="primary" inverse>
           Edit Artist
         </.button_link>
       </:action>
@@ -50,7 +61,7 @@ defmodule TunezWeb.Artists.ShowLive do
     </.button_link>
 
     <ul class="mt-10 space-y-6 md:space-y-10">
-      <li :for={album <- @artist.albums}>
+      <li :for={album <- @albums}>
         <.album_details album={album} />
       </li>
     </ul>
@@ -64,24 +75,24 @@ defmodule TunezWeb.Artists.ShowLive do
         <.cover_image image={@album.cover_image_url} />
       </div>
       <div class="flex-1">
-        <.header class="pl-4 pr-2 !m-0">
+        <.header class="pl-3 pr-2 !m-0">
           <.h2>
             {@album.name} ({@album.year_released})
           </.h2>
           <:action>
             <.button_link
               size="sm"
-              text
+              inverse
               kind="error"
               data-confirm={"Are you sure you want to delete #{@album.name}?"}
-              phx-click="destroy_album"
+              phx-click="destroy-album"
               phx-value-id={@album.id}
             >
               Delete
             </.button_link>
           </:action>
           <:action>
-            <.button_link size="sm" kind="primary" outline navigate={~p"/albums/#{@album.id}/edit"}>
+            <.button_link size="sm" kind="primary" inverse navigate={~p"/albums/#{@album.id}/edit"}>
               Edit
             </.button_link>
           </:action>
@@ -94,16 +105,16 @@ defmodule TunezWeb.Artists.ShowLive do
 
   defp track_details(assigns) do
     ~H"""
-    <table :if={@tracks != []} class="table table-md w-full mt-2 -z-10">
-      <tr :for={track <- @tracks}>
-        <th class="whitespace-nowrap w-1">
-          {String.pad_leading("#{track.number}", 2, "0")}.
+    <table :if={@tracks != []} class="w-full mt-2 -z-10">
+      <tr :for={track <- @tracks} class="border-t first:border-0 border-gray-100">
+        <th class="whitespace-nowrap w-1 p-3">
+          {String.pad_leading("#{track.order}", 2, "0")}.
         </th>
-        <td>{track.name}</td>
-        <td class="whitespace-nowrap w-1 text-right">{track.duration}</td>
+        <td class="p-3">{track.name}</td>
+        <td class="whitespace-nowrap w-1 text-right p-2">{track.duration_seconds}</td>
       </tr>
     </table>
-    <div :if={@tracks == []} class="p-8 text-center italic text-base-content/40">
+    <div :if={@tracks == []} class="p-8 text-center italic text-gray-400">
       <.icon name="hero-clock" class="w-12 h-12 bg-base-300" /> Track data coming soon....
     </div>
     """
@@ -160,49 +171,11 @@ defmodule TunezWeb.Artists.ShowLive do
     """
   end
 
-  def handle_event("destroy_artist", _params, socket) do
-    case Tunez.Music.destroy_artist(socket.assigns.artist) do
-      :ok ->
-        socket =
-          socket
-          |> put_flash(:info, "Artist deleted successfully")
-          |> push_navigate(to: ~p"/")
-
-        {:noreply, socket}
-
-      {:error, error} ->
-        Logger.info("Could not delete artist '#{socket.assigns.artist.id}': #{inspect(error)}")
-
-        socket =
-          socket
-          |> put_flash(:error, "Could not delete artist")
-
-        {:noreply, socket}
-    end
+  def handle_event("destroy-artist", _params, socket) do
+    {:noreply, socket}
   end
 
-  def handle_event("destroy_album", %{"id" => album_id}, socket) do
-    case Tunez.Music.destroy_album(album_id) do
-      :ok ->
-        socket =
-          socket
-          |> update(:artist, fn artist ->
-            Map.update!(artist, :albums, fn albums ->
-              Enum.reject(albums, &(&1.id == album_id))
-            end)
-          end)
-          |> put_flash(:info, "Album deleted successfully")
-
-        {:noreply, socket}
-
-      {:error, error} ->
-        Logger.info("Could not delete album '#{album_id}': #{inspect(error)}")
-
-        socket =
-          socket
-          |> put_flash(:error, "Could not delete album")
-
-        {:noreply, socket}
-    end
+  def handle_event("destroy-album", _params, socket) do
+    {:noreply, socket}
   end
 end

@@ -11,15 +11,15 @@ defmodule TunezWeb.Artists.IndexLive do
     {:ok, socket}
   end
 
-  def handle_params(params, _url, socket) do
-    sort_by = Map.get(params, "sort_by") |> validate_sort_by()
-    query_text = Map.get(params, "q", "")
-    artists = Tunez.Music.search_artists!(query_text, query: [sort_input: sort_by])
+  def handle_params(_params, _url, socket) do
+    artists = [
+      %{id: "test-artist-1", name: "Test Artist 1"},
+      %{id: "test-artist-2", name: "Test Artist 2"},
+      %{id: "test-artist-3", name: "Test Artist 3"}
+    ]
 
     socket =
       socket
-      |> assign(:sort_by, sort_by)
-      |> assign(:query_text, query_text)
       |> assign(:artists, artists)
 
     {:noreply, socket}
@@ -29,10 +29,6 @@ defmodule TunezWeb.Artists.IndexLive do
     ~H"""
     <.header responsive={false}>
       <.h1>Artists</.h1>
-      <:action><.sort_changer selected={@sort_by} /></:action>
-      <:action>
-        <.search_box query={@query_text} phx-submit="search" method="get" data-role="artist-search" />
-      </:action>
       <:action>
         <.button_link navigate={~p"/artists/new"} kind="primary">
           New Artist
@@ -41,7 +37,7 @@ defmodule TunezWeb.Artists.IndexLive do
     </.header>
 
     <div :if={@artists == []} class="p-8 text-center">
-      <.icon name="hero-face-frown" class="w-32 h-32 bg-base-300" />
+      <.icon name="hero-face-frown" class="w-32 h-32 bg-gray-300" />
       <br /> No artist data to display!
     </div>
 
@@ -85,11 +81,11 @@ defmodule TunezWeb.Artists.IndexLive do
 
   def pagination_links(assigns) do
     ~H"""
-    <div class="flex justify-center pt-8 join">
-      <.button_link data-role="previous-page" class="join-item" kind="primary" outline>
+    <div class="flex justify-center pt-8 space-x-4">
+      <.button_link data-role="previous-page" kind="primary" inverse>
         « Previous
       </.button_link>
-      <.button_link data-role="next-page" class="join-item" kind="primary" outline>
+      <.button_link data-role="next-page" kind="primary" inverse>
         Next »
       </.button_link>
     </div>
@@ -103,10 +99,12 @@ defmodule TunezWeb.Artists.IndexLive do
   def search_box(assigns) do
     ~H"""
     <form class="relative w-fit inline-block" {@rest}>
-      <.icon name="hero-magnifying-glass" class="w-4 h-4 m-2 ml-3 absolute bg-base-content/50" />
-      <input
-        class="input input-bordered rounded-full input-sm pl-8 w-32 sm:w-48"
+      <.icon name="hero-magnifying-glass" class="w-4 h-4 m-2 ml-3 mt-4 absolute bg-gray-400" />
+      <label for="search-text" class="hidden">Search</label>
+      <.input
+        class="!rounded-full p-1 pl-8 !w-32 sm:!w-48"
         name="query"
+        id="search-text"
         value={@query}
       />
       {render_slot(@inner_block)}
@@ -118,31 +116,31 @@ defmodule TunezWeb.Artists.IndexLive do
     assigns = assign(assigns, :options, sort_options())
 
     ~H"""
-    <form data-role="artist-sort" class="hidden sm:inline" phx-change="change_sort">
-      <label for="sort_by" class="text-sm">sort by:</label>
-      <select class="select select-bordered select-sm py-0 w-fit" name="sort_by">
-        <option
-          :for={{value, text} <- @options}
-          value={value}
-          {if @selected == value, do: [selected: true], else: []}
-        >
-          {text}
-        </option>
-      </select>
+    <form data-role="artist-sort" class="hidden sm:inline" phx-change="change-sort">
+      <.input
+        label="sort by:"
+        type="select"
+        id="sort_by"
+        name="sort_by"
+        options={@options}
+        value={@selected}
+        class="px-2 py-0.5 !w-fit !inline-block pr-8 text-sm"
+        container_class="!inline-block"
+      />
     </form>
     """
   end
 
   defp sort_options do
     [
-      {"-updated_at", "recently updated"},
-      {"-inserted_at", "recently added"},
+      {"recently updated", "updated_at"},
+      {"recently added", "inserted_at"},
       {"name", "name"}
     ]
   end
 
   def validate_sort_by(key) do
-    valid_keys = Enum.map(sort_options(), &elem(&1, 0))
+    valid_keys = Enum.map(sort_options(), &elem(&1, 1))
 
     if key in valid_keys do
       key
@@ -155,13 +153,13 @@ defmodule TunezWeb.Artists.IndexLive do
     Enum.filter(params, fn {_key, val} -> val != "" end)
   end
 
-  def handle_event("change_sort", %{"sort_by" => sort_by}, socket) do
+  def handle_event("change-sort", %{"sort_by" => sort_by}, socket) do
     params = remove_empty(%{q: socket.assigns.query_text, sort_by: sort_by})
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
   def handle_event("search", %{"query" => query}, socket) do
-    params = remove_empty(%{q: query, sort_by: socket.assigns.sort_by})
+    params = remove_empty(%{q: query})
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 end
