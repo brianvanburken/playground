@@ -3,6 +3,8 @@ defmodule Tunez.Music do
     otp_app: :tunez
 
   resources do
-    resource Tunez.Music.Artist
+    resource Tunez.Music.Artist do
+      define :create_artist, action: :create
+    end
   end
 end
