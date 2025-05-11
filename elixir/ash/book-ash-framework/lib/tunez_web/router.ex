@@ -1,7 +1,13 @@
 defmodule TunezWeb.Router do
   use TunezWeb, :router
 
+  use AshAuthentication.Phoenix.Router
+
+  import AshAuthentication.Plug.Helpers
+
   pipeline :graphql do
+    plug :load_from_bearer
+    plug :set_actor, :user
     plug AshGraphql.Plug
   end
 
@@ -12,10 +18,13 @@ defmodule TunezWeb.Router do
     plug :put_root_layout, html: {TunezWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :load_from_session
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :load_from_bearer
+    plug :set_actor, :user
   end
 
   scope "/gql" do
@@ -46,12 +55,42 @@ defmodule TunezWeb.Router do
   scope "/", TunezWeb do
     pipe_through :browser
 
-    live "/", Artists.IndexLive
-    live "/artists/new", Artists.FormLive, :new
-    live "/artists/:id", Artists.ShowLive
-    live "/artists/:id/edit", Artists.FormLive, :edit
-    live "/artists/:artist_id/albums/new", Albums.FormLive, :new
-    live "/albums/:id/edit", Albums.FormLive, :edit
+    ash_authentication_live_session :authenticated_routes do
+      live "/", Artists.IndexLive
+      live "/artists/new", Artists.FormLive, :new
+      live "/artists/:id", Artists.ShowLive
+      live "/artists/:id/edit", Artists.FormLive, :edit
+      live "/artists/:artist_id/albums/new", Albums.FormLive, :new
+      live "/albums/:id/edit", Albums.FormLive, :edit
+    end
+
+    auth_routes AuthController, Tunez.Accounts.User, path: "/auth"
+    sign_out_route AuthController
+
+    # Remove these if you'd like to use your own authentication views
+    sign_in_route register_path: "/register",
+                  reset_path: "/reset",
+                  auth_routes_prefix: "/auth",
+                  on_mount: [{TunezWeb.LiveUserAuth, :live_no_user}],
+                  overrides: [TunezWeb.AuthOverrides, AshAuthentication.Phoenix.Overrides.Default]
+
+    # Remove this if you do not want to use the reset password feature
+    reset_route auth_routes_prefix: "/auth",
+                overrides: [TunezWeb.AuthOverrides, AshAuthentication.Phoenix.Overrides.Default]
+
+    # Remove this if you do not use the confirmation strategy
+    confirm_route Tunez.Accounts.User,
+                  :confirm_new_user,
+                  auth_routes_prefix: "/auth",
+                  overrides: [TunezWeb.AuthOverrides, AshAuthentication.Phoenix.Overrides.Default]
+
+    # Remove this if you do not use the magic link strategy.
+    magic_sign_in_route(
+      Tunez.Accounts.User,
+      :magic_link,
+      auth_routes_prefix: "/auth",
+      overrides: [TunezWeb.AuthOverrides, AshAuthentication.Phoenix.Overrides.Default]
+    )
   end
 
   # Other scopes may use custom stacks.
