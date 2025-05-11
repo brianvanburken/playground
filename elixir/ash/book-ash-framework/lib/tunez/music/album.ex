@@ -1,5 +1,17 @@
 defmodule Tunez.Music.Album do
-  use Ash.Resource, otp_app: :tunez, domain: Tunez.Music, data_layer: AshPostgres.DataLayer
+  use Ash.Resource,
+    otp_app: :tunez,
+    domain: Tunez.Music,
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshGraphql.Resource, AshJsonApi.Resource]
+
+  graphql do
+    type :album
+  end
+
+  json_api do
+    type "album"
+  end
 
   postgres do
     table "albums"
@@ -38,18 +50,24 @@ defmodule Tunez.Music.Album do
              message: "must start with https:// or /images/"
   end
 
+  def next_year, do: Date.utc_today().year + 1
+
   attributes do
     uuid_primary_key :id
 
     attribute :name, :string do
       allow_nil? false
+      public? true
     end
 
     attribute :year_released, :integer do
       allow_nil? false
+      public? true
     end
 
-    attribute :cover_image_url, :string
+    attribute :cover_image_url, :string do
+      public? true
+    end
 
     create_timestamp :inserted_at
     update_timestamp :updated_at
@@ -60,8 +78,6 @@ defmodule Tunez.Music.Album do
       allow_nil? false
     end
   end
-
-  def next_year, do: Date.utc_today().year + 1
 
   calculations do
     calculate :years_ago, :integer, expr(2025 - year_released)
