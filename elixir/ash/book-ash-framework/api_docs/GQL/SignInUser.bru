@@ -5,7 +5,15 @@ meta {
 }
 
 post {
-  url: http://localhost:4000/gql
-  body: none
+  url: {{BASE_URL}}/gql
+  body: graphql
   auth: inherit
+}
+
+body:graphql {
+  query {
+    signInUser(email:"test@example.com", password:"supersecret"){
+      token
+    }
+  }
 }
