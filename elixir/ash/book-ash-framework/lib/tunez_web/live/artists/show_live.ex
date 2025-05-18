@@ -11,7 +11,7 @@ defmodule TunezWeb.Artists.ShowLive do
     artist =
       Tunez.Music.get_artist_by_id!(
         artist_id,
-        load: [:albums],
+        load: [albums: [:duration, :tracks]],
         actor: socket.assigns.current_user
       )
 
@@ -48,6 +48,7 @@ defmodule TunezWeb.Artists.ShowLive do
         </.button_link>
       </:action>
     </.header>
+    <.track_details tracks={@album.tracks} />
     <div class="mb-6">{formatted(@artist.biography)}</div>
 
     <.button_link
@@ -107,10 +108,10 @@ defmodule TunezWeb.Artists.ShowLive do
     <table :if={@tracks != []} class="w-full mt-2 -z-10">
       <tr :for={track <- @tracks} class="border-t first:border-0 border-gray-100">
         <th class="whitespace-nowrap w-1 p-3">
-          {String.pad_leading("#{track.order}", 2, "0")}.
+          {String.pad_leading("#{track.number}", 2, "0")}.
         </th>
         <td class="p-3">{track.name}</td>
-        <td class="whitespace-nowrap w-1 text-right p-2">{track.duration_seconds}</td>
+        <td class="whitespace-nowrap w-1 text-right p-2">{track.duration}</td>
       </tr>
     </table>
     <div :if={@tracks == []} class="p-8 text-center italic text-gray-400">

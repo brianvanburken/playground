@@ -20,7 +20,7 @@ defmodule Tunez.Music.Artist do
 
   json_api do
     type "artist"
-    includes [:albums]
+    includes albums: [:tracks]
     derive_filter? false
   end
 
@@ -58,12 +58,21 @@ defmodule Tunez.Music.Artist do
   end
 
   policies do
-    bypass actor_attribute_equals(:role, :admin) do
-      authorize_if always()
+    policy action(:create) do
+      authorize_if actor_attribute_equals(:role, :admin)
     end
 
-    policy action_type(:update) do
-      forbid_if always()
+    policy action(:update) do
+      authorize_if actor_attribute_equals(:role, :admin)
+      authorize_if actor_attribute_equals(:role, :editor)
+    end
+
+    policy action(:destroy) do
+      authorize_if actor_attribute_equals(:role, :admin)
+    end
+
+    policy action_type(:read) do
+      authorize_if always()
     end
   end
 
