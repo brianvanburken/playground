@@ -70,6 +70,7 @@ defmodule TunezWeb.Artists.IndexLive do
     ~H"""
     <div id={"artist-#{@artist.id}"} data-role="artist-card" class="relative mb-2">
       <.link navigate={~p"/artists/#{@artist.id}"}>
+        <.follow_icon :if={@artist.followed_by_me} />
         <.cover_image image={@artist.cover_image_url} />
       </.link>
     </div>
@@ -81,6 +82,7 @@ defmodule TunezWeb.Artists.IndexLive do
       >
         {@artist.name}
       </.link>
+      <.follower_count_display count={@artist.follower_count} />
     </p>
 
     <.artist_card_album_info artist={@artist} />
@@ -165,13 +167,33 @@ defmodule TunezWeb.Artists.IndexLive do
     """
   end
 
+  def follow_icon(assigns) do
+    ~H"""
+    <.icon name="hero-star-solid" class="w-8 h-8 bg-yellow-400 absolute top-2 right-2" />
+    """
+  end
+
+  def follower_count_display(assigns) do
+    ~H"""
+    <span
+      :if={@count > 0}
+      data-role="follower-count"
+      class="text-zinc-500 text-sm whitespace-nowrap pt-1 pl-1"
+    >
+      <.icon name="hero-star" class="size-4 -mt-0.5" /> {round_count(@count)}
+    </span>
+    """
+  end
+
   defp sort_options do
     [
       {"recently updated", "-updated_at"},
       {"recently added", "-inserted_at"},
       {"name", "name"},
       {"number of albums", "-album_count"},
-      {"latest album release", "--latest_album_year_released"}
+      {"latest album release", "--latest_album_year_released"},
+      {"popularity", "-follower_count"},
+      {"follwed artists first", "-followed_by_me"}
     ]
   end
 
@@ -207,5 +229,13 @@ defmodule TunezWeb.Artists.IndexLive do
   def handle_event("search", %{"query" => query}, socket) do
     params = remove_empty(%{q: query, sort_by: socket.assigns.sort_by})
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
+  end
+
+  def round_count(number) do
+    case number do
+      n when n >= 1_000_000 -> "#{Float.round(n / 1_000_000, 1)}M"
+      n when n >= 1_000 -> "#{Float.round(n / 1_000, 1)}K"
+      n -> n
+    end
   end
 end
