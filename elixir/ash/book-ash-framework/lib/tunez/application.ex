@@ -8,6 +8,11 @@ defmodule Tunez.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      {Oban,
+       AshOban.config(
+         Application.fetch_env!(:tunez, :ash_domains),
+         Application.fetch_env!(:tunez, Oban)
+       )},
       TunezWeb.Telemetry,
       Tunez.Repo,
       {DNSCluster, query: Application.get_env(:tunez, :dns_cluster_query) || :ignore},

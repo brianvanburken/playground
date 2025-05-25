@@ -7,6 +7,8 @@
 # General application configuration
 import Config
 
+config :ash_oban, pro?: false
+config :tunez, Oban, plugins: [{Oban.Plugins.Cron, []}]
 config :ash_graphql, authorize_update_destroy_with_error?: true
 
 config :mime,

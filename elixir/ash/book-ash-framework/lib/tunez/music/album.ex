@@ -3,11 +3,23 @@ defmodule Tunez.Music.Album do
     otp_app: :tunez,
     domain: Tunez.Music,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshGraphql.Resource, AshJsonApi.Resource],
+    extensions: [AshOban, AshGraphql.Resource, AshJsonApi.Resource],
     authorizers: [Ash.Policy.Authorizer]
 
   graphql do
     type :album
+  end
+
+  oban do
+    triggers do
+      trigger :send_new_album_notifications do
+        action :send_new_album_notifications
+        queue :default
+        scheduler_cron false
+        worker_module_name Tunez.Music.Album.AshOban.Worker.SendNewAlbumNotifications
+        scheduler_module_name Tunez.Music.Album.AshOban.Scheduler.SendNewAlbumNotifications
+      end
+    end
   end
 
   json_api do
@@ -20,12 +32,12 @@ defmodule Tunez.Music.Album do
     repo Tunez.Repo
 
     references do
-      reference :artist, index?: true, on_delete: :delete
+      reference :artist, index?: true
     end
   end
 
   actions do
-    defaults [:read, :destroy]
+    defaults [:read]
 
     create :create do
       accept [:name, :year_released, :cover_image_url, :artist_id]
@@ -39,9 +51,24 @@ defmodule Tunez.Music.Album do
       argument :tracks, {:array, :map}
       change manage_relationship(:tracks, type: :direct_control, order_is_key: :order)
     end
+
+    update :send_new_album_notifications do
+      change Tunez.Accounts.Changes.SendNewAlbumNotifications
+    end
+
+    destroy :destroy do
+      primary? true
+      change cascade_destroy(:notifications, return_notifications?: true, after_action?: false)
+    end
   end
 
+  def next_year, do: Date.utc_today().year + 1
+
   policies do
+    bypass AshOban.Checks.AshObanInteraction do
+      authorize_if always()
+    end
+
     bypass actor_attribute_equals(:role, :admin) do
       authorize_if always()
     end
@@ -55,15 +82,16 @@ defmodule Tunez.Music.Album do
     end
 
     policy action_type([:update, :destroy]) do
-      authorize_if expr(^actor(:role) == :editor and created_by_id == ^actor(:id))
+      authorize_if expr(can_manage_album?)
     end
   end
 
-  def next_year, do: Date.utc_today().year + 1
-
   changes do
+    change run_oban_trigger(:send_new_album_notifications), on: [:create]
     change relate_actor(:created_by, allow_nil?: true), on: [:create]
     change relate_actor(:updated_by, allow_nil?: true)
+
+    change Tunez.Accounts.Changes.SendNewAlbumNotifications, on: [:create]
   end
 
   validations do
@@ -115,6 +143,8 @@ defmodule Tunez.Music.Album do
       sort order: :asc
       public? true
     end
+
+    has_many :notifications, Tunez.Accounts.Notification
   end
 
   calculations do
@@ -123,6 +153,13 @@ defmodule Tunez.Music.Album do
     calculate :string_years_ago,
               :string,
               expr("wow, this was released " <> years_ago <> " years ago!")
+
+    calculate :can_manage_album?,
+              :boolean,
+              expr(
+                ^actor(:role) == :admin or
+                  (^actor(:role) == :editor and created_by_id == ^actor(:id))
+              )
   end
 
   calculations do

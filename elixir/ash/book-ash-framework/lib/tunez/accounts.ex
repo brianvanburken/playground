@@ -44,5 +44,10 @@ defmodule Tunez.Accounts do
       define :get_user_by_id, action: :read, args: [:id]
       define :get_user_by_email, action: :get_by_email, args: [:email]
     end
+
+    resource Tunez.Accounts.Notification do
+      define :notifications_for_user, action: :for_user
+      define :dismiss_notification, action: :destroy
+    end
   end
 end
