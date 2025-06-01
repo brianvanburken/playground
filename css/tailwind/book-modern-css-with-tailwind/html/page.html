@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!--
+ ! Excerpted from "Modern CSS with Tailwind, Second Edition",
+ ! published by The Pragmatic Bookshelf.
+ ! Copyrights apply to this code. It may not be used to create training material,
+ ! courses, books, articles, and the like. Contact us if you are in doubt.
+ ! We make no guarantees that this code is fit for any purpose.
+ ! Visit https://pragprog.com/titles/tailwind2 for more book information.
+-->
+<html>
+  <head>
+    <title>TailwindCode</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="../css/output.css" />
+  </head>
+
+  <body>
+    <section class="py-12 px-6">
+      <div class="container mx-auto">
+        <%
+        <table class="table-fixed border border-collapse">
+          <tr>
+            <th class="border border-black w-1/6">Small</th>
+            <th class="border border-black w-2/6">Medium</th>
+            <th class="border border-black w-3/6">Large</th>
+          </tr>
+        </table>
+        <%
+
+        <br /><br />
+        <hr/ >
+        <br /><br />
+
+        <%
+        <div class="grid grid-cols-2 w-1/4 gap-4">
+          <div class="border bg-gray-300 text-center">A</div>
+          <div class="border bg-gray-300 text-center">B</div>
+          <div class="border bg-gray-300 text-center">C</div>
+          <div class="border bg-gray-300 text-center">D</div>
+        </div>
+        <%
+
+        <br /><br />
+        <hr/ >
+        <br /><br />
+
+        <%
+        <div class="grid grid-rows-2 w-1/4 gap-4 grid-flow-col">
+          <div class="border bg-gray-300 text-center">A</div>
+          <div class="border bg-gray-300 text-center">B</div>
+          <div class="border bg-gray-300 text-center">C</div>
+          <div class="border bg-gray-300 text-center">D</div>
+        </div>
+        <%
+
+        <br /><br />
+        <hr/ >
+        <br /><br />
+
+        <%
+        <div class="grid grid-cols-2 w-1/4 gap-4">
+          <div class="border bg-gray-300 text-center col-span-2">A</div>
+          <div class="border bg-gray-300 text-center">B</div>
+          <div class="border bg-gray-300 text-center">C</div>
+          <div class="border bg-gray-300 text-center">D</div>
+        </div>
+        <%
+
+        <br /><br />
+        <hr/ >
+        <br /><br />
+
+        <%
+        <div class="grid grid-cols-2 w-1/4 gap-4">
+          <div class="border bg-gray-300 text-center row-span-2">A</div>
+          <div class="border bg-gray-300 text-center">B</div>
+          <div class="border bg-gray-300 text-center">C</div>
+          <div class="border bg-gray-300 text-center">D</div>
+        </div>
+        <%
+
+        <br /><br />
+        <hr/ >
+        <br /><br />
+
+        <%
+        <div class="grid grid-cols-3 gap-4 w-1/3">
+          <div class="text-center col-span-3">Header</div>
+          <div class="text-center w-1/5">Left Sidebar</div>
+          <div class="text-center w-3/5">Content</div>
+          <div class="text-center w-1/5">Right Sidebar</div>
+          <div class="text-center col-span-3">Footer</div>
+        </div>
+        <%
+
+        <br /><br />
+        <hr/ >
+        <br /><br />
+
+        <%
+        <div class="flex flex-col w-1/3">
+          <div class="flex-grow">Header</div>
+          <div class="flex flex-row">
+            <div class="text-center w-1/5">Left Sidebar</div>
+            <div class="text-center w-3/5">Content</div>
+            <div class="text-center w-1/5">Right Sidebar</div>
+          </div>
+          <div class="flex-grow">Footer</div>
+        </div>
+        <%
+
+        <br /><br />
+        <hr/ >
+        <br /><br />
+
+        <%
+        <div class="flex flex-row flex-wrap w-1/3">
+          <div class="w-full">Header</div>
+          <div class="text-center w-1/5">Left Sidebar</div>
+          <div class="text-center w-3/5">Content</div>
+          <div class="text-center w-1/5">Right Sidebar</div>
+          <div class="w-full">Footer</div>
+        </div>
+        <%
+
+        <br /><br />
+        <hr/ >
+        <br /><br />
+
+        <%
+        <div class="flex flex-row flex-wrap w-1/3">
+          <div class="text-center w-3/5 order-3">Content</div>
+          <div class="w-full order-1">Header</div>
+          <div class="text-center w-1/5 order-2">Left Sidebar</div>
+          <div class="text-center w-1/5 order-4">Right Sidebar</div>
+          <div class="w-full order-5">Footer</div>
+        </div>
+        <%
+      </div>
+    </section>
+  </body>
+</html>
