@@ -1,6 +1,6 @@
 {
   "name": "book-modern-css-with-tailwind",
   "dependencies": {
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^4.1.8"
   }
 }
