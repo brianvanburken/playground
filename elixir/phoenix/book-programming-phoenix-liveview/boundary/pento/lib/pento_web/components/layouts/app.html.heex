@@ -1,0 +1,22 @@
+<header class="px-4 sm:px-6 lg:px-8">
+  <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
+    <div class="flex items-center gap-4">
+      <a href="/">
+        <svg viewBox="0 0 55 55" class="h-6">
+          <rect x="0" y="0" width="55" height="55" fill="#DDD" />
+          <rect x="10" y="5" width="30" height="30" fill="#689042"></rect>
+          <rect x="10" y="35" width="15" height="15" fill="#689042"></rect>
+        </svg>
+      </a>
+      <p class="px-2 text-[0.8125rem] font-heavy leading-6">
+        Pentominos
+      </p>
+    </div>
+  </div>
+</header>
+<main class="px-4 py-20 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl">
+    <.flash_group flash={@flash} />
+    {@inner_content}
+  </div>
+</main>

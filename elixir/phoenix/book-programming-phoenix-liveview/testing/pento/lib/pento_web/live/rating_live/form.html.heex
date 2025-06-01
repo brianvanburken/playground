@@ -1,0 +1,28 @@
+<div>
+  <.form for={@form} phx-submit="save" phx-target={@myself} id={@id}>
+    <input
+      type="hidden"
+      name={@form[:user_id].name}
+      value={@form[:user_id].value}
+    />
+    <input
+      type="hidden"
+      name={@form[:product_id].name}
+      value={@form[:product_id].value}
+    />
+
+    <.input
+      field={@form[:stars]}
+      type="rating"
+      prompt="Rating"
+      options={[
+        "★★★★★": 5,
+        "★★★★": 4,
+        "★★★": 3,
+        "★★": 2,
+        "★": 1
+      ]}
+    />
+    <.button phx-disable-with="Saving...">Save</.button>
+  </.form>
+</div>
