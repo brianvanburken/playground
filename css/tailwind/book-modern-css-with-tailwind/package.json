@@ -1,5 +1,9 @@
 {
   "name": "book-modern-css-with-tailwind",
+  "scripts": {
+    "start": "pnpx @tailwindcss/cli --watch -i css/input.css -o css/output.css",
+    "build": "pnpx @tailwindcss/cli --minify -i css/input.css -o css/output.css"
+  },
   "dependencies": {
     "tailwindcss": "^4.1.8"
   }
