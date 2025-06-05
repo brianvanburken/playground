@@ -180,6 +180,7 @@ defmodule PentoWeb.UserAuth do
         Accounts.get_user_by_session_token(user_token)
       end
     end)
+    |> Phoenix.Component.assign_new(:session_id, fn -> session["live_socket_id"] end)
   end
 
   @doc """

@@ -1,18 +1,7 @@
 defmodule PentoWeb.WrongLive do
   use PentoWeb, :live_view
-  alias Pento.Accounts
 
-  def mount(_, session, socket) do
-    user = Accounts.get_user_by_session_token(session["user_token"])
-    new_socket = new_game(socket)
-
-    {:ok,
-     assign(
-       new_socket,
-       current_user: user,
-       session_id: session["live_socket_id"]
-     )}
-  end
+  def mount(_, _, socket), do: {:ok, new_game(socket)}
 
   def handle_params(%{"new_game" => "true"}, _, socket), do: {:noreply, new_game(socket)}
   def handle_params(_, _, socket), do: {:noreply, socket}
