@@ -3,10 +3,10 @@ defmodule Pento.Catalog.Product do
   import Ecto.Changeset
 
   schema "products" do
-    field :name, :string
-    field :description, :string
-    field :unit_price, :float
-    field :sku, :integer
+    field(:name, :string)
+    field(:description, :string)
+    field(:unit_price, :float)
+    field(:sku, :integer)
 
     timestamps(type: :utc_datetime)
   end
@@ -20,7 +20,7 @@ defmodule Pento.Catalog.Product do
     |> validate_number(:unit_price, greater_than: 0.0)
   end
 
-  def decrease_price_changeset(product, attrs) do
+  def changeset_markdown_product(product, attrs) do
     product
     |> cast(attrs, [:unit_price])
     |> validate_number(:unit_price,
