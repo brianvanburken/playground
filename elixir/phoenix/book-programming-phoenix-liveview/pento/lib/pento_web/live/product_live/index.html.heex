@@ -1,3 +1,5 @@
+<h1 class="text-2xl font-bold">{@greeting}</h1>
+
 <.header>
   Listing Products
   <:actions>
@@ -47,3 +49,5 @@
     patch={~p"/products"}
   />
 </.modal>
+
+<pre><%= inspect assigns, pretty: true %></pre>
