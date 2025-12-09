@@ -84,6 +84,17 @@ defmodule TaskManager.Organizations.Organization do
                    action: :register_with_password,
                    authorize?: false
                  ),
+               {:ok, _membership} <-
+                 Ash.create(
+                   TaskManager.Organizations.Membership,
+                   %{
+                     user_id: user.id,
+                     organization_id: org.id,
+                     role: :owner
+                   },
+                   tenant: org.id,
+                   authorize?: false
+                 ),
                {:ok, organization} <- Ash.update(org, %{owner_id: user.id}, authorize?: false) do
             {:ok, organization}
           else
@@ -128,6 +139,17 @@ defmodule TaskManager.Organizations.Organization do
   relationships do
     belongs_to :owner, TaskManager.Accounts.User do
       source_attribute :owner_id
+      public? true
+    end
+
+    has_many :memberships, TaskManager.Organizations.Membership do
+      public? true
+    end
+
+    many_to_many :users, TaskManager.Organizations.Membership do
+      through TaskManager.Organizations.Membership
+      destination_attribute_on_join_resource :user_id
+      source_attribute_on_join_resource :organization_id
       public? true
     end
   end

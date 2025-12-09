@@ -4,5 +4,6 @@ defmodule TaskManager.Organizations do
 
   resources do
     resource TaskManager.Organizations.Organization
+    resource TaskManager.Organizations.Membership
   end
 end
