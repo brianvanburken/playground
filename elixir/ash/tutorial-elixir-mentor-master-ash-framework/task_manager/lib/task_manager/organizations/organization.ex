@@ -12,7 +12,13 @@ defmodule TaskManager.Organizations.Organization do
   end
 
   actions do
-    defaults [:read, :update, :destroy]
+    defaults [:read, :destroy]
+
+    update :update do
+      primary? true
+      require_atomic? false
+      accept [:name, :plan, :max_users, :active, :owner_id]
+    end
 
     create :create do
       primary? true
@@ -36,6 +42,62 @@ defmodule TaskManager.Organizations.Organization do
         end)
       end
     end
+
+    create :register do
+      accept [:name, :slug]
+
+      argument :owner, :map do
+        allow_nil? false
+      end
+
+      change fn changeset, _ ->
+        owner = Ash.Changeset.get_argument(changeset, :owner)
+
+        changeset =
+          case Ash.Changeset.get_attribute(changeset, :slug) do
+            nil ->
+              name = Ash.Changeset.get_attribute(changeset, :name) || ""
+
+              slug =
+                name
+                |> String.downcase()
+                |> String.replace(" ", "-")
+                |> String.trim("-")
+
+              Ash.Changeset.change_attribute(changeset, :slug, slug)
+
+            _ ->
+              changeset
+          end
+
+        changeset
+        |> Ash.Changeset.after_action(fn _changeset, org ->
+          user_params = %{
+            email: owner[:email],
+            password: owner[:password],
+            password_confirmation: owner[:password_confirmation],
+            organization_id: org.id
+          }
+
+          with {:ok, user} <-
+                 Ash.create(TaskManager.Accounts.User, user_params,
+                   action: :register_with_password,
+                   authorize?: false
+                 ),
+               {:ok, organization} <- Ash.update(org, %{owner_id: user.id}, authorize?: false) do
+            {:ok, organization}
+          else
+            {:error, error} -> {:error, error}
+          end
+        end)
+      end
+    end
+  end
+
+  policies do
+    bypass action(:register) do
+      authorize_if always()
+    end
   end
 
   validations do
@@ -54,7 +116,20 @@ defmodule TaskManager.Organizations.Organization do
     attribute :plan, :atom
     attribute :max_users, :integer
     attribute :active, :boolean
+
+    attribute :owner_id, :uuid do
+      public? true
+      allow_nil? true
+    end
+
     timestamps()
+  end
+
+  relationships do
+    belongs_to :owner, TaskManager.Accounts.User do
+      source_attribute :owner_id
+      public? true
+    end
   end
 
   identities do
