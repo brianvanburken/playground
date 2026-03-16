@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refactoring Progress</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2d3a;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --elm: #60b5d1;
+      --scss: #cd6799;
+      --ts: #f0db4f;
+      --added: #4ade80;
+      --removed: #f87171;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "SF Mono", "Fira Code", ui-monospace, monospace;
+      font-size: 13px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 1.5rem 2rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+    }
+
+    header h1 {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--text);
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .legend {
+      margin-left: auto;
+      display: flex;
+      gap: 1.25rem;
+      align-items: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .chart-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 400px;
+    }
+
+    #error-banner {
+      display: none;
+      background: #450a0a;
+      border: 1px solid #7f1d1d;
+      color: #fca5a5;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      line-height: 1.5;
+    }
+
+    #error-banner code {
+      background: rgba(255,255,255,0.08);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+    }
+
+    /* Custom tooltip */
+    #tooltip {
+      position: fixed;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.1s;
+      max-width: 320px;
+    }
+
+    #tooltip.visible { opacity: 1; }
+
+    .tooltip-inner {
+      background: #0f1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    }
+
+    .tooltip-hash {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .tooltip-msg {
+      font-size: 0.8rem;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+      word-break: break-word;
+    }
+
+    .tooltip-date {
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .tooltip-lines {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.25rem 1rem;
+      font-size: 0.75rem;
+    }
+
+    .tooltip-label { color: var(--muted); }
+    .tooltip-val { text-align: right; }
+
+    .tooltip-divider {
+      grid-column: 1 / -1;
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0.35rem 0;
+    }
+
+    .delta-added { color: var(--added); }
+    .delta-removed { color: var(--removed); }
+    .delta-neutral { color: var(--muted); }
+
+    .tooltip-hint {
+      margin-top: 0.6rem;
+      font-size: 0.65rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 0.5rem;
+    }
+
+    .controls {
+      padding: 0.75rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .controls label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .controls select {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.3rem 0.5rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      cursor: pointer;
+      max-width: 320px;
+    }
+
+    .controls select:focus {
+      outline: none;
+      border-color: var(--muted);
+    }
+
+    .controls .range-info {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .chart-toggle {
+      margin-left: auto;
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .chart-toggle button {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.75rem;
+      padding: 0.3rem 0.75rem;
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .chart-toggle button:not(:last-child) {
+      border-right: 1px solid var(--border);
+    }
+
+    .chart-toggle button.active {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .chart-toggle button:not(.active):hover {
+      background: rgba(255,255,255,0.04);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>refactoring progress</h1>
+  <p id="subtitle">loading...</p>
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--elm)"></div>
+      <span>Elm</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--scss)"></div>
+      <span>SCSS</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:var(--ts)"></div>
+      <span>TypeScript / JS</span>
+    </div>
+  </div>
+</header>
+
+<div class="controls" id="controls" style="display:none">
+  <label>
+    from
+    <select id="range-from"></select>
+  </label>
+  <label>
+    to
+    <select id="range-to"></select>
+  </label>
+  <span class="range-info" id="range-info"></span>
+  <div class="chart-toggle">
+    <button id="toggle-bar">bar</button>
+    <button id="toggle-line" class="active">line</button>
+  </div>
+</div>
+
+<main>
+  <div id="error-banner"></div>
+  <div class="chart-wrap">
+    <canvas id="chart"></canvas>
+  </div>
+</main>
+
+<div id="tooltip">
+  <div class="tooltip-inner">
+    <div class="tooltip-hash" id="tt-hash"></div>
+    <div class="tooltip-msg" id="tt-msg"></div>
+    <div class="tooltip-date" id="tt-date"></div>
+    <div class="tooltip-lines" id="tt-lines"></div>
+    <div class="tooltip-hint" id="tt-hint"></div>
+  </div>
+</div>
+
+<script>
+  // ---------------------------------------------------------------------------
+  // Config — point DATA_FILE at the JSON produced by gather.sh
+  // ---------------------------------------------------------------------------
+  const DATA_FILE = 'commits_data.json';
+
+  // ---------------------------------------------------------------------------
+  // Utilities
+  // ---------------------------------------------------------------------------
+  const el = id => document.getElementById(id);
+
+  function showError(msg) {
+    const b = el('error-banner');
+    b.innerHTML = msg;
+    b.style.display = 'block';
+    el('subtitle').textContent = 'error loading data';
+  }
+
+  function formatDelta(current, previous, key) {
+    if (previous == null) return null;
+    const diff = current[key] - previous[key];
+    if (diff === 0) return null;
+    return diff;
+  }
+
+  function deltaHtml(diff) {
+    if (diff == null) return '<span class="delta-neutral">—</span>';
+    const sign = diff > 0 ? '+' : '';
+    const cls = diff > 0 ? 'delta-added' : 'delta-removed';
+    return `<span class="${cls}">${sign}${diff.toLocaleString()}</span>`;
+  }
+
+  function positionTooltip(x, y) {
+    const tt = el('tooltip');
+    const margin = 14;
+    const tw = tt.offsetWidth;
+    const th = tt.offsetHeight;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let left = x + margin;
+    let top  = y + margin;
+    if (left + tw > vw - 8)  left = x - tw - margin;
+    if (top  + th > vh - 8)  top  = y - th - margin;
+    tt.style.left = left + 'px';
+    tt.style.top  = top  + 'px';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Load data and build chart
+  // ---------------------------------------------------------------------------
+  async function init() {
+    let data;
+    try {
+      const resp = await fetch(DATA_FILE);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status} — ${resp.statusText}`);
+      data = await resp.json();
+    } catch (err) {
+      showError(
+        `Could not load <code>${DATA_FILE}</code>: ${err.message}.<br>` +
+        `Run <code>./gather.sh</code> in your target repository first, then serve this ` +
+        `directory with a local HTTP server (e.g. <code>npx serve .</code>).`
+      );
+      return;
+    }
+
+    if (!Array.isArray(data) || data.length === 0) {
+      showError(`<code>${DATA_FILE}</code> is empty or malformed.`);
+      return;
+    }
+
+    el('subtitle').textContent =
+      `${data.length} commits · ${data[0].date} → ${data[data.length - 1].date}`;
+
+    const BAR_ALPHA  = '99';
+    const ELM_COLOR  = '#60b5d1';
+    const SCSS_COLOR = '#cd6799';
+    const TS_COLOR   = '#f0db4f';
+
+    // Pre-compute tooltip HTML for every commit once at load time.
+    // Mousemove then only does a Map lookup and a position update.
+    const tooltipByHash = new Map(data.map((d, fullIdx) => {
+      const prev       = fullIdx > 0 ? data[fullIdx - 1] : null;
+      const elmDelta   = formatDelta(d.lines, prev?.lines, 'elm');
+      const scssDelta  = formatDelta(d.lines, prev?.lines, 'scss');
+      const tsDelta    = formatDelta(d.lines, prev?.lines, 'typescript');
+      const total      = d.lines.elm + d.lines.scss + d.lines.typescript;
+      const prevTotal  = prev ? prev.lines.elm + prev.lines.scss + prev.lines.typescript : null;
+      const totalDelta = prevTotal != null ? total - prevTotal : null;
+
+      return [d.hash, {
+        hashText:  `#${d.hash}`,
+        message:   d.message,
+        date:      d.date,
+        linesHtml: `
+          <span class="tooltip-label">Elm</span>
+          <span class="tooltip-val">${d.lines.elm.toLocaleString()} ${deltaHtml(elmDelta)}</span>
+          <span class="tooltip-label">SCSS</span>
+          <span class="tooltip-val">${d.lines.scss.toLocaleString()} ${deltaHtml(scssDelta)}</span>
+          <span class="tooltip-label">TypeScript / JS</span>
+          <span class="tooltip-val">${d.lines.typescript.toLocaleString()} ${deltaHtml(tsDelta)}</span>
+          <hr class="tooltip-divider" />
+          <span class="tooltip-label">total</span>
+          <span class="tooltip-val">${total.toLocaleString()} ${deltaHtml(totalDelta)}</span>
+        `,
+        hasUrl: !!(d.url),
+        url:    d.url,
+      }];
+    }));
+
+    // -----------------------------------------------------------------------
+    // Range selects
+    // -----------------------------------------------------------------------
+    const selectFrom = el('range-from');
+    const selectTo   = el('range-to');
+
+    function commitLabel(d) {
+      const msg = d.message.length > 52 ? d.message.slice(0, 50) + '…' : d.message;
+      return `#${d.shortHash}  ${msg}`;
+    }
+
+    data.forEach((d, i) => {
+      const opt = new Option(commitLabel(d), i);
+      selectFrom.add(opt.cloneNode(true));
+      selectTo.add(opt);
+    });
+
+    selectFrom.value = 0;
+    selectTo.value   = data.length - 1;
+
+    el('controls').style.display = '';
+
+    // -----------------------------------------------------------------------
+    // Chart
+    // -----------------------------------------------------------------------
+    // view holds the currently visible slice; used for bar index → commit mapping.
+    let view      = data;
+    let chartType = 'line';
+    let chart     = null;
+
+    // Declared here so buildChart() can reset them when recreating the chart.
+    const ttEl        = el('tooltip');
+    const ttHash      = el('tt-hash');
+    const ttMsg       = el('tt-msg');
+    const ttDate      = el('tt-date');
+    const ttLines     = el('tt-lines');
+    const ttHint      = el('tt-hint');
+    const chartCanvas = el('chart');
+    let lastViewIdx   = -1;
+    let rafId         = null;
+    let mouseX        = 0;
+    let mouseY        = 0;
+
+    function dataset(label, color, values) {
+      const isLine = chartType === 'line';
+      return {
+        label,
+        data: values,
+        backgroundColor: isLine ? color + '33' : color + BAR_ALPHA,
+        borderColor: color,
+        borderWidth: isLine ? 2 : 1,
+        ...(isLine
+          ? { fill: true, tension: 0.3, pointRadius: 0 }
+          : { borderRadius: 2 }
+        ),
+      };
+    }
+
+    function buildChart() {
+      if (chart) {
+        chart.destroy();
+        lastViewIdx = -1;
+        ttEl.classList.remove('visible');
+      }
+
+      chart = new Chart(el('chart'), {
+        type: chartType,
+        data: {
+          labels:   view.map(d => d.shortHash),
+          datasets: [
+            dataset('Elm',             ELM_COLOR,  view.map(d => d.lines.elm)),
+            dataset('SCSS',            SCSS_COLOR, view.map(d => d.lines.scss)),
+            dataset('TypeScript / JS', TS_COLOR,   view.map(d => d.lines.typescript)),
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 200 },
+          // Disable Chart.js internal mouse handling — it redraws all bars/points
+          // on every mousemove for hover highlighting, which is expensive at 4k entries.
+          // We do our own hit-testing via getElementsAtEventForMode.
+          events: [],
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false },
+          },
+          scales: {
+            x: {
+              stacked: true,
+              ticks: {
+                color: '#475569',
+                font: { family: '"SF Mono","Fira Code",ui-monospace,monospace', size: 10 },
+                maxTicksLimit: 20,
+                maxRotation: 45,
+              },
+              grid: { color: '#1e2130' },
+              border: { color: '#2a2d3a' },
+            },
+            y: {
+              stacked: true,
+              ticks: {
+                color: '#475569',
+                font: { family: '"SF Mono","Fira Code",ui-monospace,monospace', size: 10 },
+                callback: v => v.toLocaleString(),
+              },
+              grid: { color: '#1e2130' },
+              border: { color: '#2a2d3a' },
+            },
+          },
+        },
+      });
+    }
+
+    function applyRange() {
+      const fromIdx = parseInt(selectFrom.value, 10);
+      const toIdx   = parseInt(selectTo.value, 10);
+
+      if (fromIdx > toIdx) selectTo.value = fromIdx;
+
+      const from = parseInt(selectFrom.value, 10);
+      const to   = parseInt(selectTo.value, 10);
+
+      view = data.slice(from, to + 1);
+
+      chart.data.labels           = view.map(d => d.shortHash);
+      chart.data.datasets[0].data = view.map(d => d.lines.elm);
+      chart.data.datasets[1].data = view.map(d => d.lines.scss);
+      chart.data.datasets[2].data = view.map(d => d.lines.typescript);
+      chart.update();
+
+      el('range-info').textContent =
+        `${view.length} commit${view.length !== 1 ? 's' : ''} · ${view[0].date} → ${view[view.length - 1].date}`;
+    }
+
+    selectFrom.addEventListener('change', applyRange);
+    selectTo.addEventListener('change', applyRange);
+
+    el('toggle-bar').addEventListener('click', () => {
+      if (chartType === 'bar') return;
+      chartType = 'bar';
+      el('toggle-bar').classList.add('active');
+      el('toggle-line').classList.remove('active');
+      buildChart();
+      applyRange();
+    });
+
+    el('toggle-line').addEventListener('click', () => {
+      if (chartType === 'line') return;
+      chartType = 'line';
+      el('toggle-line').classList.add('active');
+      el('toggle-bar').classList.remove('active');
+      buildChart();
+      applyRange();
+    });
+
+    buildChart();
+    applyRange();
+
+    // -----------------------------------------------------------------------
+    // Custom tooltip
+    // -----------------------------------------------------------------------
+    chartCanvas.addEventListener('mousemove', evt => {
+      mouseX = evt.clientX;
+      mouseY = evt.clientY;
+
+      const points = chart.getElementsAtEventForMode(evt, 'index', { intersect: false }, false);
+
+      if (!points.length) {
+        if (lastViewIdx !== -1) {
+          ttEl.classList.remove('visible');
+          chartCanvas.style.cursor = 'default';
+          lastViewIdx = -1;
+        }
+        return;
+      }
+
+      const viewIdx = points[0].index;
+      chartCanvas.style.cursor = 'pointer';
+
+      // Only update DOM content when the hovered bar changes.
+      if (viewIdx !== lastViewIdx) {
+        lastViewIdx = viewIdx;
+        const cached = tooltipByHash.get(view[viewIdx].hash);
+
+        ttHash.textContent  = cached.hashText;
+        ttMsg.textContent   = cached.message;
+        ttDate.textContent  = cached.date;
+        ttLines.innerHTML   = cached.linesHtml;
+        ttHint.textContent  = cached.hasUrl ? 'click to open commit on GitHub' : '';
+        ttHint.style.display = cached.hasUrl ? '' : 'none';
+        ttEl.classList.add('visible');
+      }
+
+      // Throttle position updates to one per animation frame.
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        positionTooltip(mouseX, mouseY);
+        rafId = null;
+      });
+    });
+
+    chartCanvas.addEventListener('mouseleave', () => {
+      ttEl.classList.remove('visible');
+      chartCanvas.style.cursor = 'default';
+      lastViewIdx = -1;
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    });
+
+    // -----------------------------------------------------------------------
+    // Click → open commit on GitHub
+    // -----------------------------------------------------------------------
+    chartCanvas.addEventListener('click', () => {
+      if (lastViewIdx === -1) return;
+      const cached = tooltipByHash.get(view[lastViewIdx].hash);
+      if (cached?.hasUrl) window.open(cached.url, '_blank', 'noopener');
+    });
+  }
+
+  init();
+</script>
+</body>
+</html>
