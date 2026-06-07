@@ -5,7 +5,7 @@ import Html exposing (Html, a, li, text, ul)
 import Html.Attributes exposing (href)
 import Layouts.Base as Base
 import Layouts.Container as Container
-import Model exposing (LayoutModel(..), Model, Msg(..), PageModel(..))
+import Model exposing (LayoutModel(..), LayoutMsg(..), Model, Msg(..), PageModel(..), PageMsg(..))
 import Pages.About as About
 import Pages.Home as Home
 import Pages.NotFound as NotFound
@@ -17,14 +17,6 @@ view model =
         |> applyLayout model.layout
 
 
-nav : Html Msg
-nav =
-    ul []
-        [ li [] [ a [ href "/" ] [ text "Home" ] ]
-        , li [] [ a [ href "/about" ] [ text "About" ] ]
-        ]
-
-
 viewPage : PageModel -> Document Msg
 viewPage page =
     case page of
@@ -32,14 +24,14 @@ viewPage page =
             { title = Home.title
             , body =
                 Home.view subModel
-                    |> List.map (Html.map HomeMsg)
+                    |> List.map (Html.map (PageMsg << HomeMsg))
             }
 
         AboutPage subModel ->
             { title = About.title
             , body =
                 About.view subModel
-                    |> List.map (Html.map AboutMsg)
+                    |> List.map (Html.map (PageMsg << AboutMsg))
             }
 
         NotFoundPage ->
@@ -65,4 +57,4 @@ viewLayout layout content =
             Container.view config content
 
         BaseLayout config subModel ->
-            Base.view config BaseMsg subModel content
+            Base.view config (LayoutMsg << BaseMsg) subModel content

@@ -4,10 +4,9 @@ import Browser exposing (UrlRequest(..))
 import Browser.Navigation as Nav
 import Init exposing (initPage)
 import Layouts.Base as Base
-import Model exposing (LayoutModel(..), Model, Msg(..), PageModel(..))
+import Model exposing (LayoutModel(..), LayoutMsg(..), Model, Msg(..), PageModel(..), PageMsg(..))
 import Pages.About as About
 import Pages.Home as Home
-import Pages.NotFound as NotFound
 import Route
 import Url
 
@@ -24,6 +23,16 @@ update msg model =
         UrlChanged url ->
             initPage (Route.fromUrl url) model
 
+        PageMsg pageMsg ->
+            handlePage pageMsg model
+
+        LayoutMsg layoutMsg ->
+            updateLayout layoutMsg model
+
+
+handlePage : PageMsg -> Model -> ( Model, Cmd Msg )
+handlePage msg model =
+    case msg of
         HomeMsg subMsg ->
             case model.page of
                 HomePage subModel ->
@@ -31,7 +40,7 @@ update msg model =
                         ( m, cmd ) =
                             Home.update subMsg subModel
                     in
-                    ( { model | page = HomePage m }, Cmd.map HomeMsg cmd )
+                    ( { model | page = HomePage m }, Cmd.map (PageMsg << HomeMsg) cmd )
 
                 _ ->
                     ( model, Cmd.none )
@@ -43,11 +52,15 @@ update msg model =
                         ( m, cmd ) =
                             About.update subMsg subModel
                     in
-                    ( { model | page = AboutPage m }, Cmd.map AboutMsg cmd )
+                    ( { model | page = AboutPage m }, Cmd.map (PageMsg << AboutMsg) cmd )
 
                 _ ->
                     ( model, Cmd.none )
 
+
+updateLayout : LayoutMsg -> Model -> ( Model, Cmd Msg )
+updateLayout msg model =
+    case msg of
         BaseMsg subMsg ->
             case model.layout of
                 BaseLayout config subModel ->
@@ -55,7 +68,7 @@ update msg model =
                         ( m, cmd ) =
                             Base.update subMsg subModel
                     in
-                    ( { model | layout = BaseLayout config m }, Cmd.map BaseMsg cmd )
+                    ( { model | layout = BaseLayout config m }, Cmd.map (LayoutMsg << BaseMsg) cmd )
 
                 _ ->
                     ( model, Cmd.none )

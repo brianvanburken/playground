@@ -1,4 +1,4 @@
-module Model exposing (LayoutModel(..), Model, Msg(..), PageModel(..))
+module Model exposing (LayoutModel(..), LayoutMsg(..), Model, Msg(..), PageModel(..), PageMsg(..))
 
 import Browser exposing (UrlRequest)
 import Browser.Navigation as Nav
@@ -8,6 +8,13 @@ import Pages.About as About
 import Pages.Home as Home
 import Pages.NotFound as NotFound
 import Url exposing (Url)
+
+
+type alias Model =
+    { key : Nav.Key
+    , page : PageModel
+    , layout : LayoutModel
+    }
 
 
 type PageModel
@@ -22,16 +29,17 @@ type LayoutModel
     | BaseLayout Base.Config Base.Model
 
 
-type alias Model =
-    { key : Nav.Key
-    , page : PageModel
-    , layout : LayoutModel
-    }
+type PageMsg
+    = HomeMsg Home.Msg
+    | AboutMsg About.Msg
+
+
+type LayoutMsg
+    = BaseMsg Base.Msg
 
 
 type Msg
     = UrlRequested UrlRequest
     | UrlChanged Url
-    | HomeMsg Home.Msg
-    | AboutMsg About.Msg
-    | BaseMsg Base.Msg
+    | PageMsg PageMsg
+    | LayoutMsg LayoutMsg

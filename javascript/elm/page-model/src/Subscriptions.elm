@@ -1,7 +1,7 @@
 module Subscriptions exposing (subscriptions)
 
 import Layouts.Base as Base
-import Model exposing (LayoutModel(..), Model, Msg(..), PageModel(..))
+import Model exposing (LayoutModel(..), LayoutMsg(..), Model, Msg(..), PageModel(..), PageMsg(..))
 import Pages.About as About
 import Pages.Home as Home
 import Pages.NotFound as NotFound
@@ -16,10 +16,10 @@ pageSubscriptions : Model -> Sub Msg
 pageSubscriptions model =
     case model.page of
         HomePage subModel ->
-            Sub.map HomeMsg (Home.subscriptions subModel)
+            Sub.map (PageMsg << HomeMsg) (Home.subscriptions subModel)
 
         AboutPage subModel ->
-            Sub.map AboutMsg (About.subscriptions subModel)
+            Sub.map (PageMsg << AboutMsg) (About.subscriptions subModel)
 
         NotFoundPage ->
             Sub.none
@@ -35,4 +35,4 @@ layoutSubscriptions model =
             Sub.none
 
         BaseLayout _ subModel ->
-            Sub.map BaseMsg (Base.subscriptions subModel)
+            Sub.map (LayoutMsg << BaseMsg) (Base.subscriptions subModel)

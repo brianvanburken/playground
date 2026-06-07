@@ -3,7 +3,7 @@ module Init exposing (init, initPage)
 import Browser.Navigation as Nav
 import Layouts.Base as BaseLayout
 import Layouts.Container as ContainerLayout
-import Model exposing (LayoutModel(..), Model, Msg(..), PageModel(..))
+import Model exposing (LayoutModel(..), LayoutMsg(..), Model, Msg(..), PageModel(..), PageMsg(..))
 import Pages.About as About
 import Pages.Home as Home
 import Pages.NotFound as NotFound
@@ -14,12 +14,14 @@ import Url exposing (Url)
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
     let
+        initialModel : Model
         initialModel =
             { key = key
             , page = Loading
             , layout = ContainerLayout ContainerLayout.config
             }
 
+        route : Route
         route =
             Route.fromUrl url
     in
@@ -37,7 +39,7 @@ initPage route model =
             ( model
                 |> setPage (HomePage m)
                 |> withBaseLayout
-            , Cmd.map HomeMsg cmd
+            , Cmd.map (PageMsg << HomeMsg) cmd
             )
 
         About ->
@@ -48,7 +50,7 @@ initPage route model =
             ( model
                 |> setPage (AboutPage m)
                 |> withBaseLayout
-            , Cmd.map AboutMsg cmd
+            , Cmd.map (PageMsg << AboutMsg) cmd
             )
 
         NotFound ->
