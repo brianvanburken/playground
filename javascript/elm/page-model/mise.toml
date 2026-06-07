@@ -1,0 +1,7 @@
+[tools]
+elm = "0.19.1"
+node = "24"
+
+[tasks.dev]
+run = "elm reactor"
+description = "Start elm reactor dev server"
