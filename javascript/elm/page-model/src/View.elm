@@ -3,19 +3,18 @@ module View exposing (view)
 import Browser exposing (Document)
 import Html exposing (Html, a, li, text, ul)
 import Html.Attributes exposing (href)
+import Layouts.Base as Base
+import Layouts.Container as Container
+import Model exposing (LayoutModel(..), Model, Msg(..), PageModel(..))
 import Pages.About as About
 import Pages.Home as Home
 import Pages.NotFound as NotFound
-import Model exposing (Model, Msg(..), PageModel(..))
 
 
 view : Model -> Document Msg
 view model =
-    let
-        doc =
-            viewPage model.page
-    in
-    { doc | body = nav :: doc.body }
+    viewPage model.page
+        |> applyLayout model.layout
 
 
 nav : Html Msg
@@ -30,22 +29,40 @@ viewPage : PageModel -> Document Msg
 viewPage page =
     case page of
         HomePage subModel ->
-            let
-                doc =
-                    Home.view subModel
-            in
-            { title = doc.title, body = List.map (Html.map HomeMsg) doc.body }
+            { title = Home.title
+            , body =
+                Home.view subModel
+                    |> List.map (Html.map HomeMsg)
+            }
 
         AboutPage subModel ->
-            let
-                doc =
-                    About.view subModel
-            in
-            { title = doc.title, body = List.map (Html.map AboutMsg) doc.body }
+            { title = About.title
+            , body =
+                About.view subModel
+                    |> List.map (Html.map AboutMsg)
+            }
 
-        NotFoundPage subModel ->
-            let
-                doc =
-                    NotFound.view subModel
-            in
-            { title = doc.title, body = List.map (Html.map NotFoundMsg) doc.body }
+        NotFoundPage ->
+            { title = NotFound.title
+            , body = NotFound.view
+            }
+
+        Loading ->
+            { title = "Loading..."
+            , body = [ text "Loading..." ]
+            }
+
+
+applyLayout : LayoutModel -> Document Msg -> Document Msg
+applyLayout layout content =
+    { content | body = viewLayout layout content.body }
+
+
+viewLayout : LayoutModel -> List (Html Msg) -> List (Html Msg)
+viewLayout layout content =
+    case layout of
+        ContainerLayout config ->
+            Container.view config content
+
+        BaseLayout config subModel ->
+            Base.view config BaseMsg subModel content

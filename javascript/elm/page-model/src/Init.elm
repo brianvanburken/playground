@@ -1,43 +1,83 @@
 module Init exposing (init, initPage)
 
 import Browser.Navigation as Nav
+import Layouts.Base as BaseLayout
+import Layouts.Container as ContainerLayout
+import Model exposing (LayoutModel(..), Model, Msg(..), PageModel(..))
 import Pages.About as About
 import Pages.Home as Home
 import Pages.NotFound as NotFound
 import Route exposing (Route(..))
-import Model exposing (Model, Msg(..), PageModel(..))
 import Url exposing (Url)
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
     let
-        ( page, cmd ) =
-            initPage (Route.fromUrl url)
+        initialModel =
+            { key = key
+            , page = Loading
+            , layout = ContainerLayout ContainerLayout.config
+            }
+
+        route =
+            Route.fromUrl url
     in
-    ( { key = key, page = page }, cmd )
+    initPage route initialModel
 
 
-initPage : Route -> ( PageModel, Cmd Msg )
-initPage route =
+initPage : Route -> Model -> ( Model, Cmd Msg )
+initPage route model =
     case route of
         Home ->
             let
                 ( m, cmd ) =
                     Home.init
             in
-            ( HomePage m, Cmd.map HomeMsg cmd )
+            ( model
+                |> setPage (HomePage m)
+                |> withBaseLayout
+            , Cmd.map HomeMsg cmd
+            )
 
         About ->
             let
                 ( m, cmd ) =
                     About.init
             in
-            ( AboutPage m, Cmd.map AboutMsg cmd )
+            ( model
+                |> setPage (AboutPage m)
+                |> withBaseLayout
+            , Cmd.map AboutMsg cmd
+            )
 
         NotFound ->
-            let
-                ( m, cmd ) =
-                    NotFound.init
-            in
-            ( NotFoundPage m, Cmd.map NotFoundMsg cmd )
+            ( model
+                |> setPage NotFoundPage
+                |> withContainerLayout
+            , Cmd.none
+            )
+
+
+withContainerLayout : Model -> Model
+withContainerLayout =
+    setLayout (ContainerLayout ContainerLayout.config)
+
+
+withBaseLayout : Model -> Model
+withBaseLayout =
+    let
+        ( m, cmd ) =
+            BaseLayout.init
+    in
+    setLayout (BaseLayout BaseLayout.config m)
+
+
+setPage : PageModel -> Model -> Model
+setPage page model =
+    { model | page = page }
+
+
+setLayout : LayoutModel -> Model -> Model
+setLayout layout model =
+    { model | layout = layout }

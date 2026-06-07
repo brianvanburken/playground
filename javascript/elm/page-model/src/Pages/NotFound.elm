@@ -1,36 +1,16 @@
-module Pages.NotFound exposing (Model, Msg, init, update, view, subscriptions)
+module Pages.NotFound exposing (title, view)
 
-import Browser exposing (Document)
-import Html exposing (h1, text)
-
-
-type alias Model =
-    {}
+import Html exposing (Html, a, h1, text)
+import Html.Attributes exposing (href)
 
 
-type Msg
-    = NoOp
+title : String
+title =
+    "404 - Not Found"
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( {}, Cmd.none )
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        NoOp ->
-            ( model, Cmd.none )
-
-
-view : Model -> Document Msg
-view _ =
-    { title = "404 - Not Found"
-    , body = [ h1 [] [ text "404 - Not Found" ] ]
-    }
-
-
-subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
+view : List (Html msg)
+view =
+    [ h1 [] [ text "404 - Not Found" ]
+    , a [ href "/" ] [ text "Back to home" ]
+    ]

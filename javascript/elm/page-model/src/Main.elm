@@ -2,8 +2,8 @@ module Main exposing (main)
 
 import Browser
 import Init
-import Subscriptions
 import Model exposing (Model, Msg(..))
+import Subscriptions
 import Update
 import View
 

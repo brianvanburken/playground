@@ -1,7 +1,12 @@
 [tools]
 elm = "0.19.1"
 node = "24"
+"github:avh4/elm-format" = "0.8.8"
 
 [tasks.dev]
 run = "elm reactor"
 description = "Start elm reactor dev server"
+
+[tasks.format]
+run = "elm-format src/ --yes"
+description = "Format all Elm source files"

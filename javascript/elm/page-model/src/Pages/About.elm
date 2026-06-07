@@ -1,7 +1,7 @@
-module Pages.About exposing (Model, Msg, init, update, view, subscriptions)
+module Pages.About exposing (Model, Msg, init, subscriptions, title, update, view)
 
 import Browser exposing (Document)
-import Html exposing (h1, text)
+import Html exposing (Html, h1, text)
 
 
 type alias Model =
@@ -17,6 +17,11 @@ init =
     ( {}, Cmd.none )
 
 
+title : String
+title =
+    "About"
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -24,11 +29,9 @@ update msg model =
             ( model, Cmd.none )
 
 
-view : Model -> Document Msg
+view : Model -> List (Html Msg)
 view _ =
-    { title = "About"
-    , body = [ h1 [] [ text "About" ] ]
-    }
+    [ h1 [] [ text "About" ] ]
 
 
 subscriptions : Model -> Sub Msg

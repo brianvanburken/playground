@@ -3,11 +3,12 @@ module Update exposing (update)
 import Browser exposing (UrlRequest(..))
 import Browser.Navigation as Nav
 import Init exposing (initPage)
+import Layouts.Base as Base
+import Model exposing (LayoutModel(..), Model, Msg(..), PageModel(..))
 import Pages.About as About
 import Pages.Home as Home
 import Pages.NotFound as NotFound
 import Route
-import Model exposing (Model, Msg(..), PageModel(..))
 import Url
 
 
@@ -21,11 +22,7 @@ update msg model =
             ( model, Nav.load url )
 
         UrlChanged url ->
-            let
-                ( page, cmd ) =
-                    initPage (Route.fromUrl url)
-            in
-            ( { model | page = page }, cmd )
+            initPage (Route.fromUrl url) model
 
         HomeMsg subMsg ->
             case model.page of
@@ -51,14 +48,14 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        NotFoundMsg subMsg ->
-            case model.page of
-                NotFoundPage subModel ->
+        BaseMsg subMsg ->
+            case model.layout of
+                BaseLayout config subModel ->
                     let
                         ( m, cmd ) =
-                            NotFound.update subMsg subModel
+                            Base.update subMsg subModel
                     in
-                    ( { model | page = NotFoundPage m }, Cmd.map NotFoundMsg cmd )
+                    ( { model | layout = BaseLayout config m }, Cmd.map BaseMsg cmd )
 
                 _ ->
                     ( model, Cmd.none )
