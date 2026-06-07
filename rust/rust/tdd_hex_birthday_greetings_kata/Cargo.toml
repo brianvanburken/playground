@@ -1,0 +1,11 @@
+[package]
+name = "ws_tdd_hex_birthday_greetings_kata_Q1_2024_S1"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4.31"
+mockall = "0.12.1"
+tempfile = "3.9.0"
