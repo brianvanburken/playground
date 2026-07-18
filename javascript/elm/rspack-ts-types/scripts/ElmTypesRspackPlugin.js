@@ -22,6 +22,12 @@ export const Elm: typeof Elm;
 
   apply(compiler) {
     compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation) => {
+      // succeedModule is synchronous, so generation runs fire-and-forget per
+      // module. Each attempt is tracked here and awaited in finishModules,
+      // which delays sealing the compilation until generation has settled,
+      // so any failure still lands in this build's compilation.errors.
+      const pending = [];
+
       compilation.hooks.succeedModule.tap(PLUGIN_NAME, (module) => {
         const resource = module.resource;
         if (!resource || !this.test.test(resource)) {
@@ -33,10 +39,20 @@ export const Elm: typeof Elm;
           return;
         }
 
-        this.generate(resource, source.source().toString()).catch((error) => {
-          console.error(`${PLUGIN_NAME} failed for ${resource}:`, error);
-        });
+        pending.push(
+          this.generate(resource, source.source().toString()).catch(
+            (error) => {
+              compilation.errors.push(
+                new Error(`${PLUGIN_NAME} failed for ${resource}: ${error.message}`),
+              );
+            },
+          ),
+        );
       });
+
+      compilation.hooks.finishModules.tapPromise(PLUGIN_NAME, () =>
+        Promise.all(pending),
+      );
     });
   }
 }
