@@ -1,6 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const ElmTypesRspackPlugin = require("./scripts/ElmTypesRspackPlugin");
+const ElmTypesPlugin = require("./scripts/ElmTypesPlugin");
 
 module.exports = (env, argv) => {
   const isDev = argv.mode !== "production";
@@ -45,7 +45,7 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({
         template: "./src/index.html",
       }),
-      new ElmTypesRspackPlugin(),
+      new ElmTypesPlugin(),
     ],
     devServer: {
       hot: true,

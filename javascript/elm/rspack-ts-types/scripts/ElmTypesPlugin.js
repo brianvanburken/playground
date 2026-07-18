@@ -1,11 +1,19 @@
 const fs = require("fs");
 const path = require("path");
 
-const PLUGIN_NAME = "ElmTypesRspackPlugin";
+const PLUGIN_NAME = "ElmTypesPlugin";
 
 /**
  * Generates a `<file>.elm.d.ts` next to every compiled `.elm` module, using
  * lydell/elm-ts-types to type the module's `init`, flags, and ports.
+ *
+ * Works with both rspack and webpack 5 unchanged: it only relies on the
+ * plugin API rspack mirrors from webpack (`compiler.hooks.compilation`,
+ * `compilation.hooks.succeedModule`/`finishModules`, `getLogger()`,
+ * `module.originalSource()`, `compilation.errors`) and nothing rspack- or
+ * webpack-specific. Verified by running it under a real webpack 5 compiler.
+ * One difference: webpack's `stats.loggingDebug` entries must be RegExp
+ * (or a function); rspack also accepts a plain string.
  *
  * Reuses the already-compiled JS from elm-webpack-loader (via
  * `module.originalSource()`) instead of invoking `elm make` a second time,
@@ -18,14 +26,14 @@ const PLUGIN_NAME = "ElmTypesRspackPlugin";
  *
  * Logs through the standard rspack/webpack Logger, so debug output is off
  * by default. Enable it with either:
- *   stats: { loggingDebug: ["ElmTypesRspackPlugin"] }
+ *   stats: { loggingDebug: [/ElmTypesPlugin/] }
  *   stats: { logging: "verbose" }
  *
  * @example
- * new ElmTypesRspackPlugin()
- * new ElmTypesRspackPlugin({ test: /\.elm$/ })
+ * new ElmTypesPlugin()
+ * new ElmTypesPlugin({ test: /\.elm$/ })
  */
-class ElmTypesRspackPlugin {
+class ElmTypesPlugin {
   /**
    * @param {object} [options]
    * @param {RegExp} [options.test] Matches module resource paths to generate
@@ -120,4 +128,4 @@ export const Elm: typeof Elm;
   }
 }
 
-module.exports = ElmTypesRspackPlugin;
+module.exports = ElmTypesPlugin;
