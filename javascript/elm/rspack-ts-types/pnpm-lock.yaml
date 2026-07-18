@@ -20,6 +20,9 @@ importers:
       elm:
         specifier: 0.19.1-6
         version: 0.19.1-6
+      elm-ts-types:
+        specifier: 1.0.1
+        version: 1.0.1
       elm-webpack-loader:
         specifier: 8.0.0
         version: 8.0.0(elm@0.19.1-6)
@@ -388,6 +391,9 @@ packages:
 
   dot-case@3.0.4:
     resolution: {integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==}
+
+  elm-ts-types@1.0.1:
+    resolution: {integrity: sha512-ZbjR9kfBuzjo3lZ16ycepgspoVOBcYET36s14fxRu99k2dM2PuzNgr9ylKh9KgvhPDf4biMPvlOcP4R5wmaisQ==}
 
   elm-webpack-loader@8.0.0:
     resolution: {integrity: sha512-R49j9GOGbZ+PjrktAzYzjUgf6w+RHOIUNWLfOVdc7OoGG52SreEk63l/bLJV31HwLE8PU6KANEnzeZ3238fAUg==}
@@ -854,6 +860,8 @@ snapshots:
     dependencies:
       no-case: 3.0.4
       tslib: 2.8.1
+
+  elm-ts-types@1.0.1: {}
 
   elm-webpack-loader@8.0.0(elm@0.19.1-6):
     dependencies:
