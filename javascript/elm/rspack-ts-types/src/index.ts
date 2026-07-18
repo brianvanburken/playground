@@ -8,5 +8,5 @@ const app = Elm.Main.init({
 });
 
 app.ports.saveCount.subscribe((count) => {
-  localStorage.setItem("count", count);
+  localStorage.setItem("count", String(count));
 });

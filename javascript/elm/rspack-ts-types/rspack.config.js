@@ -5,13 +5,28 @@ module.exports = (env, argv) => {
   const isDev = argv.mode !== "production";
 
   return {
-    entry: "./src/index.js",
+    entry: "./src/index.ts",
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "[name].js",
     },
+    resolve: {
+      extensions: [".ts", ".js"],
+    },
     module: {
       rules: [
+        {
+          test: /\.ts$/,
+          exclude: [/node_modules/],
+          loader: "builtin:swc-loader",
+          options: {
+            jsc: {
+              parser: {
+                syntax: "typescript",
+              },
+            },
+          },
+        },
         {
           test: /\.elm$/,
           exclude: [/elm-stuff/, /node_modules/],
