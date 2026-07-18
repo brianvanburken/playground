@@ -45,9 +45,7 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({
         template: "./src/index.html",
       }),
-      new ElmTypesRspackPlugin({
-        elmBinary: path.join(__dirname, "node_modules", ".bin", "elm"),
-      }),
+      new ElmTypesRspackPlugin(),
     ],
     devServer: {
       hot: true,
