@@ -24,6 +24,10 @@ const PLUGIN_NAME = "ElmTypesPlugin";
  * change) doesn't bump the `.d.ts` mtime and trigger downstream watchers
  * (editor TS servers, `tsc --watch`, etc.) for no reason.
  *
+ * In watch mode, also removes the `.d.ts` for any `.elm` file that gets
+ * deleted (via `compiler.removedFiles`, populated before each rebuild), so a
+ * removed entry module doesn't leave a stale type definition behind.
+ *
  * Logs through the standard rspack/webpack Logger, so debug output is off
  * by default. Enable it with either:
  *   stats: { loggingDebug: [/ElmTypesPlugin/] }
@@ -86,6 +90,24 @@ export const Elm: typeof Elm;
   apply(compiler) {
     compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation) => {
       const logger = compilation.getLogger(PLUGIN_NAME);
+
+      for (const resource of compiler.removedFiles || []) {
+        if (!this.test.test(resource)) {
+          continue;
+        }
+
+        const outputPath = `${resource}.d.ts`;
+        const relativeOutputPath = path.relative(compiler.context, outputPath);
+
+        try {
+          fs.unlinkSync(outputPath);
+          logger.debug(`removed stale "${relativeOutputPath}"`);
+        } catch (error) {
+          if (error.code !== "ENOENT") {
+            throw error;
+          }
+        }
+      }
 
       // succeedModule is synchronous, so generation runs fire-and-forget per
       // module. Each attempt is tracked here and awaited in finishModules,
