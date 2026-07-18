@@ -1,4 +1,4 @@
 node_modules/
 dist/
 elm-stuff/
-src/Main.elm.d.ts
+src/*.elm.d.ts
