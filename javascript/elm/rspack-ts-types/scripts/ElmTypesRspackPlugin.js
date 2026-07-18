@@ -74,6 +74,7 @@ export const Elm: typeof Elm;
     });
   }
 
+  /** @param {import("webpack").Compiler} compiler */
   apply(compiler) {
     compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation) => {
       const logger = compilation.getLogger(PLUGIN_NAME);
@@ -107,7 +108,7 @@ export const Elm: typeof Elm;
           ).catch((error) => {
             compilation.errors.push(
               new Error(
-                `${PLUGIN_NAME} failed for "${relativeResource}": ${error.message}`,
+                `${PLUGIN_NAME} failed for "${relativeResource}":\n${error.stack || error.message}`,
               ),
             );
           }),
