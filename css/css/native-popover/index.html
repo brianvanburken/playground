@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Native popover</title>
+<style>
+  [popover] {
+    /* UA default centers popovers in the top layer with an inset:auto box. */
+    width: 20rem;
+    max-width: 100%;
+    padding: 1rem;
+    border: 1px solid;
+  }
+
+  .menu-anchor {
+    anchor-name: --menu-button;
+  }
+
+  @supports (anchor-name: --x) {
+    #menu {
+      position: absolute;
+      position-anchor: --menu-button;
+      position-area: bottom span-right;
+      margin: 0.25rem 0 0 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Native popover</h1>
+<p>Positioned under its button with CSS anchor positioning, centered otherwise. Light dismiss: click outside or press Escape.</p>
+
+<button type="button" class="menu-anchor" popovertarget="menu">Open menu</button>
+
+<div id="menu" popover>
+  <p>Anchored to the button above.</p>
+</div>
+
+</body>
+</html>
