@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Native dialog as right drawer</title>
+<style>
+  dialog {
+    /* Undo the UA centering: pin to the right edge, full height. */
+    margin: 0 0 0 auto;
+    width: 30rem;
+    max-width: 100%;
+    height: 100vh;
+    max-height: none;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  dialog::backdrop {
+    background: rgb(0 0 0 / 0.4);
+  }
+
+  .drawer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .drawer-body {
+    overflow-y: auto;
+  }
+</style>
+</head>
+<body>
+
+<h1>Native dialog as a right drawer</h1>
+<button type="button" command="show-modal" commandfor="drawer">Open drawer</button>
+
+<dialog id="drawer" closedby="any">
+  <div class="drawer">
+    <h2>Settings</h2>
+
+    <div class="drawer-body">
+      <p>Scroll this area. The heading above and the button below stay put.</p>
+      <p>Section 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Section 2. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      <p>Section 3. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+      <p>Section 4. Nisi ut aliquip ex ea commodo consequat.</p>
+      <p>Section 5. Duis aute irure dolor in reprehenderit in voluptate velit esse.</p>
+      <p>Section 6. Cillum dolore eu fugiat nulla pariatur.</p>
+      <p>Section 7. Excepteur sint occaecat cupidatat non proident.</p>
+      <p>Section 8. Sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      <p>Section 9. Curabitur pretium tincidunt lacus.</p>
+      <p>Section 10. Nulla gravida orci a odio.</p>
+      <p>Section 11. Nullam varius, turpis et commodo pharetra.</p>
+      <p>Section 12. Aenean ut eros et nisl sagittis vestibulum.</p>
+      <p>Section 13. Sed lectus. Donec mollis hendrerit risus.</p>
+      <p>Section 14. Phasellus nec sem in justo pellentesque facilisis.</p>
+      <p>Section 15. The last one, you reached the bottom.</p>
+    </div>
+
+    <form method="dialog">
+      <button>Close</button>
+    </form>
+  </div>
+</dialog>
+
+</body>
+</html>
