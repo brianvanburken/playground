@@ -1,0 +1,37 @@
+{
+  "name": "poc-playwright-msw-elm-graphql",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "ISC",
+  "scripts": {
+    "dev": "aubr codegen && vite",
+    "dev:nomock": "aubr codegen && VITE_MSW=false vite",
+    "build": "aubr codegen && vite build",
+    "preview": "vite preview",
+    "test": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "codegen": "elm-graphql --schema-file schema.graphql --base Api --output src --skip-elm-format"
+  },
+  "devDependencies": {
+    "@dillonkearns/elm-graphql": "4.3.2",
+    "@playwright/test": "1.62.1",
+    "graphql": "17.0.2",
+    "elm": "0.19.2-0",
+    "msw": "2.15.0",
+    "typescript": "7.0.2",
+    "vite": "8.2.2",
+    "vite-plugin-elm": "3.0.1"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  },
+  "pnpm": {
+    "allowBuilds": {
+      "elm": true,
+      "msw": true
+    }
+  }
+}
