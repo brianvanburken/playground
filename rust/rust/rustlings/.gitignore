@@ -1,12 +1,3 @@
-*.swp
+Cargo.lock
 target/
-**/*.rs.bk
-.DS_Store
-*.pdb
-exercises/clippy/Cargo.toml
-exercises/clippy/Cargo.lock
-rust-project.json
-.idea
-.vscode
-*.iml
-*.o
+.vscode/
